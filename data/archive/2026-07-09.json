@@ -1,4 +1,12 @@
 {
+  "asset": {
+    "company_name": null,
+    "display_symbol": "TMGH",
+    "liquidity_tier": "core_liquid",
+    "market": "EGX",
+    "sector": "Financial Services",
+    "symbol": "EGX:TMGH"
+  },
   "audience": "public",
   "context": {
     "prediction_status": "live_predictions_written",
@@ -11,16 +19,58 @@
     "market_use": "research_and_information_only"
   },
   "domain": "EGXResearch",
-  "integrity": {
-    "public_wire_hash": "sha256:52ad1b6f6c6f5439d5e9f56c75e6e81145e2095914707f2660a38dc7884bc3aa",
-    "source_payload_hash": "sha256:87edb2e4c293bc4a62ab69002f9c08e7316bc0533cb3229b6877187b708b7b3a"
+  "funnel_context": {
+    "full_product_hint": "The complete daily intelligence view includes the full ranked list, model context, and signal history.",
+    "public_position": "one public signal from the daily EGX /Alpha ranking"
   },
-  "published_at": "2026-07-09T16:12:27.314910+00:00",
+  "integrity": {
+    "public_wire_hash": "sha256:d2b446e19a1330d5d1fe3dd85aa5efd2de1e000aafa622485046a5477205a42b",
+    "source_payload_hash": "sha256:c4db5a3be6fcb583b75ac6aad3a846d78a2c4a45b5786d07e81be651827ace43"
+  },
+  "market_snapshot": {
+    "availability_timestamp": "2026-07-09T15:15:00+03:00",
+    "daily_change_pct": null,
+    "data_timestamp": "2026-07-09T07:00:00+03:00",
+    "latest_close": 97.1,
+    "liquidity_tier": "core_liquid",
+    "market_structure_sector": "Financial Services",
+    "traded_value_egp": 197544124.0,
+    "value_traded_status": "above_recent_baseline",
+    "volume": 2034440.0
+  },
+  "model_state": {
+    "public_label": "Early live tracking",
+    "public_note": "The system is still building realised outcome history while publishing research-only public signals.",
+    "technical_state": "insufficient_evidence"
+  },
+  "public_copy": {
+    "headline": "Today’s EGX /Alpha public signal: TMGH",
+    "investor_read": "Caution / downside-pressure signal. This is a public market-intelligence signal to follow, not a trade instruction.",
+    "one_line_summary": "Public rank #3 for the 5-session horizon after the latest EGX /Alpha post-close scan."
+  },
+  "public_signal": {
+    "direction_bucket": "negative_model_signal",
+    "horizon": "5",
+    "horizon_label": "5-session horizon",
+    "plain_direction": "Caution / downside-pressure signal",
+    "rank_label": "Public rank #3",
+    "rank_within_horizon": 3,
+    "release_mode": "live_v1_2_onnx_ranking",
+    "source_freshness_status": "live_observation_completed",
+    "stock_symbol": "EGX:TMGH"
+  },
+  "published_at": "2026-07-09T18:23:15.649868+00:00",
+  "publishing_context": {
+    "next_expected_signal": "next EGX trading day",
+    "published_after": "EGX close",
+    "published_at_utc": "2026-07-09T18:22:57.961214+00:00",
+    "timezone": "Africa/Cairo"
+  },
   "schema_version": "egx_alpha_public_wire_v1",
   "signal": {
     "direction_bucket": "negative_model_signal",
     "horizon": "5",
-    "rank_label": "third ranked stock in primary horizon",
+    "rank_label": "Public rank #3",
     "rank_within_horizon": 3,
     "source_freshness_status": "live_observation_completed",
     "stock_symbol": "EGX:TMGH"
