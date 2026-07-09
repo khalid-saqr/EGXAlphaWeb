@@ -1,0 +1,10 @@
+[
+  {
+    "date": "2026-07-09",
+    "symbol": "EGX:DEMO",
+    "horizon": "5D",
+    "rank_label": "third-ranked public signal",
+    "direction_bucket": "positive_model_signal",
+    "url": "/archive/2026-07-09/"
+  }
+]

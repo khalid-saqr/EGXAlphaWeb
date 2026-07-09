@@ -1,0 +1,62 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { loadAndValidate } from './validate.mjs';
+import { renderArchivePage, renderSearchPage, renderSignalPage } from './render.mjs';
+
+const ROOT = process.cwd();
+const OUT = path.join(ROOT, '_site');
+const DATA_DIR = path.join(ROOT, 'data');
+
+function ensureDir(p) { fs.mkdirSync(p, { recursive: true }); }
+function write(p, content) { ensureDir(path.dirname(p)); fs.writeFileSync(p, content, 'utf8'); }
+function copy(src, dest) { ensureDir(path.dirname(dest)); fs.copyFileSync(src, dest); }
+function rmrf(p) { if (fs.existsSync(p)) fs.rmSync(p, { recursive: true, force: true }); }
+
+function archiveJsonFiles() {
+  const dir = path.join(DATA_DIR, 'archive');
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir).filter(name => name.endsWith('.json')).sort();
+}
+
+function indexItem(payload) {
+  return {
+    date: payload.trading_date,
+    symbol: payload.signal.stock_symbol,
+    horizon: payload.signal.horizon,
+    rank_label: payload.signal.rank_label,
+    direction_bucket: payload.signal.direction_bucket,
+    url: `/archive/${payload.trading_date}/`
+  };
+}
+
+function main() {
+  rmrf(OUT);
+  ensureDir(OUT);
+  const latest = loadAndValidate(path.join(DATA_DIR, 'latest.json'));
+  const items = [];
+
+  for (const name of archiveJsonFiles()) {
+    const payload = loadAndValidate(path.join(DATA_DIR, 'archive', name));
+    const date = payload.trading_date;
+    items.push(indexItem(payload));
+    write(path.join(OUT, 'archive', date, 'index.html'), renderSignalPage(payload, `/archive/${date}/`));
+    write(path.join(OUT, 'data', 'archive', `${date}.json`), JSON.stringify(payload, null, 2) + '\n');
+  }
+
+  items.sort((a, b) => b.date.localeCompare(a.date));
+  write(path.join(OUT, 'index.html'), renderSignalPage(latest, '/'));
+  write(path.join(OUT, 'today', 'index.html'), renderSignalPage(latest, '/today/'));
+  write(path.join(OUT, 'archive', 'index.html'), renderArchivePage(items));
+  write(path.join(OUT, 'search', 'index.html'), renderSearchPage());
+  write(path.join(OUT, 'data', 'latest.json'), JSON.stringify(latest, null, 2) + '\n');
+  write(path.join(OUT, 'data', 'index.json'), JSON.stringify(items, null, 2) + '\n');
+
+  copy(path.join(ROOT, 'assets', 'app.css'), path.join(OUT, 'assets', 'app.css'));
+  copy(path.join(ROOT, 'assets', 'app.js'), path.join(OUT, 'assets', 'app.js'));
+  copy(path.join(ROOT, 'public', 'manifest.webmanifest'), path.join(OUT, 'manifest.webmanifest'));
+  copy(path.join(ROOT, 'public', 'sw.js'), path.join(OUT, 'sw.js'));
+  copy(path.join(ROOT, 'public', '.nojekyll'), path.join(OUT, '.nojekyll'));
+  console.log(`Built EGXResearch public PWA with ${items.length} archived signal(s).`);
+}
+
+main();

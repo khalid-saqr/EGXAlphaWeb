@@ -1,0 +1,15 @@
+{
+  "name": "egxresearch-public-pwa",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static GitHub Pages PWA for EGXResearch / EGX /Alpha public signal.",
+  "type": "module",
+  "scripts": {
+    "validate": "node src/validate.mjs data/latest.json",
+    "build": "node src/build.mjs",
+    "test": "node tests/test-public-wire.mjs && node tests/test-build-output.mjs && node tests/test-no-leakage.mjs && node tests/test-no-binaries.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

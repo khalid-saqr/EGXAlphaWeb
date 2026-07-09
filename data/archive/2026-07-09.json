@@ -1,0 +1,30 @@
+{
+  "schema_version": "egx_alpha_public_wire_v1",
+  "domain": "EGXResearch",
+  "signal_name": "EGX /Alpha signal",
+  "audience": "public",
+  "trading_date": "2026-07-09",
+  "published_at": "2026-07-09T13:30:00Z",
+  "signal": {
+    "stock_symbol": "EGX:DEMO",
+    "rank_label": "third-ranked public signal",
+    "rank_within_horizon": 3,
+    "horizon": "5D",
+    "direction_bucket": "positive_model_signal",
+    "source_freshness_status": "live_observation_completed"
+  },
+  "context": {
+    "trust_state": "weak_but_usable",
+    "source_quality_status": "source_healthy",
+    "prediction_status": "live_predictions_written"
+  },
+  "disclaimer": {
+    "market_use": "research_and_information_only",
+    "investment_advice": false,
+    "execution_instruction": false
+  },
+  "integrity": {
+    "source_payload_hash": "sha256:sample-source-payload-hash",
+    "public_wire_hash": "sha256:sample-public-wire-hash"
+  }
+}
