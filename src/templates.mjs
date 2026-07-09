@@ -1,8 +1,8 @@
 export const SITE = {
   domain: 'EGXResearch',
   signalName: 'EGX /Alpha signal',
-basePath: process.env.EGX_BASE_PATH || '/EGXAlphaWeb',
-siteUrl: process.env.EGX_SITE_URL || (process.env.GITHUB_REPOSITORY_OWNER ? `https://${process.env.GITHUB_REPOSITORY_OWNER}.github.io/EGXAlphaWeb` : '')
+  basePath: process.env.EGX_BASE_PATH || '/EGXAlphaWeb',
+  siteUrl: process.env.EGX_SITE_URL || (process.env.GITHUB_REPOSITORY_OWNER ? `https://${process.env.GITHUB_REPOSITORY_OWNER}.github.io/EGXAlphaWeb` : '')
 };
 
 export function escapeHtml(value) {
@@ -47,6 +47,7 @@ export function abs(rootRelative) {
 export function htmlShell({ title, description, canonicalPath, payload, body, pageClass = '' }) {
   const url = abs(canonicalPath);
   const payloadJson = payload ? JSON.stringify(payload).replaceAll('</script', '<\\/script') : '';
+  const clientConfig = JSON.stringify({ basePath: SITE.basePath }).replaceAll('</script', '<\\/script');
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -68,6 +69,7 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
   <link rel="stylesheet" href="${rel('/assets/app.css')}">
 </head>
 <body class="${escapeHtml(pageClass)}">
+  <script id="site-config" type="application/json">${clientConfig}</script>
   <script id="beacon-payload" type="application/json">${payloadJson}</script>
   ${body}
   <script src="${rel('/assets/app.js')}" defer></script>
@@ -75,21 +77,51 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
 </html>\n`;
 }
 
-export function signalCard(payload) {
-  const signal = payload.signal;
-  const context = payload.context || {};
-  return `<main class="site-shell" data-page="signal">
-  <header class="topbar" aria-label="Site header">
+export function siteHeader(sectionLabel = SITE.signalName) {
+  return `<header class="topbar" aria-label="Site header">
     <a class="brand" href="${rel('/')}">
       <span class="brand-mark">EGX</span>
-      <span><strong>EGXResearch</strong><em>EGX /Alpha signal</em></span>
+      <span><strong>${escapeHtml(SITE.domain)}</strong><em>${escapeHtml(sectionLabel)}</em></span>
     </a>
     <nav class="navlinks" aria-label="Primary navigation">
       <a href="${rel('/today/')}">Today</a>
       <a href="${rel('/archive/')}">Archive</a>
       <a href="${rel('/search/')}">Search</a>
+      <button class="button theme-toggle" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false">
+        <span class="theme-bulb" aria-hidden="true">💡</span>
+        <span data-theme-label>Theme</span>
+      </button>
     </nav>
-  </header>
+  </header>`;
+}
+
+export function megaFooter() {
+  return `<footer class="mega-footer" aria-label="Site footer">
+    <section>
+      <p class="eyebrow">EGXResearch</p>
+      <h2>EGX /Alpha signal</h2>
+      <p class="small-note">A limited public preview that publishes only the third-ranked public model signal for the selected horizon.</p>
+    </section>
+    <section>
+      <h3>Explore</h3>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="${rel('/today/')}">Today</a>
+        <a href="${rel('/archive/')}">Archive</a>
+        <a href="${rel('/search/')}">Search</a>
+      </nav>
+    </section>
+    <section>
+      <h3>Research boundary</h3>
+      <p class="small-note">Research-only public signal. Not personalised investment advice and not an instruction to buy, sell, or hold any security.</p>
+    </section>
+  </footer>`;
+}
+
+export function signalCard(payload) {
+  const signal = payload.signal;
+  const context = payload.context || {};
+  return `<main class="site-shell" data-page="signal">
+  ${siteHeader(SITE.signalName)}
 
   <section class="hero-grid">
     <article class="card hero-card">
@@ -139,5 +171,6 @@ export function signalCard(payload) {
       <p class="small-note" data-copy-status aria-live="polite">Share the page URL; the public card is rendered when opened.</p>
     </article>
   </section>
+  ${megaFooter()}
 </main>`;
 }

@@ -1,11 +1,29 @@
 (function () {
-  const basePath = '/EGXResearch';
+  const configJson = document.getElementById('site-config')?.textContent?.trim();
   const json = document.getElementById('beacon-payload')?.textContent?.trim();
+  let config = {};
   let payload = null;
+  try { if (configJson) config = JSON.parse(configJson); } catch (_) { config = {}; }
   try { if (json) payload = JSON.parse(json); } catch (_) { payload = null; }
+  const basePath = normalizeBasePath(config.basePath || '');
 
   function absoluteUrl(pathname) {
     return new URL(pathname || window.location.pathname, window.location.origin).href;
+  }
+
+  function normalizeBasePath(path) {
+    const cleaned = String(path || '').trim();
+    if (!cleaned || cleaned === '/') return '';
+    return `/${cleaned.replace(/^\/+|\/+$/g, '')}`;
+  }
+
+  function withBasePath(path) {
+    const normalizedPath = String(path || '/').startsWith('/') ? String(path || '/') : `/${path}`;
+    return `${basePath}${normalizedPath}`;
+  }
+
+  function prettyState(value) {
+    return String(value || '').replaceAll('_', ' ');
   }
 
   function updateShareLinks() {
@@ -32,6 +50,33 @@
     });
   }
 
+  function initThemeToggle() {
+    const toggles = document.querySelectorAll('[data-theme-toggle]');
+    if (!toggles.length) return;
+    const storedTheme = localStorage.getItem('egx-theme');
+    const preferredTheme = window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    const initialTheme = storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : preferredTheme;
+
+    function applyTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#f4f7fb' : '#09111f');
+      toggles.forEach(toggle => {
+        toggle.setAttribute('aria-pressed', String(theme === 'light'));
+        const label = toggle.querySelector('[data-theme-label]');
+        if (label) label.textContent = theme === 'light' ? 'Light' : 'Dark';
+      });
+    }
+
+    applyTheme(initialTheme);
+    toggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const nextTheme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+        localStorage.setItem('egx-theme', nextTheme);
+        applyTheme(nextTheme);
+      });
+    });
+  }
+
   async function copyUrl() {
     const url = absoluteUrl(window.location.pathname);
     try {
@@ -43,8 +88,35 @@
     }
   }
 
+  initThemeToggle();
   document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', copyUrl));
   updateShareLinks();
+
+  function renderMessage(output, message) {
+    output.replaceChildren();
+    const note = document.createElement('p');
+    note.className = 'small-note';
+    note.textContent = message;
+    output.append(note);
+  }
+
+  function renderSearchRow(row) {
+    const link = document.createElement('a');
+    link.className = 'archive-row';
+    link.href = withBasePath(row.url || '/archive/');
+
+    const date = document.createElement('span');
+    date.textContent = row.date || '';
+    const symbol = document.createElement('strong');
+    symbol.textContent = row.symbol || '';
+    const horizon = document.createElement('em');
+    horizon.textContent = row.horizon || '';
+    const direction = document.createElement('small');
+    direction.textContent = prettyState(row.direction_bucket);
+
+    link.append(date, symbol, horizon, direction);
+    return link;
+  }
 
   async function initSearch() {
     const input = document.querySelector('[data-search-input]');
@@ -52,18 +124,21 @@
     if (!input || !output) return;
     let rows = [];
     try {
-      const res = await fetch(`${basePath}/data/index.json`, { cache: 'no-cache' });
+      const res = await fetch(withBasePath('/data/index.json'), { cache: 'no-cache' });
       rows = await res.json();
     } catch (_) {
-      output.innerHTML = '<p class="small-note">Search index is unavailable.</p>';
+      renderMessage(output, 'Search index is unavailable.');
       return;
     }
     function render() {
       const q = input.value.trim().toLowerCase();
       const filtered = rows.filter(row => !q || Object.values(row).join(' ').toLowerCase().includes(q)).slice(0, 50);
-      output.innerHTML = filtered.length ? filtered.map(row => `<a class="archive-row" href="${basePath}${row.url}">
-        <span>${row.date}</span><strong>${row.symbol}</strong><em>${row.horizon}</em><small>${String(row.direction_bucket || '').replaceAll('_', ' ')}</small>
-      </a>`).join('') : '<p class="small-note">No matching public signals.</p>';
+      output.replaceChildren();
+      if (!filtered.length) {
+        renderMessage(output, 'No matching public signals.');
+        return;
+      }
+      output.append(...filtered.map(renderSearchRow));
     }
     input.addEventListener('input', render);
     render();
@@ -71,6 +146,6 @@
   initSearch();
 
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register(`${basePath}/sw.js`).catch(() => {}));
+    window.addEventListener('load', () => navigator.serviceWorker.register(withBasePath('/sw.js')).catch(() => {}));
   }
 })();
