@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { loadAndValidate } from './validate.mjs';
-import { renderArchivePage, renderSearchPage, renderSignalPage } from './render.mjs';
+import { renderArchivePage, renderMethodologyPage, renderSearchPage, renderSignalPage } from './render.mjs';
 
 const ROOT = process.cwd();
 const OUT = path.join(ROOT, '_site');
@@ -61,6 +61,7 @@ function main() {
   write(path.join(OUT, 'today', 'index.html'), renderSignalPage(latest, '/today/'));
   write(path.join(OUT, 'archive', 'index.html'), renderArchivePage(items));
   write(path.join(OUT, 'search', 'index.html'), renderSearchPage());
+  write(path.join(OUT, 'methodology', 'index.html'), renderMethodologyPage());
   write(path.join(OUT, 'data', 'latest.json'), JSON.stringify(latest, null, 2) + '\n');
   write(path.join(OUT, 'data', 'index.json'), JSON.stringify(items, null, 2) + '\n');
 

@@ -1,4 +1,4 @@
-import { escapeHtml, htmlShell, megaFooter, prettyState, rel, signalCard, siteHeader } from './templates.mjs';
+import { escapeHtml, htmlShell, megaFooter, methodologyPage, prettyState, rel, signalCard, siteHeader } from './templates.mjs';
 
 function signalParts(payload) {
   const signal = payload.public_signal || payload.signal || {};
@@ -7,6 +7,15 @@ function signalParts(payload) {
   const display = asset.display_symbol || (String(symbol).includes(':') ? String(symbol).split(':').pop() : symbol);
   const company = asset.company_name ? ` — ${asset.company_name}` : '';
   return { symbol, display, company, signal };
+}
+
+function horizonDisplay(item) {
+  const raw = String(item.horizon || '').trim();
+  if (/^\d+(\.0+)?$/.test(raw)) return `Next ${parseInt(raw, 10)} EGX sessions`;
+  const label = String(item.horizon_label || '').trim();
+  const match = label.match(/(\d+)/);
+  if (match) return `Next ${parseInt(match[1], 10)} EGX sessions`;
+  return label || raw || 'Selected window';
 }
 
 export function renderSignalPage(payload, canonicalPath = '/today/') {
@@ -27,7 +36,7 @@ export function renderArchivePage(items) {
   const rows = items.map(item => `<a class="archive-row" href="${rel(item.url)}">
     <span>${escapeHtml(item.date)}</span>
     <strong>${escapeHtml(item.display_symbol || item.symbol)}</strong>
-    <em>${escapeHtml(item.horizon_label || item.horizon)}</em>
+    <em>${escapeHtml(horizonDisplay(item))}</em>
     <small>${escapeHtml(item.company_name || prettyState(item.direction_bucket))}</small>
   </a>`).join('\n');
   return htmlShell({
@@ -39,7 +48,7 @@ export function renderArchivePage(items) {
       <section class="card hero-card archive-hero">
         <p class="eyebrow">Archive</p>
         <h1>Public signal archive</h1>
-        <p class="lede">Review previous EGX /Alpha public signals by date, symbol, horizon, and model direction.</p>
+        <p class="lede">Review previous EGX /Alpha public signals by date, symbol, company, direction, and evaluation window.</p>
         <div class="meta-row"><span class="badge badge-strong">${items.length} public signal${items.length === 1 ? '' : 's'}</span><a class="badge badge-link" href="${rel('/search/')}">Search archive</a></div>
       </section>
       <section class="card archive-list">${rows || '<p>No archive records yet.</p>'}</section>
@@ -57,12 +66,22 @@ export function renderSearchPage() {
       ${siteHeader('Search')}
       <section class="card hero-card search-hero">
         <p class="eyebrow">Search</p>
-        <h1>Find public signals</h1>
-        <p class="lede">Search the public archive by symbol, company name, date, month, horizon, or model direction.</p>
+        <h1>Public signal memory</h1>
+        <p class="lede">Search the public archive by symbol, company name, date, month, sector, window, or direction.</p>
         <input class="search-input" data-search-input type="search" placeholder="Try TMGH, EGX:TMGH, Real Estate, or 2026-07" aria-label="Search signals">
       </section>
       <section class="card"><div class="search-results" data-search-results aria-live="polite"></div></section>
       ${megaFooter()}
     </main>`
+  });
+}
+
+export function renderMethodologyPage() {
+  return htmlShell({
+    title: 'EGX /Alpha methodology — EGXResearch',
+    description: 'Public-facing methodology white paper for the EGXResearch signal publication layer.',
+    canonicalPath: '/methodology/',
+    pageClass: 'page-methodology',
+    body: methodologyPage()
   });
 }
