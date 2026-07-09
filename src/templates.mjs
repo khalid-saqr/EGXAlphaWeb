@@ -1,8 +1,8 @@
 export const SITE = {
   domain: 'EGXResearch',
   signalName: 'EGX /Alpha signal',
-  basePath: process.env.EGX_BASE_PATH || '/EGXResearch',
-  siteUrl: process.env.EGX_SITE_URL || (process.env.GITHUB_REPOSITORY_OWNER ? `https://${process.env.GITHUB_REPOSITORY_OWNER}.github.io/EGXResearch` : '')
+basePath: process.env.EGX_BASE_PATH || '/EGXAlphaWeb',
+siteUrl: process.env.EGX_SITE_URL || (process.env.GITHUB_REPOSITORY_OWNER ? `https://${process.env.GITHUB_REPOSITORY_OWNER}.github.io/EGXAlphaWeb` : '')
 };
 
 export function escapeHtml(value) {
