@@ -22,8 +22,8 @@
 
   function signalText() {
     if (!payload) return document.title;
-    const read = payload.public_signal?.plain_direction || payload.public_copy?.investor_read || payload.signal?.rank_label || 'EGX /Alpha signal';
-    return `${read}. Research-only.`;
+    const read = payload.public_copy?.investor_read || payload.public_signal?.plain_direction || payload.signal?.rank_label || 'EGX /Alpha signal';
+    return `${String(read).replace(/\.$/, '')}. Research-only.`;
   }
 
   function setTheme(theme) {
@@ -51,8 +51,7 @@
     const url = absoluteUrl(window.location.pathname);
     try {
       await navigator.clipboard.writeText(url);
-      const status = document.querySelector('[data-copy-status]');
-      if (status) status.textContent = 'Link copied.';
+      document.querySelectorAll('[data-copy-status]').forEach(status => { status.textContent = 'Link copied.'; });
     } catch (_) {
       window.prompt('Copy this link', url);
     }
@@ -82,8 +81,15 @@
     });
   }
 
+  function initPrint() {
+    document.querySelectorAll('[data-print]').forEach(button => {
+      button.addEventListener('click', () => window.print());
+    });
+  }
+
   document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', copyUrl));
   updateShareLinks();
+  initPrint();
   initTheme();
 
   async function initSearch() {
@@ -99,13 +105,20 @@
       return;
     }
     function label(value) { return String(value || '').replaceAll('_', ' '); }
+    function horizon(row) {
+      const raw = String(row.horizon || '').trim();
+      if (/^\d+(\.0+)?$/.test(raw)) return `Next ${parseInt(raw, 10)} EGX sessions`;
+      const fromLabel = String(row.horizon_label || '').trim();
+      const match = fromLabel.match(/(\d+)/);
+      return match ? `Next ${parseInt(match[1], 10)} EGX sessions` : fromLabel || raw;
+    }
     function render() {
       const q = input.value.trim().toLowerCase();
       const filtered = rows.filter(row => !q || Object.values(row).join(' ').toLowerCase().includes(q)).slice(0, 50);
       output.innerHTML = filtered.length ? filtered.map(row => `<a class="archive-row" href="${basePath}${row.url}">
         <span>${row.date || ''}</span>
         <strong>${row.display_symbol || row.symbol || ''}</strong>
-        <em>${row.company_name || row.sector || label(row.horizon_label || row.horizon)}</em>
+        <em>${row.company_name || row.sector || horizon(row)}</em>
         <small>${label(row.plain_direction || row.direction_bucket)}</small>
       </a>`).join('') : '<p class="small-note">No matching signals.</p>';
     }
