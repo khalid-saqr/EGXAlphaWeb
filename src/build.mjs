@@ -55,7 +55,7 @@ function main() {
   copy(path.join(ROOT, 'assets', 'app.js'), path.join(OUT, 'assets', 'app.js'));
   copy(path.join(ROOT, 'public', 'manifest.webmanifest'), path.join(OUT, 'manifest.webmanifest'));
   copy(path.join(ROOT, 'public', 'sw.js'), path.join(OUT, 'sw.js'));
-  copy(path.join(ROOT, 'public', '.nojekyll'), path.join(OUT, '.nojekyll'));
+  write(path.join(OUT, '.nojekyll'), '');
   console.log(`Built EGXResearch public PWA with ${items.length} archived signal(s).`);
 }
 
