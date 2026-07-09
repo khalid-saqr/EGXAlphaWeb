@@ -12,15 +12,30 @@
     return new URL(pathname || window.location.pathname, window.location.origin).href;
   }
 
+  function signalSymbol() {
+    return payload?.asset?.display_symbol || payload?.asset?.symbol || payload?.public_signal?.stock_symbol || payload?.signal?.stock_symbol || 'EGX signal';
+  }
+
+  function signalTitle() {
+    return payload ? `${payload.signal_name || 'EGX /Alpha signal'} — ${signalSymbol()}` : document.title;
+  }
+
+  function signalText() {
+    if (!payload) return document.title;
+    const read = payload.public_copy?.investor_read || payload.public_signal?.plain_direction || payload.signal?.rank_label || 'Public EGX /Alpha signal';
+    return `${read} Research-only.`;
+  }
+
   function setTheme(theme) {
     const resolved = theme === 'light' ? 'light' : 'dark';
     document.documentElement.dataset.theme = resolved;
     localStorage.setItem('egxalpha-theme', resolved);
     document.querySelectorAll('[data-theme-toggle]').forEach(button => {
       button.setAttribute('aria-pressed', resolved === 'light' ? 'true' : 'false');
+      button.title = resolved === 'light' ? 'Switch to dark theme' : 'Switch to light theme';
     });
     document.querySelectorAll('[data-theme-label]').forEach(label => {
-      label.textContent = resolved === 'light' ? 'Light' : 'Dark';
+      label.textContent = 'Theme';
     });
   }
 
@@ -32,10 +47,21 @@
     });
   }
 
+  async function copyUrl() {
+    const url = absoluteUrl(window.location.pathname);
+    try {
+      await navigator.clipboard.writeText(url);
+      const status = document.querySelector('[data-copy-status]');
+      if (status) status.textContent = 'Link copied. Public signal page ready to share.';
+    } catch (_) {
+      window.prompt('Copy this link', url);
+    }
+  }
+
   function updateShareLinks() {
     const url = absoluteUrl(window.location.pathname);
-    const title = payload ? `${payload.signal_name} — ${payload.signal.stock_symbol}` : document.title;
-    const text = payload ? `${payload.signal.rank_label} for ${payload.signal.horizon}. Research-only.` : document.title;
+    const title = signalTitle();
+    const text = signalText();
     document.querySelectorAll('[data-share-link="linkedin"]').forEach(a => {
       a.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
       a.target = '_blank';
@@ -54,17 +80,6 @@
         await copyUrl();
       });
     });
-  }
-
-  async function copyUrl() {
-    const url = absoluteUrl(window.location.pathname);
-    try {
-      await navigator.clipboard.writeText(url);
-      const status = document.querySelector('[data-copy-status]');
-      if (status) status.textContent = 'Link copied. Share today’s public signal with your network.';
-    } catch (_) {
-      window.prompt('Copy this link', url);
-    }
   }
 
   document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', copyUrl));
@@ -88,7 +103,10 @@
       const q = input.value.trim().toLowerCase();
       const filtered = rows.filter(row => !q || Object.values(row).join(' ').toLowerCase().includes(q)).slice(0, 50);
       output.innerHTML = filtered.length ? filtered.map(row => `<a class="archive-row" href="${basePath}${row.url}">
-        <span>${row.date}</span><strong>${row.symbol}</strong><em>${row.horizon}</em><small>${label(row.direction_bucket)}</small>
+        <span>${row.date || ''}</span>
+        <strong>${row.display_symbol || row.symbol || ''}</strong>
+        <em>${row.company_name || row.sector || label(row.horizon_label || row.horizon)}</em>
+        <small>${label(row.plain_direction || row.direction_bucket)}</small>
       </a>`).join('') : '<p class="small-note">No matching public signals.</p>';
     }
     input.addEventListener('input', render);

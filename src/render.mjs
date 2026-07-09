@@ -1,9 +1,18 @@
 import { escapeHtml, htmlShell, megaFooter, prettyState, rel, signalCard, siteHeader } from './templates.mjs';
 
+function signalParts(payload) {
+  const signal = payload.public_signal || payload.signal || {};
+  const asset = payload.asset || {};
+  const symbol = asset.symbol || signal.stock_symbol || payload.signal?.stock_symbol || 'EGX signal';
+  const display = asset.display_symbol || (String(symbol).includes(':') ? String(symbol).split(':').pop() : symbol);
+  const company = asset.company_name ? ` — ${asset.company_name}` : '';
+  return { symbol, display, company, signal };
+}
+
 export function renderSignalPage(payload, canonicalPath = '/today/') {
-  const symbol = payload.signal?.stock_symbol || 'EGX signal';
-  const title = `EGX /Alpha signal — ${symbol} — ${payload.trading_date}`;
-  const description = `EGXResearch daily public EGX /Alpha signal for ${payload.trading_date}: one public signal from the model-ranked EGX watchlist. Research-only.`;
+  const { symbol, display, company } = signalParts(payload);
+  const title = `EGX /Alpha signal — ${display} — ${payload.trading_date}`;
+  const description = `EGX /Alpha Mind daily public signal for ${payload.trading_date}: ${symbol}${company}. Research-only EGX market intelligence.`;
   return htmlShell({
     title,
     description,
@@ -17,9 +26,9 @@ export function renderSignalPage(payload, canonicalPath = '/today/') {
 export function renderArchivePage(items) {
   const rows = items.map(item => `<a class="archive-row" href="${rel(item.url)}">
     <span>${escapeHtml(item.date)}</span>
-    <strong>${escapeHtml(item.symbol)}</strong>
-    <em>${escapeHtml(item.horizon)}</em>
-    <small>${escapeHtml(prettyState(item.direction_bucket))}</small>
+    <strong>${escapeHtml(item.display_symbol || item.symbol)}</strong>
+    <em>${escapeHtml(item.horizon_label || item.horizon)}</em>
+    <small>${escapeHtml(item.company_name || prettyState(item.direction_bucket))}</small>
   </a>`).join('\n');
   return htmlShell({
     title: 'EGX /Alpha signal archive — EGXResearch',
@@ -30,7 +39,7 @@ export function renderArchivePage(items) {
       <section class="card hero-card archive-hero">
         <p class="eyebrow">Archive</p>
         <h1>Public signal archive</h1>
-        <p class="lede">Every public EGX /Alpha signal becomes a permanent dated page. Search by symbol, horizon, month, or signal direction.</p>
+        <p class="lede">Review previous EGX /Alpha public signals by date, symbol, horizon, and model direction.</p>
         <div class="meta-row"><span class="badge badge-strong">${items.length} public signal${items.length === 1 ? '' : 's'}</span><a class="badge badge-link" href="${rel('/search/')}">Search archive</a></div>
       </section>
       <section class="card archive-list">${rows || '<p>No archive records yet.</p>'}</section>
@@ -49,8 +58,8 @@ export function renderSearchPage() {
       <section class="card hero-card search-hero">
         <p class="eyebrow">Search</p>
         <h1>Find public signals</h1>
-        <p class="lede">Search the public archive by stock symbol, date, month, horizon, or direction.</p>
-        <input class="search-input" data-search-input type="search" placeholder="Try EGX:TMGH or 2026-07" aria-label="Search signals">
+        <p class="lede">Search the public archive by symbol, company name, date, month, horizon, or model direction.</p>
+        <input class="search-input" data-search-input type="search" placeholder="Try TMGH, EGX:TMGH, Real Estate, or 2026-07" aria-label="Search signals">
       </section>
       <section class="card"><div class="search-results" data-search-results aria-live="polite"></div></section>
       ${megaFooter()}

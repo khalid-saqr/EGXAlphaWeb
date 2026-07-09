@@ -19,12 +19,25 @@ function archiveJsonFiles() {
 }
 
 function indexItem(payload) {
+  const signal = payload.public_signal || payload.signal || {};
+  const legacy = payload.signal || {};
+  const asset = payload.asset || {};
+  const market = payload.market_snapshot || {};
+  const symbol = asset.symbol || signal.stock_symbol || legacy.stock_symbol;
+  const display = asset.display_symbol || (String(symbol || '').includes(':') ? String(symbol).split(':').pop() : symbol);
   return {
     date: payload.trading_date,
-    symbol: payload.signal.stock_symbol,
-    horizon: payload.signal.horizon,
-    rank_label: payload.signal.rank_label,
-    direction_bucket: payload.signal.direction_bucket,
+    symbol,
+    display_symbol: display,
+    company_name: asset.company_name || null,
+    sector: asset.sector || market.market_structure_sector || null,
+    horizon: signal.horizon || legacy.horizon,
+    horizon_label: signal.horizon_label || null,
+    rank_label: signal.rank_label || legacy.rank_label,
+    direction_bucket: signal.direction_bucket || legacy.direction_bucket,
+    plain_direction: signal.plain_direction || null,
+    latest_close: market.latest_close ?? null,
+    daily_change_pct: market.daily_change_pct ?? null,
     url: `/archive/${payload.trading_date}/`
   };
 }
