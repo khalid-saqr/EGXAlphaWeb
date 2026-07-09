@@ -2,6 +2,7 @@ export const SITE = {
   domain: 'EGXResearch',
   signalName: 'EGX /Alpha signal',
   mindName: 'EGX /Alpha Mind',
+  accessEmail: 'access@egxresearch.com',
   basePath: process.env.EGX_BASE_PATH || '/EGXAlphaWeb',
   siteUrl: process.env.EGX_SITE_URL || (process.env.GITHUB_REPOSITORY_OWNER ? `https://${process.env.GITHUB_REPOSITORY_OWNER}.github.io/EGXAlphaWeb` : '')
 };
@@ -31,14 +32,15 @@ export function prettyState(value) {
     weak_but_usable: 'Live tracking',
     stable_positive: 'Stable tracking',
     insufficient_evidence: 'Early tracking',
-    source_healthy: 'Healthy data',
-    source_degraded: 'Partial data',
-    source_unreliable: 'Data caution',
+    source_healthy: 'Verified source',
+    source_degraded: 'Partial source',
+    source_unreliable: 'Source caution',
     live_predictions_written: 'Generated',
-    live_observation_completed: 'Fresh data',
+    live_observation_completed: 'Observation complete',
     above_recent_baseline: 'Above baseline',
     near_recent_baseline: 'Near baseline',
-    below_recent_baseline: 'Below baseline'
+    below_recent_baseline: 'Below baseline',
+    core_liquid: 'Core liquid'
   };
   return map[value] || String(value || 'Unavailable').replaceAll('_', ' ');
 }
@@ -49,15 +51,17 @@ function directionTone(value) {
   return 'tone-neutral';
 }
 
-function horizonLabel(value) {
-  const text = String(value ?? '').trim();
-  if (!text) return 'Selected horizon';
-  if (/^\d+(\.0+)?$/.test(text)) return `${parseInt(text, 10)} sessions`;
-  return text.replace(/d$/i, 'D');
+function horizonText(value, label) {
+  const raw = String(value ?? '').trim();
+  if (/^\d+(\.0+)?$/.test(raw)) return `Next ${parseInt(raw, 10)} EGX trading sessions`;
+  const fromLabel = String(label ?? '').trim();
+  const match = fromLabel.match(/(\d+)/);
+  if (match) return `Next ${parseInt(match[1], 10)} EGX trading sessions`;
+  return fromLabel || raw || 'Selected EGX trading horizon';
 }
 
 function formatPublished(value) {
-  if (!value) return 'EGX close';
+  if (!value) return 'Cairo time';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return String(value);
   return date.toLocaleString('en-GB', {
@@ -93,14 +97,6 @@ function formatMoney(value) {
   return compact ? `EGP ${compact}` : null;
 }
 
-function formatPct(value) {
-  if (!hasValue(value)) return null;
-  const number = Number(value);
-  if (!Number.isFinite(number)) return String(value);
-  const sign = number > 0 ? '+' : '';
-  return `${sign}${number.toFixed(2)}%`;
-}
-
 function displaySymbolFrom(symbol) {
   const text = String(symbol || '').trim();
   if (!text) return 'EGX';
@@ -109,11 +105,18 @@ function displaySymbolFrom(symbol) {
 
 function humanLabel(value) {
   if (!hasValue(value)) return null;
-  return String(value).replaceAll('_', ' ');
+  return prettyState(value);
 }
 
-function dataLabel(value) {
-  return prettyState(value);
+function shortHash(value) {
+  const text = String(value || '').trim();
+  if (!text) return null;
+  const clean = text.replace(/^sha256:/, '');
+  return clean.length > 14 ? `${clean.slice(0, 8)}…${clean.slice(-6)}` : clean;
+}
+
+function mailtoLink(subject = 'EGX Alpha early access request') {
+  return `mailto:${SITE.accessEmail}?subject=${encodeURIComponent(subject)}`;
 }
 
 function payloadParts(payload) {
@@ -127,16 +130,12 @@ function payloadParts(payload) {
   const context = payload.context || {};
   const stockSymbol = asset.symbol || signal.stock_symbol || legacySignal.stock_symbol;
   const displaySymbol = asset.display_symbol || displaySymbolFrom(stockSymbol);
-  const horizon = signal.horizon_label || horizonLabel(signal.horizon || legacySignal.horizon);
   const directionBucket = signal.direction_bucket || legacySignal.direction_bucket;
   const plainDirection = signal.plain_direction || prettyState(directionBucket);
   const rank = signal.rank_within_horizon || legacySignal.rank_within_horizon;
-  const modelLabel = modelState.public_label || prettyState(context.trust_state);
-  const modelNote = modelState.public_note || 'Track the signal record over time as live outcomes accumulate.';
-  const sourceLabel = dataLabel(signal.source_freshness_status || legacySignal.source_freshness_status || context.source_quality_status);
-  const headline = publicCopy.headline || `Today’s EGX /Alpha signal: ${displaySymbol}`;
-  const summary = publicCopy.one_line_summary || `Rank #${rank} for the ${horizon}.`;
+  const rankLabel = signal.rank_label || legacySignal.rank_label || (rank ? `Public rank #${rank}` : 'Public signal');
   const investorRead = publicCopy.investor_read || `${plainDirection}.`;
+  const signalSentence = investorRead.replace(/\s*This is a public market-intelligence signal to follow, not a trade instruction\.?$/i, '').trim();
   return {
     signal,
     asset,
@@ -146,16 +145,14 @@ function payloadParts(payload) {
     context,
     stockSymbol,
     displaySymbol,
-    horizon,
     directionBucket,
     plainDirection,
     rank,
-    modelLabel,
-    modelNote,
-    sourceLabel,
-    headline,
-    summary,
-    investorRead
+    rankLabel,
+    horizon: horizonText(signal.horizon || legacySignal.horizon, signal.horizon_label),
+    signalSentence: signalSentence || plainDirection,
+    headline: publicCopy.headline || `Today’s EGX /Alpha public signal: ${displaySymbol}`,
+    summary: publicCopy.one_line_summary || `${rankLabel} for the selected horizon.`
   };
 }
 
@@ -166,8 +163,7 @@ export function rel(rootRelative) {
 }
 
 export function abs(rootRelative) {
-  const relative = rel(rootRelative);
-  if (!SITE.siteUrl) return relative;
+  if (!SITE.siteUrl) return rel(rootRelative);
   return `${SITE.siteUrl.replace(/\/$/, '')}${String(rootRelative || '/').startsWith('/') ? rootRelative : `/${rootRelative}`}`;
 }
 
@@ -214,8 +210,8 @@ export function siteHeader(sectionLabel = SITE.signalName) {
       <a href="${rel('/today/')}">Today</a>
       <a href="${rel('/archive/')}">Archive</a>
       <a href="${rel('/search/')}">Search</a>
+      <a href="${rel('/methodology/')}">Methodology</a>
       <button class="button theme-toggle" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false">
-        <span class="theme-bulb" aria-hidden="true">💡</span>
         <span data-theme-label>Theme</span>
       </button>
     </nav>
@@ -228,6 +224,7 @@ export function megaFooter() {
       <p class="eyebrow">EGXResearch</p>
       <h2>EGX /Alpha Mind</h2>
       <p class="small-note">Daily ranked intelligence for the Egyptian Exchange.</p>
+      <a class="button button-primary footer-cta" href="${mailtoLink()}">Request early access</a>
     </section>
     <section>
       <h3>Explore</h3>
@@ -235,11 +232,13 @@ export function megaFooter() {
         <a href="${rel('/today/')}">Today</a>
         <a href="${rel('/archive/')}">Archive</a>
         <a href="${rel('/search/')}">Search</a>
+        <a href="${rel('/methodology/')}">Methodology</a>
       </nav>
     </section>
     <section class="footer-disclaimer">
       <h3>Research boundary</h3>
       <p class="small-note">Research-only. Not personalised investment advice. No buy/sell/hold instruction.</p>
+      <p class="small-note legal-note">© EGX Research LLP. IP management rights and disclaimer administration are managed by KNOWDYN LTD (UK).</p>
     </section>
   </footer>`;
 }
@@ -253,26 +252,24 @@ function signalMetricTiles(parts) {
   const market = parts.market;
   return compact([
     metricTile('Close', formatNumber(market.latest_close, 4), 'EGP/share'),
-    metricTile('Move', formatPct(market.daily_change_pct), 'vs previous close', Number(market.daily_change_pct) > 0 ? 'tone-box-positive' : Number(market.daily_change_pct) < 0 ? 'tone-box-negative' : ''),
-    metricTile('Traded value', formatMoney(market.traded_value_egp), dataLabel(market.value_traded_status)),
+    metricTile('Traded value', formatMoney(market.traded_value_egp), humanLabel(market.value_traded_status)),
     metricTile('Volume', formatCompactNumber(market.volume, 2), 'shares'),
-    metricTile('Liquidity', humanLabel(market.liquidity_tier || parts.asset.liquidity_tier), ''),
-    metricTile('Sector', parts.asset.sector, '')
+    metricTile('Liquidity', humanLabel(market.liquidity_tier || parts.asset.liquidity_tier)),
+    metricTile('Sector', parts.asset.sector)
   ]).join('');
 }
 
-function signalFacts(parts, published) {
+function signalFacts(parts, payload, published) {
+  const hash = shortHash(payload.integrity?.public_wire_hash);
   return compact([
-    `<div><span>Rank</span><strong>#${escapeHtml(parts.rank || 3)}</strong></div>`,
-    `<div><span>Horizon</span><strong>${escapeHtml(parts.horizon)}</strong></div>`,
-    `<div><span>Model read</span><strong class="${directionTone(parts.directionBucket)}">${escapeHtml(parts.plainDirection)}</strong></div>`,
-    `<div><span>Data</span><strong>${escapeHtml(parts.sourceLabel)}</strong></div>`,
-    `<div><span>Model state</span><strong>${escapeHtml(parts.modelLabel)}</strong></div>`,
-    `<div><span>Published</span><strong>${escapeHtml(published)}</strong></div>`
+    `<div><span>Rank</span><strong>${escapeHtml(parts.rankLabel)}</strong></div>`,
+    `<div><span>Window</span><strong>${escapeHtml(parts.horizon)}</strong><em>Not an intraday instruction.</em></div>`,
+    `<div><span>Published</span><strong>${escapeHtml(parts.publishing.published_after || 'After EGX close')}</strong><em>${escapeHtml(published)}</em></div>`,
+    hash ? `<div><span>Public wire</span><strong>Verified</strong><em>${escapeHtml(hash)}</em></div>` : ''
   ]).join('');
 }
 
-function signalHero(parts, payload, published) {
+function signalCardShell(parts, payload, published) {
   const metrics = signalMetricTiles(parts);
   const company = parts.asset.company_name;
   const sector = parts.asset.sector;
@@ -281,100 +278,58 @@ function signalHero(parts, payload, published) {
   return `<article class="signal-hero-card" id="today-signal" aria-label="Today’s EGX Alpha signal">
     <div class="signal-hero-head">
       <div>
-        <p class="eyebrow">Today’s signal</p>
+        <p class="eyebrow">Today’s public signal</p>
         <div class="symbol" title="${escapeHtml(parts.stockSymbol)}">${escapeHtml(parts.displaySymbol)}</div>
         <p class="symbol-subtitle">${escapeHtml(subtitle)}</p>
       </div>
-      <span class="date-chip">${escapeHtml(payload.trading_date)}</span>
+      <div class="signal-tools" aria-label="Signal actions">
+        <span class="date-chip">${escapeHtml(payload.trading_date)}</span>
+        <button class="icon-button" type="button" data-share aria-label="Share today’s public signal">Share</button>
+        <button class="icon-button" type="button" data-copy aria-label="Copy public signal link">Copy</button>
+      </div>
     </div>
-    <div class="readout ${directionTone(parts.directionBucket)}">
-      <span>Signal read</span>
-      <strong>${escapeHtml(parts.plainDirection)}</strong>
+    <div class="signal-band ${directionTone(parts.directionBucket)}">
+      <span>Signal</span>
+      <strong>${escapeHtml(parts.signalSentence)}</strong>
     </div>
-    <div class="signal-metrics">${metrics || `<p class="small-note">Market context will appear when the daily payload includes price and liquidity fields.</p>`}</div>
-    <div class="signal-facts">${signalFacts(parts, published)}</div>
+    <div class="signal-metrics">${metrics || `<p class="small-note">Market context appears when the public wire includes price and liquidity fields.</p>`}</div>
+    <div class="signal-facts">${signalFacts(parts, payload, published)}</div>
+    <p class="small-note boundary-line">Research-only. Not personalised investment advice. No buy/sell/hold instruction.</p>
+    <p class="small-note" data-copy-status aria-live="polite"></p>
   </article>`;
 }
 
-function mindHero(parts) {
+function introPanel(parts) {
   return `<article class="mind-hero-card">
     <p class="eyebrow">${escapeHtml(SITE.mindName)}</p>
-    <h1>Market intelligence for the Egyptian Exchange.</h1>
-    <p class="lede">A daily model-ranked EGX view based on deep-learning and real-time monitoring</p>
+    <h1>One public signal from the EGX ranking engine.</h1>
+    <p class="lede">A compact daily view for following one bounded public EGX /Alpha signal after market close.</p>
     <div class="mind-summary">
       <div><span>Today</span><strong>${escapeHtml(parts.displaySymbol)}</strong></div>
-      <div><span>Read</span><strong>${escapeHtml(parts.plainDirection)}</strong></div>
-      <div><span>Horizon</span><strong>${escapeHtml(parts.horizon)}</strong></div>
+      <div><span>Signal</span><strong>${escapeHtml(parts.plainDirection)}</strong></div>
+      <div><span>Window</span><strong>${escapeHtml(parts.horizon)}</strong></div>
     </div>
     <div class="hero-actions">
-      <a class="button button-primary" href="#today-signal">View signal</a>
-      <a class="button" href="${rel('/archive/')}">Archive</a>
-      <a class="button" href="${rel('/search/')}">Search</a>
+      <a class="button button-primary" href="${mailtoLink()}">Request early access</a>
+      <a class="button" href="${rel('/methodology/')}">Methodology</a>
     </div>
   </article>`;
 }
 
-function howItWorks() {
-  return `<section class="system-strip" aria-label="How EGX Alpha Mind works">
-    <article>
-      <span>01</span>
-      <h2>Scan</h2>
-      <p>Read the latest EGX observations from the live pipeline.</p>
-    </article>
-    <article>
-      <span>02</span>
-      <h2>Rank</h2>
-      <p>Convert market observations into a model-ranked signal view.</p>
-    </article>
-    <article>
-      <span>03</span>
-      <h2>Track</h2>
-      <p>Keep a dated record so signals can be reviewed over time.</p>
-    </article>
-  </section>`;
-}
-
-function secondaryCards(parts) {
-  return `<section class="support-grid">
-    <article class="card compact-card">
-      <p class="eyebrow">Investor read</p>
-      <h2>${escapeHtml(parts.displaySymbol)} in context</h2>
-      <p>${escapeHtml(parts.investorRead.replace(/ Research-only\.$/, '.'))}</p>
-      <p class="small-note">${escapeHtml(parts.modelNote)}</p>
-    </article>
-    <article class="card compact-card">
-      <p class="eyebrow">Archive</p>
-      <h2>Review earlier signals.</h2>
-      <p>Compare previous dates by symbol, horizon, direction, and available market context.</p>
-      <a class="button button-wide" href="${rel('/archive/')}">Open archive</a>
-    </article>
-    <article class="card compact-card share-card">
-      <p class="eyebrow">Share</p>
-      <h2>Share today’s card.</h2>
-      <p>Copy the page link or use the native share action.</p>
-      <div class="button-row button-row-wide">
-        <button class="button button-primary" data-copy>Copy link</button>
-        <button class="button" data-share>Share</button>
-        <a class="button" data-share-link="linkedin" href="#">LinkedIn</a>
-        <a class="button" data-share-link="facebook" href="#">Facebook</a>
-      </div>
-      <p class="small-note" data-copy-status aria-live="polite"></p>
-    </article>
-  </section>`;
-}
-
-function broaderLayer() {
-  return `<section class="card intelligence-card">
-    <div>
-      <p class="eyebrow">Daily ranking layer</p>
-      <h2>One card from a broader model-ranked EGX scan.</h2>
-      <p>The site shows the day’s selected signal and keeps the dated record visible. Broader rankings, model context, and extended history belong to the full intelligence layer.</p>
-    </div>
-    <div class="layer-points">
-      <span>Signal</span>
-      <span>Market context</span>
+function archiveTeaser() {
+  return `<section class="compact-strip" aria-label="Public signal tools">
+    <a class="strip-card" href="${rel('/archive/')}">
       <span>Archive</span>
-    </div>
+      <strong>Dated public signal trail</strong>
+    </a>
+    <a class="strip-card" href="${rel('/search/')}">
+      <span>Search</span>
+      <strong>Find by symbol, sector, date, or direction</strong>
+    </a>
+    <a class="strip-card" href="${rel('/methodology/')}">
+      <span>Methodology</span>
+      <strong>Public-wire publication discipline</strong>
+    </a>
   </section>`;
 }
 
@@ -385,13 +340,68 @@ export function signalCard(payload) {
   ${siteHeader(SITE.signalName)}
 
   <section class="v3-hero">
-    ${mindHero(parts)}
-    ${signalHero(parts, payload, published)}
+    ${introPanel(parts)}
+    ${signalCardShell(parts, payload, published)}
   </section>
 
-  ${howItWorks()}
-  ${secondaryCards(parts)}
-  ${broaderLayer()}
+  ${archiveTeaser()}
   ${megaFooter()}
 </main>`;
+}
+
+function whitePaperSection(label, title, body) {
+  return `<section class="whitepaper-section">
+    <p class="eyebrow">${escapeHtml(label)}</p>
+    <h2>${escapeHtml(title)}</h2>
+    <p>${escapeHtml(body)}</p>
+  </section>`;
+}
+
+export function methodologyPage() {
+  return `<main class="site-shell page-methodology" data-page="methodology">
+    ${siteHeader('Methodology')}
+    <article class="whitepaper">
+      <header class="whitepaper-header">
+        <div>
+          <p class="eyebrow">Investor white paper</p>
+          <h1>EGX /Alpha Methodology</h1>
+          <p class="lede">A public-facing explanation of how EGXResearch publishes one bounded daily signal without exposing the private intelligence layer.</p>
+        </div>
+        <div class="whitepaper-actions" aria-label="White paper actions">
+          <button class="icon-button" type="button" data-share aria-label="Share methodology page">Share</button>
+          <button class="icon-button" type="button" data-print aria-label="Print methodology page">Print</button>
+        </div>
+      </header>
+
+      <section class="process-strip" aria-label="Publication workflow">
+        <div><span>01</span><strong>Observe</strong></div>
+        <div><span>02</span><strong>Time-lock</strong></div>
+        <div><span>03</span><strong>Rank</strong></div>
+        <div><span>04</span><strong>Publish public wire</strong></div>
+        <div><span>05</span><strong>Archive</strong></div>
+      </section>
+
+      <div class="whitepaper-grid">
+        ${whitePaperSection('01', 'Executive summary', 'EGX /Alpha is a post-close market-intelligence publication layer for the Egyptian Exchange. The public website shows one bounded public signal, its market context, and a dated record for follow-up.')}
+        ${whitePaperSection('02', 'Public-wire philosophy', 'The public website receives only a compact publication wire. It is designed to be useful enough for market follow-up while keeping the private research system outside the public repository.')}
+        ${whitePaperSection('03', 'Post-close publication workflow', 'The daily public page is generated after EGX close, using Cairo-time publication context and static pages that can be shared, archived, and revisited.')}
+        ${whitePaperSection('04', 'Availability-aware market context', 'The public card can show symbol, company, sector, liquidity, close, traded value, volume, publication timing, and integrity metadata when those fields are present in the public wire.')}
+        ${whitePaperSection('05', 'Model-ranked signal layer', 'The private engine produces a model-ranked research view. The public site receives one selected public signal, its horizon, and a plain-language direction label.')}
+        ${whitePaperSection('06', 'Public website receives', 'The public repository can render the selected asset, public rank, signal direction, horizon, market snapshot, publication context, public copy, integrity hash, and archive index.')}
+        ${whitePaperSection('07', 'Public website never receives', 'The public repository does not receive paid subscriber material, creator-only material, raw model output, private research memory, tokens, source files, or operational internals.')}
+        ${whitePaperSection('08', 'Research-only boundary', 'The public material is for information, research, and market follow-up only. It is not personalised investment advice and does not provide buy, sell, or hold instructions.')}
+        ${whitePaperSection('09', 'Archive and follow-up design', 'Every public signal becomes a dated static page. The archive and search pages make the public trail reviewable without exposing the private intelligence layer.')}
+      </div>
+
+      <section class="rights-card">
+        <p class="eyebrow">Rights and disclaimer</p>
+        <p>© EGX Research LLP. All rights reserved.</p>
+        <p>EGX /Alpha, EGXResearch, the public signal publication layer, public-wire design, methodology descriptions, visual presentation, and related materials are copyright EGX Research LLP unless otherwise stated.</p>
+        <p>IP management rights, technical governance, research commercialisation support, and disclaimer administration are managed by KNOWDYN LTD (UK).</p>
+        <p>Research-only. Not personalised investment advice. No buy, sell, or hold instruction. Public materials are provided for information, research, and market-follow-up purposes only.</p>
+        <a class="button button-primary" href="${mailtoLink()}">Request early access</a>
+      </section>
+    </article>
+    ${megaFooter()}
+  </main>`;
 }
