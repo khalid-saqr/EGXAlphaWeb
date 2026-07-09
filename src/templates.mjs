@@ -299,8 +299,8 @@ function signalHero(parts, payload, published) {
 function mindHero(parts) {
   return `<article class="mind-hero-card">
     <p class="eyebrow">${escapeHtml(SITE.mindName)}</p>
-    <h1>Ranked market intelligence for the Egyptian Exchange.</h1>
-    <p class="lede">A daily model-ranked EGX view with one signal, live market context, and an archive for follow-up.</p>
+    <h1>Market intelligence for the Egyptian Exchange.</h1>
+    <p class="lede">A daily model-ranked EGX view based on deep-learning and real-time monitoring</p>
     <div class="mind-summary">
       <div><span>Today</span><strong>${escapeHtml(parts.displaySymbol)}</strong></div>
       <div><span>Read</span><strong>${escapeHtml(parts.plainDirection)}</strong></div>
