@@ -1,6 +1,6 @@
 # EGXResearch — EGX /Alpha signal
 
-A static, text-only GitHub Pages PWA for publishing the daily public **EGX /Alpha signal**.
+A static GitHub Pages PWA for publishing a compact public **EGX /Alpha signal** dashboard and methodology page.
 
 This repository is designed as the public shell. It receives only a tiny public signal payload from the private EGXResearch system, validates it, builds static pages, and deploys to GitHub Pages.
 
@@ -9,6 +9,7 @@ This repository is designed as the public shell. It receives only a tiny public 
 - Latest public signal at `/today/`
 - Permanent daily signal pages at `/archive/YYYY-MM-DD/`
 - Search by symbol/date at `/search/`
+- Public methodology white paper at `/methodology/`
 - Static JSON at `/data/latest.json` and `/data/archive/YYYY-MM-DD.json`
 
 ## What it never contains
@@ -20,6 +21,14 @@ This repository is designed as the public shell. It receives only a tiny public 
 - private memory files
 - tokens or secrets
 - images or binary files
+
+## Early access CTA
+
+The public site uses a static email CTA only:
+
+```text
+mailto:access@egxresearch.com
+```
 
 ## Local commands
 
