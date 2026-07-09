@@ -23,4 +23,12 @@ for (const file of scanDirs.flatMap(walk)) {
     assert.equal(text.includes(`"${key}"`), false, `${key} leaked into ${file}`);
   }
 }
+
+for (const file of walk('_site').filter(p => p.endsWith('.html'))) {
+  const text = fs.readFileSync(file, 'utf8');
+  for (const rejected of ['Fresh data', 'Model read', 'Signal read', 'Investor read', 'Daily ranking layer', 'Share today’s card']) {
+    assert.equal(text.includes(rejected), false, `${rejected} leaked into ${file}`);
+  }
+}
+
 console.log('test-no-leakage passed');
