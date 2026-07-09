@@ -349,51 +349,109 @@ export function signalCard(payload) {
 </main>`;
 }
 
-function whitePaperSection(label, title, body) {
-  return `<section class="whitepaper-section">
-    <p class="eyebrow">${escapeHtml(label)}</p>
+function paperStat(label, value) {
+  return `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`;
+}
+
+function paperSection(number, title, body, extra = '') {
+  return `<section class="paper-section" id="m${escapeHtml(number)}">
+    <p class="paper-number">${escapeHtml(number)}</p>
     <h2>${escapeHtml(title)}</h2>
     <p>${escapeHtml(body)}</p>
+    ${extra}
   </section>`;
+}
+
+function paperPillar(label, title, body) {
+  return `<article class="paper-pillar">
+    <span>${escapeHtml(label)}</span>
+    <strong>${escapeHtml(title)}</strong>
+    <p>${escapeHtml(body)}</p>
+  </article>`;
+}
+
+function paperBoundary(title, body) {
+  return `<div class="boundary-item">
+    <strong>${escapeHtml(title)}</strong>
+    <p>${escapeHtml(body)}</p>
+  </div>`;
 }
 
 export function methodologyPage() {
   return `<main class="site-shell page-methodology" data-page="methodology">
     ${siteHeader('Methodology')}
-    <article class="whitepaper">
-      <header class="whitepaper-header">
+    <article class="whitepaper paper-document">
+      <header class="whitepaper-header paper-cover">
         <div>
-          <p class="eyebrow">Investor white paper</p>
+          <p class="eyebrow">Public methodology white paper</p>
           <h1>EGX /Alpha Methodology</h1>
-          <p class="lede">A public-facing explanation of how EGXResearch publishes one bounded daily signal without exposing the private intelligence layer.</p>
+          <p class="lede">A public-safe description of the deep-learning and real-time monitoring discipline behind the EGXResearch public signal publication layer.</p>
+          <div class="paper-meta" aria-label="White paper metadata">
+            ${paperStat('Document', 'Public white paper')}
+            ${paperStat('Scope', 'EGX public signal layer')}
+            ${paperStat('Access', 'Bounded disclosure')}
+          </div>
         </div>
         <div class="whitepaper-actions" aria-label="White paper actions">
-          <button class="icon-button" type="button" data-share aria-label="Share methodology page">Share</button>
-          <button class="icon-button" type="button" data-print aria-label="Print methodology page">Print</button>
+          <button class="icon-button paper-icon" type="button" data-share aria-label="Share methodology page"><span aria-hidden="true">↗</span>Share</button>
+          <button class="icon-button paper-icon" type="button" data-print aria-label="Print methodology page"><span aria-hidden="true">⎙</span>Print</button>
         </div>
       </header>
 
-      <section class="process-strip" aria-label="Publication workflow">
-        <div><span>01</span><strong>Observe</strong></div>
-        <div><span>02</span><strong>Time-lock</strong></div>
-        <div><span>03</span><strong>Rank</strong></div>
-        <div><span>04</span><strong>Publish public wire</strong></div>
-        <div><span>05</span><strong>Archive</strong></div>
+      <section class="paper-abstract">
+        <p class="eyebrow">Abstract</p>
+        <p>EGX /Alpha is designed as a persistent market-memory and ranking-forecast research system for the Egyptian Exchange. The private system monitors available market observations, prepares an availability-aware research frame, applies a deep-learning ranking layer, stores dated signal memory, and later follows matured outcomes. The public website receives only one bounded public signal and its publication context.</p>
       </section>
 
-      <div class="whitepaper-grid">
-        ${whitePaperSection('01', 'Executive summary', 'EGX /Alpha is a post-close market-intelligence publication layer for the Egyptian Exchange. The public website shows one bounded public signal, its market context, and a dated record for follow-up.')}
-        ${whitePaperSection('02', 'Public-wire philosophy', 'The public website receives only a compact publication wire. It is designed to be useful enough for market follow-up while keeping the private research system outside the public repository.')}
-        ${whitePaperSection('03', 'Post-close publication workflow', 'The daily public page is generated after EGX close, using Cairo-time publication context and static pages that can be shared, archived, and revisited.')}
-        ${whitePaperSection('04', 'Availability-aware market context', 'The public card can show symbol, company, sector, liquidity, close, traded value, volume, publication timing, and integrity metadata when those fields are present in the public wire.')}
-        ${whitePaperSection('05', 'Model-ranked signal layer', 'The private engine produces a model-ranked research view. The public site receives one selected public signal, its horizon, and a plain-language direction label.')}
-        ${whitePaperSection('06', 'Public website receives', 'The public repository can render the selected asset, public rank, signal direction, horizon, market snapshot, publication context, public copy, integrity hash, and archive index.')}
-        ${whitePaperSection('07', 'Public website never receives', 'The public repository does not receive paid subscriber material, creator-only material, raw model output, private research memory, tokens, source files, or operational internals.')}
-        ${whitePaperSection('08', 'Research-only boundary', 'The public material is for information, research, and market follow-up only. It is not personalised investment advice and does not provide buy, sell, or hold instructions.')}
-        ${whitePaperSection('09', 'Archive and follow-up design', 'Every public signal becomes a dated static page. The archive and search pages make the public trail reviewable without exposing the private intelligence layer.')}
+      <nav class="whitepaper-toc" aria-label="White paper contents">
+        <a href="#m1">1. System thesis</a>
+        <a href="#m2">2. Monitoring layer</a>
+        <a href="#m3">3. Ranking layer</a>
+        <a href="#m4">4. Public wire</a>
+        <a href="#m5">5. Follow-up loop</a>
+        <a href="#m6">6. Boundary</a>
+      </nav>
+
+      <section class="methodology-flow" aria-label="Public-safe EGX Alpha workflow">
+        <div><span>01</span><strong>Observe</strong><p>Source-aware market monitoring.</p></div>
+        <div><span>02</span><strong>Time-lock</strong><p>Cairo-time availability discipline.</p></div>
+        <div><span>03</span><strong>Shape</strong><p>Research frame prepared privately.</p></div>
+        <div><span>04</span><strong>Rank</strong><p>Deep-learning ranking layer.</p></div>
+        <div><span>05</span><strong>Publish</strong><p>One public wire, not the full view.</p></div>
+        <div><span>06</span><strong>Archive</strong><p>Dated public follow-up trail.</p></div>
+      </section>
+
+      <div class="paper-body">
+        ${paperSection('1', 'System thesis', 'The private EGXResearch engine is organised as an observe, rank, store, score, and evidence loop. The public site mirrors that discipline only at publication level: one signal, one dated page, one archive trail, and no private intelligence layer.')}
+        ${paperSection('2', 'Real-time monitoring layer', 'The private repo maintains a live observation posture using a source ladder and stale-data rejection. Public materials should describe this as real-time monitoring and availability discipline, not as a disclosure of data vendors, raw rows, or operational paths.')}
+        ${paperSection('3', 'Deep-learning ranking layer', 'The private engine converts the prepared research frame into a model-ranked EGX view across an evaluation window. The public website must not expose the full rank table, private numerical outputs, feature construction, model inputs, model weights, or internal diagnostics.')}
+        ${paperSection('4', 'Public-wire publication layer', 'The public wire is the boundary object. It carries the selected asset, public rank label, signal direction, evaluation window, market snapshot, public copy, publication timing, disclaimer, and integrity metadata. It does not turn the public repo into the private system.')}
+        ${paperSection('5', 'Matured-outcome follow-up', 'The private system can later compare signals against matured market outcomes. The public website should communicate archive discipline and follow-up logic without publishing realised private score ledgers or calibration details.')}
+        ${paperSection('6', 'Investor interpretation boundary', 'The public signal is a research object for market follow-up. It is not an intraday call, not personalised advice, and not a buy, sell, or hold instruction.')}
       </div>
 
-      <section class="rights-card">
+      <section class="paper-pillar-grid" aria-label="Public-safe architecture pillars">
+        ${paperPillar('A', 'Market memory', 'A dated research memory allows the system to follow signals through time instead of treating every page as isolated marketing copy.')}
+        ${paperPillar('B', 'Availability discipline', 'The publication layer is designed around what was safely available at the relevant Cairo-time observation point.')}
+        ${paperPillar('C', 'Ranking intelligence', 'The private system is ranking-oriented, but the public surface intentionally exposes only one selected public signal.')}
+        ${paperPillar('D', 'Auditability', 'The archive, timestamp, disclaimer, and integrity metadata help visitors understand the public publication boundary.')}
+      </section>
+
+      <section class="paper-boundary">
+        <div>
+          <p class="eyebrow">What remains private</p>
+          <h2>Secret sauce stays out of the public repo.</h2>
+          <p>The public website should sound technically credible without becoming a disclosure channel for the private engine.</p>
+        </div>
+        <div class="boundary-list">
+          ${paperBoundary('Full market ranking', 'The public site does not disclose the full daily ranked list or subscriber-only intelligence view.')}
+          ${paperBoundary('Model internals', 'No feature recipes, model input contracts, weights, internal state, or private diagnostic traces are described.')}
+          ${paperBoundary('Private numerical outputs', 'No hidden ranking values, direction diagnostics, probability-like values, or realised private score ledgers are published.')}
+          ${paperBoundary('Operational substrate', 'No source paths, staging files, private memory files, or raw observation tables belong in the public repository.')}
+        </div>
+      </section>
+
+      <section class="rights-card paper-rights">
         <p class="eyebrow">Rights and disclaimer</p>
         <p>© EGX Research LLP. All rights reserved.</p>
         <p>EGX /Alpha, EGXResearch, the public signal publication layer, public-wire design, methodology descriptions, visual presentation, and related materials are copyright EGX Research LLP unless otherwise stated.</p>
