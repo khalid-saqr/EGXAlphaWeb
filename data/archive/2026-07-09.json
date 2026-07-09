@@ -1,30 +1,30 @@
 {
-  "schema_version": "egx_alpha_public_wire_v1",
-  "domain": "EGXResearch",
-  "signal_name": "EGX /Alpha signal",
   "audience": "public",
-  "trading_date": "2026-07-09",
-  "published_at": "2026-07-09T13:30:00Z",
-  "signal": {
-    "stock_symbol": "EGX:DEMO",
-    "rank_label": "third-ranked public signal",
-    "rank_within_horizon": 3,
-    "horizon": "5D",
-    "direction_bucket": "positive_model_signal",
-    "source_freshness_status": "live_observation_completed"
-  },
   "context": {
-    "trust_state": "weak_but_usable",
+    "prediction_status": "live_predictions_written",
     "source_quality_status": "source_healthy",
-    "prediction_status": "live_predictions_written"
+    "trust_state": "insufficient_evidence"
   },
   "disclaimer": {
-    "market_use": "research_and_information_only",
+    "execution_instruction": false,
     "investment_advice": false,
-    "execution_instruction": false
+    "market_use": "research_and_information_only"
   },
+  "domain": "EGXResearch",
   "integrity": {
-    "source_payload_hash": "sha256:sample-source-payload-hash",
-    "public_wire_hash": "sha256:sample-public-wire-hash"
-  }
+    "public_wire_hash": "sha256:52ad1b6f6c6f5439d5e9f56c75e6e81145e2095914707f2660a38dc7884bc3aa",
+    "source_payload_hash": "sha256:87edb2e4c293bc4a62ab69002f9c08e7316bc0533cb3229b6877187b708b7b3a"
+  },
+  "published_at": "2026-07-09T16:12:27.314910+00:00",
+  "schema_version": "egx_alpha_public_wire_v1",
+  "signal": {
+    "direction_bucket": "negative_model_signal",
+    "horizon": "5",
+    "rank_label": "third ranked stock in primary horizon",
+    "rank_within_horizon": 3,
+    "source_freshness_status": "live_observation_completed",
+    "stock_symbol": "EGX:TMGH"
+  },
+  "signal_name": "EGX /Alpha signal",
+  "trading_date": "2026-07-09"
 }
