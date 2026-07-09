@@ -25,7 +25,7 @@ const symbol = latest.asset?.symbol || latest.public_signal?.stock_symbol || lat
 const display = latest.asset?.display_symbol || String(symbol || '').split(':').pop();
 
 assert.ok(date, 'latest payload must include trading_date');
-assert.ok(symbol, 'latest payload must include a public stock symbol');
+assert.ok(symbol, 'latest payload must include a stock symbol');
 
 const archivePath = `_site/archive/${date}/index.html`;
 assert.equal(fs.existsSync(archivePath), true, `${archivePath} should exist`);
@@ -37,15 +37,20 @@ assert.match(daily, /EGX \/Alpha signal/);
 assert.match(daily, /EGX \/Alpha Mind/);
 assert.ok(daily.includes(symbol) || daily.includes(display), `daily page should include current symbol ${symbol}`);
 assert.ok(daily.includes(date), `daily page should include current trading date ${date}`);
-assert.ok(daily.includes('Research-only public signal'), 'daily page should include research-only boundary');
+assert.ok(daily.includes('Research-only. Not personalised investment advice. No buy/sell/hold instruction.'), 'daily page should include the compact research boundary');
+assert.ok(daily.includes('Close') || daily.includes('Traded value') || daily.includes('Volume'), 'signal hero should include market context when available');
 
 for (const rejected of [
+  'Public-safe',
+  'public-safe',
+  'Daily EGX market intelligence after the close',
   'The free signal is only a ' + 'teaser',
   'Creator' + ':',
   'internal ' + 'state',
   'Build ' + 'the archive. Watch the ' + 'pattern',
   'Every new public signal becomes a permanent dated ' + 'page',
-  'Full system ' + 'diagnostics'
+  'Full system ' + 'diagnostics',
+  'market_structure_sector'
 ]) {
   assert.equal(daily.includes(rejected), false, `Rejected public copy found: ${rejected}`);
 }

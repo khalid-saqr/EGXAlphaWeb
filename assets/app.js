@@ -22,8 +22,8 @@
 
   function signalText() {
     if (!payload) return document.title;
-    const read = payload.public_copy?.investor_read || payload.public_signal?.plain_direction || payload.signal?.rank_label || 'Public EGX /Alpha signal';
-    return `${read} Research-only.`;
+    const read = payload.public_signal?.plain_direction || payload.public_copy?.investor_read || payload.signal?.rank_label || 'EGX /Alpha signal';
+    return `${read}. Research-only.`;
   }
 
   function setTheme(theme) {
@@ -52,7 +52,7 @@
     try {
       await navigator.clipboard.writeText(url);
       const status = document.querySelector('[data-copy-status]');
-      if (status) status.textContent = 'Link copied. Public signal page ready to share.';
+      if (status) status.textContent = 'Link copied.';
     } catch (_) {
       window.prompt('Copy this link', url);
     }
@@ -107,7 +107,7 @@
         <strong>${row.display_symbol || row.symbol || ''}</strong>
         <em>${row.company_name || row.sector || label(row.horizon_label || row.horizon)}</em>
         <small>${label(row.plain_direction || row.direction_bucket)}</small>
-      </a>`).join('') : '<p class="small-note">No matching public signals.</p>';
+      </a>`).join('') : '<p class="small-note">No matching signals.</p>';
     }
     input.addEventListener('input', render);
     render();
