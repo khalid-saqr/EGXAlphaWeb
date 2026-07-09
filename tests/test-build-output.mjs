@@ -31,6 +31,7 @@ assert.ok(symbol, 'latest payload must include a stock symbol');
 const daily = fs.readFileSync('_site/today/index.html', 'utf8');
 const home = fs.readFileSync('_site/index.html', 'utf8');
 const methodology = fs.readFileSync('_site/methodology/index.html', 'utf8');
+const css = fs.readFileSync('_site/assets/app.css', 'utf8');
 
 assert.match(daily, /og:title/);
 assert.match(daily, /EGX \/Alpha signal/);
@@ -41,11 +42,29 @@ assert.ok(daily.includes('Research-only. Not personalised investment advice. No 
 assert.ok(daily.includes('Close') || daily.includes('Traded value') || daily.includes('Volume'), 'signal hero should include market context when available');
 assert.ok(daily.includes('Next 5 EGX trading sessions') || daily.includes('Next 5 EGX sessions'), 'horizon should be explained in investor language');
 assert.ok(daily.includes('mailto:access@egxresearch.com'), 'daily page should include the early-access mailto CTA');
-assert.ok(methodology.includes('EGX /Alpha Methodology'), 'methodology page should render white paper title');
-assert.ok(methodology.includes('Share'), 'methodology page should include a share control');
-assert.ok(methodology.includes('Print'), 'methodology page should include a print control');
-assert.ok(methodology.includes('© EGX Research LLP. All rights reserved.'), 'methodology page should include EGX Research LLP copyright');
-assert.ok(methodology.includes('KNOWDYN LTD (UK)'), 'methodology page should include KNOWDYN LTD (UK) IP management language');
+
+for (const required of [
+  'Public methodology white paper',
+  'EGX /Alpha Methodology',
+  'Abstract',
+  'deep-learning and real-time monitoring',
+  'Real-time monitoring layer',
+  'Deep-learning ranking layer',
+  'Public-wire publication layer',
+  'Matured-outcome follow-up',
+  'What remains private',
+  'Secret sauce stays out of the public repo.',
+  'Share',
+  'Print',
+  '© EGX Research LLP. All rights reserved.',
+  'KNOWDYN LTD (UK)'
+]) {
+  assert.ok(methodology.includes(required), `methodology page should include: ${required}`);
+}
+
+for (const requiredClass of ['paper-document', 'paper-cover', 'paper-abstract', 'whitepaper-toc', 'methodology-flow', 'paper-boundary']) {
+  assert.ok(css.includes(requiredClass), `white paper CSS should include: ${requiredClass}`);
+}
 
 for (const rejected of [
   'Fresh data',
@@ -64,6 +83,18 @@ for (const rejected of [
 ]) {
   assert.equal(home.includes(rejected), false, `Rejected homepage copy found: ${rejected}`);
   assert.equal(daily.includes(rejected), false, `Rejected daily copy found: ${rejected}`);
+}
+
+for (const privatePhrase of [
+  'ranking_score',
+  'direction_logit',
+  'raw_observation_rows',
+  'feature_audit',
+  'latest_predictions',
+  'source_status_path',
+  'daily_bars_path'
+]) {
+  assert.equal(methodology.includes(privatePhrase), false, `Private implementation term found on methodology page: ${privatePhrase}`);
 }
 
 console.log('test-build-output passed');
