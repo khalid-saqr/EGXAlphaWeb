@@ -1,6 +1,6 @@
 # EGXResearch — EGX /Alpha signal
 
-A static GitHub Pages PWA for publishing a compact public **EGX /Alpha signal** dashboard and methodology page.
+A static GitHub Pages site for publishing a compact public **EGX /Alpha signal** dashboard and methodology page.
 
 This repository is designed as the public shell. It receives only a tiny public signal payload from the private EGXResearch system, validates it, builds static pages, and deploys to GitHub Pages.
 
@@ -39,12 +39,23 @@ npm run build
 
 The generated site appears in `_site/`.
 
-## Public URL after GitHub Pages
+## Production URL
 
-If your GitHub username is `<owner>` and the repo is named `EGXResearch`, the site URL will normally be:
+The live public site is served from the custom-domain root:
 
 ```text
-https://<owner>.github.io/EGXResearch/
+https://egxresearch.com/
 ```
 
-Read `INSTALL_BROWSER.md` for browser-only installation steps.
+Production renders critical CSS inline so the page does not depend on an external stylesheet. The small client script remains root-relative at `/assets/app.js`.
+
+## Alternate preview URL
+
+For a GitHub Pages preview without the custom domain, set `EGX_BASE_PATH` and `EGX_SITE_URL` during the build, for example:
+
+```text
+EGX_BASE_PATH=/EGXResearch
+EGX_SITE_URL=https://<owner>.github.io/EGXResearch
+```
+
+Read `INSTALL_BROWSER.md` for browser-only deployment checks. PWA installability is intentionally disabled until the live site is visually stable.

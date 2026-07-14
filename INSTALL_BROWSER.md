@@ -1,6 +1,6 @@
-# Browser-only installation guide
+# Browser-only deployment guide
 
-Use this when you have the ZIP package and want to launch the public PWA through the GitHub website only.
+Use this when you have the ZIP package and want to launch the public site through the GitHub website only.
 
 ## 1. Create the public repo
 
@@ -30,13 +30,15 @@ EGXResearch
 4. Run or wait for **Deploy EGXResearch Public PWA**.
 5. Open the deployment URL.
 
-Expected URL pattern:
+Production URL:
 
 ```text
-https://<your-github-username>.github.io/EGXResearch/
+https://egxresearch.com/
 ```
 
-## 4. Test the public PWA
+If you test a GitHub Pages preview without the custom domain, configure `EGX_BASE_PATH` for that preview path before deployment.
+
+## 4. Test the public site
 
 Open:
 
@@ -57,17 +59,10 @@ Check:
 - Facebook/LinkedIn share buttons open share pages
 - the layout works on mobile and desktop
 
-## 5. Install from browser
+## 5. Clear old PWA cache if needed
 
-On Android Chrome/Edge:
-
-1. Open the GitHub Pages URL.
-2. Tap the browser menu.
-3. Choose **Add to Home screen** or **Install app** if offered.
-4. Open the installed EGXResearch shortcut.
-
-Because this package intentionally includes no images or binary icon files, the installed app may use a generic browser icon.
+PWA installability is intentionally disabled until the live site is visually stable. If the page ever appears as plain unstyled HTML after a deployment, hard refresh the page. If it stays stale, remove any old installed EGXResearch shortcut, clear site data, unregister any old service worker from the browser's site settings, then reopen `https://egxresearch.com/`.
 
 ## 6. Connect the private repo later
 
-After the public PWA is working, follow `PRIVATE_HANDOFF_TEMPLATE.md` from the private EGXResearch repo. The private repo should push only `data/latest.json` and `data/archive/YYYY-MM-DD.json` into this public repo.
+After the public site is working, follow `PRIVATE_HANDOFF_TEMPLATE.md` from the private EGXResearch repo. The private repo should push only `data/latest.json` and `data/archive/YYYY-MM-DD.json` into this public repo.

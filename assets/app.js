@@ -1,8 +1,8 @@
 (function () {
   const configText = document.getElementById('site-config')?.textContent?.trim();
-  let siteConfig = { basePath: '/EGXAlphaWeb' };
+  let siteConfig = { basePath: '' };
   try { if (configText) siteConfig = JSON.parse(configText); } catch (_) {}
-  const basePath = String(siteConfig.basePath || '/EGXAlphaWeb').replace(/\/$/, '');
+  const basePath = String(siteConfig.basePath ?? '').replace(/\/$/, '');
 
   const json = document.getElementById('beacon-payload')?.textContent?.trim();
   let payload = null;
@@ -128,6 +128,10 @@
   initSearch();
 
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register(`${basePath}/sw.js`).catch(() => {}));
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.getRegistrations?.().then(registrations => {
+        registrations.forEach(registration => registration.unregister());
+      }).catch(() => {});
+    });
   }
 })();
