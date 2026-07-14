@@ -30,11 +30,13 @@ EGXResearch
 4. Run or wait for **Deploy EGXResearch Public PWA**.
 5. Open the deployment URL.
 
-Expected URL pattern:
+Production URL:
 
 ```text
-https://<your-github-username>.github.io/EGXResearch/
+https://egxresearch.com/
 ```
+
+If you test a GitHub Pages preview without the custom domain, configure `EGX_BASE_PATH` for that preview path before deployment.
 
 ## 4. Test the public PWA
 
@@ -61,12 +63,14 @@ Check:
 
 On Android Chrome/Edge:
 
-1. Open the GitHub Pages URL.
+1. Open `https://egxresearch.com/`.
 2. Tap the browser menu.
 3. Choose **Add to Home screen** or **Install app** if offered.
 4. Open the installed EGXResearch shortcut.
 
 Because this package intentionally includes no images or binary icon files, the installed app may use a generic browser icon.
+
+If the page ever appears as plain unstyled HTML after a deployment, hard refresh the page. If it stays unstyled in an installed PWA, remove the installed shortcut or unregister the old service worker from the browser's site settings, then reopen `https://egxresearch.com/` so the browser installs the latest cache version.
 
 ## 6. Connect the private repo later
 
