@@ -33,6 +33,39 @@ const home = fs.readFileSync('_site/index.html', 'utf8');
 const methodology = fs.readFileSync('_site/methodology/index.html', 'utf8');
 const css = fs.readFileSync('_site/assets/app.css', 'utf8');
 
+const appJs = fs.readFileSync('_site/assets/app.js', 'utf8');
+const sw = fs.readFileSync('_site/sw.js', 'utf8');
+const manifest = JSON.parse(fs.readFileSync('_site/manifest.webmanifest', 'utf8'));
+const htmlPages = [
+  '_site/index.html',
+  '_site/today/index.html',
+  '_site/archive/index.html',
+  '_site/search/index.html',
+  '_site/methodology/index.html'
+];
+const basePath = '/EGXResearch';
+const forbiddenBasePath = '/EGXAlphaWeb';
+
+for (const page of htmlPages) {
+  const html = fs.readFileSync(page, 'utf8');
+  assert.ok(html.includes(`href="${basePath}/assets/app.css"`), `${page} should link the deployed stylesheet`);
+  assert.ok(html.includes(`src="${basePath}/assets/app.js"`), `${page} should link the deployed app script`);
+  assert.ok(html.includes(`href="${basePath}/manifest.webmanifest"`), `${page} should link the deployed manifest`);
+  assert.ok(html.includes(`"basePath":"${basePath}"`), `${page} should embed the deployed base path`);
+  assert.equal(html.includes(forbiddenBasePath), false, `${page} should not reference the old deployment base path`);
+}
+
+assert.equal(appJs.includes(forbiddenBasePath), false, 'client app should not retain the old fallback base path');
+assert.ok(appJs.includes(basePath), 'client app should retain the production fallback base path');
+assert.equal(manifest.start_url, `${basePath}/`, 'manifest start_url should use the production base path');
+assert.equal(manifest.scope, `${basePath}/`, 'manifest scope should use the production base path');
+assert.ok(sw.includes(`const BASE = "${basePath}";`), 'service worker should use the production base path');
+assert.ok(sw.includes('egxresearch-public-pwa-v2-egxresearch'), 'service worker cache should be bumped for corrected asset URLs');
+for (const asset of ['/assets/app.css', '/assets/app.js', '/data/latest.json', '/data/index.json', '/manifest.webmanifest']) {
+  assert.ok(sw.includes(`url('${asset}')`), `service worker should precache ${asset}`);
+}
+assert.equal(sw.includes(forbiddenBasePath), false, 'service worker should not reference the old deployment base path');
+
 assert.match(daily, /og:title/);
 assert.match(daily, /EGX \/Alpha signal/);
 assert.match(daily, /EGX \/Alpha Mind/);

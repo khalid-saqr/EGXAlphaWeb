@@ -68,6 +68,8 @@ On Android Chrome/Edge:
 
 Because this package intentionally includes no images or binary icon files, the installed app may use a generic browser icon.
 
+If the page ever appears as plain unstyled HTML after a deployment, hard refresh the page. If it stays unstyled in an installed PWA, remove the installed shortcut or unregister the old service worker from the browser's site settings, then reopen the GitHub Pages URL so the browser installs the latest cache version.
+
 ## 6. Connect the private repo later
 
 After the public PWA is working, follow `PRIVATE_HANDOFF_TEMPLATE.md` from the private EGXResearch repo. The private repo should push only `data/latest.json` and `data/archive/YYYY-MM-DD.json` into this public repo.
