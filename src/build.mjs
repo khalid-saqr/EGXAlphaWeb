@@ -129,12 +129,11 @@ function main() {
   write(path.join(OUT, 'data', 'latest.json'), JSON.stringify(latest, null, 2) + '\n');
   write(path.join(OUT, 'data', 'index.json'), JSON.stringify(items, null, 2) + '\n');
 
-  copy(path.join(ROOT, 'assets', 'app.css'), path.join(OUT, 'assets', 'app.css'));
   copy(path.join(ROOT, 'assets', 'app.js'), path.join(OUT, 'assets', 'app.js'));
   write(path.join(OUT, 'manifest.webmanifest'), renderManifest());
   write(path.join(OUT, 'sw.js'), renderServiceWorker());
   write(path.join(OUT, '.nojekyll'), '');
-  console.log(`Built EGXResearch public PWA with ${items.length} archived signal(s).`);
+  console.log(`Built EGXResearch public site with ${items.length} archived signal(s).`);
 }
 
 main();

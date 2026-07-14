@@ -12,9 +12,7 @@ for (const file of [
   '_site/methodology/index.html',
   '_site/data/latest.json',
   '_site/data/index.json',
-  '_site/assets/app.css',
   '_site/assets/app.js',
-  '_site/manifest.webmanifest',
   '_site/sw.js'
 ]) {
   assert.equal(fs.existsSync(file), true, `${file} should exist`);
@@ -31,7 +29,40 @@ assert.ok(symbol, 'latest payload must include a stock symbol');
 const daily = fs.readFileSync('_site/today/index.html', 'utf8');
 const home = fs.readFileSync('_site/index.html', 'utf8');
 const methodology = fs.readFileSync('_site/methodology/index.html', 'utf8');
-const css = fs.readFileSync('_site/assets/app.css', 'utf8');
+const css = fs.readFileSync('assets/app.css', 'utf8');
+
+const appJs = fs.readFileSync('_site/assets/app.js', 'utf8');
+const sw = fs.readFileSync('_site/sw.js', 'utf8');
+const htmlPages = [
+  '_site/index.html',
+  '_site/today/index.html',
+  '_site/archive/index.html',
+  '_site/search/index.html',
+  '_site/methodology/index.html'
+];
+const productionBasePath = '';
+const forbiddenBasePaths = ['/EGXResearch', '/EGXAlphaWeb'];
+
+for (const page of htmlPages) {
+  const html = fs.readFileSync(page, 'utf8');
+  assert.ok(html.includes('<style>'), `${page} should inline the production stylesheet`);
+  assert.equal(html.includes('href="/assets/app.css"'), false, `${page} should not depend on an external stylesheet`);
+  assert.equal(html.includes('href="/manifest.webmanifest"'), false, `${page} should not enable PWA manifest before visual stability`);
+  assert.ok(html.includes('src="/assets/app.js"'), `${page} should link the root-scoped app script`);
+  assert.ok(html.includes(`"basePath":"${productionBasePath}"`), `${page} should embed the production root base path`);
+  for (const forbiddenBasePath of forbiddenBasePaths) {
+    assert.equal(html.includes(forbiddenBasePath), false, `${page} should not reference ${forbiddenBasePath} in production output`);
+  }
+}
+
+for (const forbiddenBasePath of forbiddenBasePaths) {
+  assert.equal(appJs.includes(forbiddenBasePath), false, `client app should not retain ${forbiddenBasePath}`);
+  assert.equal(sw.includes(forbiddenBasePath), false, `service worker should not reference ${forbiddenBasePath}`);
+}
+assert.ok(appJs.includes("basePath: ''"), 'client app should retain the root production fallback base path');
+assert.equal(appJs.includes('serviceWorker.register'), false, 'client app should not register a service worker before visual stability');
+assert.ok(sw.includes('self.registration.unregister()'), 'service worker artifact should unregister legacy workers');
+assert.equal(sw.includes('caches.open'), false, 'service worker cleanup should not precache assets');
 
 const appJs = fs.readFileSync('_site/assets/app.js', 'utf8');
 const sw = fs.readFileSync('_site/sw.js', 'utf8');

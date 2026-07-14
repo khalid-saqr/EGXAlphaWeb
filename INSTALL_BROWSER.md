@@ -1,6 +1,6 @@
-# Browser-only installation guide
+# Browser-only deployment guide
 
-Use this when you have the ZIP package and want to launch the public PWA through the GitHub website only.
+Use this when you have the ZIP package and want to launch the public site through the GitHub website only.
 
 ## 1. Create the public repo
 
@@ -68,10 +68,10 @@ On Android Chrome/Edge:
 3. Choose **Add to Home screen** or **Install app** if offered.
 4. Open the installed EGXResearch shortcut.
 
-Because this package intentionally includes no images or binary icon files, the installed app may use a generic browser icon.
+PWA installability is intentionally disabled until the live site is visually stable. If the page ever appears as plain unstyled HTML after a deployment, hard refresh the page. If it stays stale, remove any old installed EGXResearch shortcut, clear site data, unregister any old service worker from the browser's site settings, then reopen `https://egxresearch.com/`.
 
 If the page ever appears as plain unstyled HTML after a deployment, hard refresh the page. If it stays unstyled in an installed PWA, remove the installed shortcut or unregister the old service worker from the browser's site settings, then reopen the GitHub Pages URL so the browser installs the latest cache version.
 
 ## 6. Connect the private repo later
 
-After the public PWA is working, follow `PRIVATE_HANDOFF_TEMPLATE.md` from the private EGXResearch repo. The private repo should push only `data/latest.json` and `data/archive/YYYY-MM-DD.json` into this public repo.
+After the public site is working, follow `PRIVATE_HANDOFF_TEMPLATE.md` from the private EGXResearch repo. The private repo should push only `data/latest.json` and `data/archive/YYYY-MM-DD.json` into this public repo.

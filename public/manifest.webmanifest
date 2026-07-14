@@ -7,7 +7,6 @@
   "display": "standalone",
   "background_color": "#07101d",
   "theme_color": "#09111f",
-  "orientation": "portrait-primary",
   "categories": ["finance", "news", "productivity"],
   "lang": "en"
 }

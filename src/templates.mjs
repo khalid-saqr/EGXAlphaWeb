@@ -1,3 +1,7 @@
+import fs from 'node:fs';
+
+const INLINE_CSS = fs.readFileSync(new URL('../assets/app.css', import.meta.url), 'utf8');
+
 export const SITE = {
   domain: 'EGXResearch',
   signalName: 'EGX /Alpha signal',
@@ -188,8 +192,7 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
   <link rel="canonical" href="${escapeHtml(url)}">
-  <link rel="manifest" href="${rel('/manifest.webmanifest')}">
-  <link rel="stylesheet" href="${rel('/assets/app.css')}">
+  <style>${INLINE_CSS.replaceAll('</style', '<\/style')}</style>
 </head>
 <body class="${escapeHtml(pageClass)}">
   <script id="site-config" type="application/json">${clientConfig}</script>
