@@ -18,7 +18,7 @@
   --shadow: 0 32px 90px rgba(0,0,0,0.35);
   --radius: 28px;
   --radius-sm: 18px;
-  --max: 1240px;
+  --max: 1180px;
   --paper: #fbfaf6;
   --paper-ink: #111827;
   --paper-muted: #536171;
@@ -70,9 +70,9 @@ button, input { font: inherit; }
 button { cursor: pointer; }
 
 .site-shell {
-  width: min(100% - 32px, var(--max));
+  width: min(100% - clamp(20px, 4vw, 48px), var(--max));
   margin: 0 auto;
-  padding: clamp(16px, 2vw, 28px) 0 54px;
+  padding: clamp(14px, 2.4vw, 28px) 0 clamp(34px, 5vw, 58px);
   position: relative;
 }
 .topbar {
@@ -120,8 +120,8 @@ button { cursor: pointer; }
 
 .v3-hero {
   display: grid;
-  grid-template-columns: minmax(320px, 0.82fr) minmax(460px, 1.18fr);
-  gap: 20px;
+  grid-template-columns: minmax(280px, 0.84fr) minmax(0, 1.16fr);
+  gap: clamp(14px, 2vw, 22px);
   align-items: stretch;
 }
 .mind-hero-card, .signal-hero-card, .card, .compact-strip, .whitepaper, .mega-footer {
@@ -133,7 +133,7 @@ button { cursor: pointer; }
 }
 .mind-hero-card {
   padding: clamp(24px, 3.4vw, 44px);
-  min-height: 520px;
+  min-height: clamp(420px, 48vw, 520px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -149,7 +149,7 @@ button { cursor: pointer; }
 h1, h2, h3, p { margin-top: 0; }
 h1 {
   margin-bottom: 18px;
-  max-width: 15ch;
+  max-width: 13ch;
   font-size: clamp(2.6rem, 4.8vw, 5.6rem);
   line-height: 0.92;
   letter-spacing: -0.07em;
@@ -181,8 +181,8 @@ h3 { font-size: 1rem; margin-bottom: 8px; }
 .signal-hero-card {
   position: relative;
   overflow: hidden;
-  min-height: 520px;
-  padding: clamp(24px, 3vw, 40px);
+  min-height: clamp(420px, 48vw, 520px);
+  padding: clamp(22px, 3vw, 40px);
   border-color: rgba(105,243,202,0.28);
   background:
     linear-gradient(160deg, rgba(105,243,202,0.18), rgba(140,188,255,0.08) 42%, rgba(255,255,255,0.07)),
@@ -229,7 +229,7 @@ h3 { font-size: 1rem; margin-bottom: 8px; }
 .signal-band {
   position: relative;
   display: grid;
-  grid-template-columns: 88px 1fr;
+  grid-template-columns: minmax(68px, 0.24fr) minmax(0, 1fr);
   gap: 12px;
   align-items: center;
   margin: 22px 0 16px;
@@ -239,18 +239,18 @@ h3 { font-size: 1rem; margin-bottom: 8px; }
   background: rgba(0,0,0,0.14);
 }
 .signal-band strong { font-size: clamp(1.1rem, 2vw, 1.55rem); line-height: 1.05; letter-spacing: -0.045em; }
-.signal-metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 16px 0; }
+.signal-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 10px; margin: 16px 0; }
 .metric-tile { min-height: 104px; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 15px; background: rgba(255,255,255,0.066); }
 .metric-tile strong { display: block; margin-top: 7px; font-size: clamp(1.05rem, 1.85vw, 1.75rem); line-height: 1; letter-spacing: -0.055em; }
 .metric-tile em, .signal-facts em { display: block; margin-top: 7px; color: var(--muted); font-size: 0.82rem; font-style: normal; }
-.signal-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.signal-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
 .signal-facts div { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 13px 14px; background: rgba(255,255,255,0.052); }
 .signal-facts strong { display: block; margin-top: 4px; font-size: 1rem; letter-spacing: -0.03em; }
 .boundary-line { margin: 18px 0 0; }
 .tone-positive { color: var(--green); }
 .tone-negative { color: var(--red); }
 .tone-neutral { color: var(--gold); }
-.compact-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; padding: 12px; }
+.compact-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 20px 0; padding: 12px; }
 .strip-card { min-height: 110px; border: 1px solid var(--line); border-radius: 22px; padding: 18px; background: rgba(255,255,255,0.055); }
 .strip-card:hover { border-color: rgba(105,243,202,0.44); background: var(--panel-2); }
 .strip-card strong { display: block; margin-top: 10px; font-size: 1.08rem; letter-spacing: -0.035em; }
@@ -467,6 +467,7 @@ h3 { font-size: 1rem; margin-bottom: 8px; }
   .signal-hero-head { display: block; }
   .signal-tools { justify-content: flex-start; margin-top: 14px; }
   .signal-band, .signal-metrics, .signal-facts, .paper-meta, .whitepaper-toc, .methodology-flow, .paper-pillar-grid { grid-template-columns: 1fr; }
+  .mind-hero-card, .signal-hero-card, .compact-strip, .mega-footer { border-radius: 20px; }
   .archive-row { grid-template-columns: 1fr; gap: 4px; }
   .paper-document { width: min(100%, 100%); padding: 22px; border-radius: 16px; }
   .paper-cover { grid-template-columns: 1fr; }
