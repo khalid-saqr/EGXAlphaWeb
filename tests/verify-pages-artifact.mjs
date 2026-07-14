@@ -22,21 +22,10 @@ const sw = fs.readFileSync('_site/sw.js', 'utf8');
 const manifest = JSON.parse(fs.readFileSync('_site/manifest.webmanifest', 'utf8'));
 const forbidden = ['/EGXResearch', '/EGXAlphaWeb'];
 
-function assertContains(text, expected, message) {
-  assert.ok(text.includes(expected), `${message}. Expected ${JSON.stringify(expected)} in _site/index.html. First stylesheet/script/config hints: ${artifactHints()}`);
-}
-
-function artifactHints() {
-  return [
-    ...index.matchAll(/<(?:link|script)[^>]+(?:href|src)="[^"]+"[^>]*>/g),
-    ...index.matchAll(/<script id="site-config"[^>]*>[^<]*<\/script>/g)
-  ].slice(0, 8).map(match => match[0]).join(' | ');
-}
-
-assertContains(index, 'href="/assets/app.css"', 'production index should link root-scoped CSS');
-assertContains(index, 'src="/assets/app.js"', 'production index should link root-scoped JS');
-assertContains(index, 'href="/manifest.webmanifest"', 'production index should link root-scoped manifest');
-assertContains(index, '"basePath":""', 'production index should embed empty root basePath');
+assert.ok(index.includes('href="/assets/app.css"'), 'production index should link root-scoped CSS');
+assert.ok(index.includes('src="/assets/app.js"'), 'production index should link root-scoped JS');
+assert.ok(index.includes('href="/manifest.webmanifest"'), 'production index should link root-scoped manifest');
+assert.ok(index.includes('"basePath":""'), 'production index should embed empty root basePath');
 assert.ok(index.includes('Track one EGX signal after the close.'), 'production index should include the current investor hook');
 assert.ok(index.includes('Get early access'), 'production index should include the current CTA');
 assert.equal(manifest.start_url, '/', 'production manifest should start at the custom-domain root');

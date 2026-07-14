@@ -14,7 +14,7 @@ function copy(src, dest) { ensureDir(path.dirname(dest)); fs.copyFileSync(src, d
 function rmrf(p) { if (fs.existsSync(p)) fs.rmSync(p, { recursive: true, force: true }); }
 
 function basePath() {
-  const base = String(SITE.basePath ?? '').replace(/\/$/, '');
+  const base = String(SITE.basePath || '').replace(/\/$/, '');
   return base || '';
 }
 
@@ -39,7 +39,7 @@ function renderManifest() {
 function renderServiceWorker() {
   const base = basePath();
   const cacheSuffix = base.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'root';
-  return `const CACHE = 'egxresearch-public-pwa-v3-${cacheSuffix}';
+  return `const CACHE = 'egxresearch-public-pwa-v2-${cacheSuffix}';
 const BASE = ${JSON.stringify(base)};
 const url = path => BASE + path;
 const ASSETS = [

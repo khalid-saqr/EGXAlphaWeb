@@ -43,32 +43,28 @@ const htmlPages = [
   '_site/search/index.html',
   '_site/methodology/index.html'
 ];
-const productionBasePath = '';
-const forbiddenBasePaths = ['/EGXResearch', '/EGXAlphaWeb'];
+const basePath = '/EGXResearch';
+const forbiddenBasePath = '/EGXAlphaWeb';
 
 for (const page of htmlPages) {
   const html = fs.readFileSync(page, 'utf8');
-  assert.ok(html.includes('href="/assets/app.css"'), `${page} should link the root-scoped stylesheet`);
-  assert.ok(html.includes('src="/assets/app.js"'), `${page} should link the root-scoped app script`);
-  assert.ok(html.includes('href="/manifest.webmanifest"'), `${page} should link the root-scoped manifest`);
-  assert.ok(html.includes(`"basePath":"${productionBasePath}"`), `${page} should embed the production root base path`);
-  for (const forbiddenBasePath of forbiddenBasePaths) {
-    assert.equal(html.includes(forbiddenBasePath), false, `${page} should not reference ${forbiddenBasePath} in production output`);
-  }
+  assert.ok(html.includes(`href="${basePath}/assets/app.css"`), `${page} should link the deployed stylesheet`);
+  assert.ok(html.includes(`src="${basePath}/assets/app.js"`), `${page} should link the deployed app script`);
+  assert.ok(html.includes(`href="${basePath}/manifest.webmanifest"`), `${page} should link the deployed manifest`);
+  assert.ok(html.includes(`"basePath":"${basePath}"`), `${page} should embed the deployed base path`);
+  assert.equal(html.includes(forbiddenBasePath), false, `${page} should not reference the old deployment base path`);
 }
 
-for (const forbiddenBasePath of forbiddenBasePaths) {
-  assert.equal(appJs.includes(forbiddenBasePath), false, `client app should not retain ${forbiddenBasePath}`);
-  assert.equal(sw.includes(forbiddenBasePath), false, `service worker should not reference ${forbiddenBasePath}`);
-}
-assert.ok(appJs.includes("basePath: ''"), 'client app should retain the root production fallback base path');
-assert.equal(manifest.start_url, '/', 'manifest start_url should use the custom-domain root');
-assert.equal(manifest.scope, '/', 'manifest scope should use the custom-domain root');
-assert.ok(sw.includes('const BASE = "";'), 'service worker should use the custom-domain root base path');
-assert.ok(sw.includes('egxresearch-public-pwa-v3-root'), 'service worker cache should be bumped for root-scoped assets');
+assert.equal(appJs.includes(forbiddenBasePath), false, 'client app should not retain the old fallback base path');
+assert.ok(appJs.includes(basePath), 'client app should retain the production fallback base path');
+assert.equal(manifest.start_url, `${basePath}/`, 'manifest start_url should use the production base path');
+assert.equal(manifest.scope, `${basePath}/`, 'manifest scope should use the production base path');
+assert.ok(sw.includes(`const BASE = "${basePath}";`), 'service worker should use the production base path');
+assert.ok(sw.includes('egxresearch-public-pwa-v2-egxresearch'), 'service worker cache should be bumped for corrected asset URLs');
 for (const asset of ['/assets/app.css', '/assets/app.js', '/data/latest.json', '/data/index.json', '/manifest.webmanifest']) {
   assert.ok(sw.includes(`url('${asset}')`), `service worker should precache ${asset}`);
 }
+assert.equal(sw.includes(forbiddenBasePath), false, 'service worker should not reference the old deployment base path');
 
 assert.match(daily, /og:title/);
 assert.match(daily, /EGX \/Alpha signal/);
