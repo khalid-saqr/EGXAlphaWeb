@@ -3,8 +3,8 @@ export const SITE = {
   signalName: 'EGX /Alpha signal',
   mindName: 'EGX /Alpha Mind',
   accessEmail: 'access@egxresearch.com',
-  basePath: process.env.EGX_BASE_PATH || '/EGXAlphaWeb',
-  siteUrl: process.env.EGX_SITE_URL || (process.env.GITHUB_REPOSITORY_OWNER ? `https://${process.env.GITHUB_REPOSITORY_OWNER}.github.io/EGXAlphaWeb` : '')
+  basePath: process.env.EGX_BASE_PATH || '/EGXResearch',
+  siteUrl: process.env.EGX_SITE_URL || (process.env.GITHUB_REPOSITORY_OWNER ? `https://${process.env.GITHUB_REPOSITORY_OWNER}.github.io/EGXResearch` : '')
 };
 
 export function escapeHtml(value) {

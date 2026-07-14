@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { loadAndValidate } from './validate.mjs';
+import { SITE } from './templates.mjs';
 import { renderArchivePage, renderMethodologyPage, renderSearchPage, renderSignalPage } from './render.mjs';
 
 const ROOT = process.cwd();
@@ -11,6 +12,69 @@ function ensureDir(p) { fs.mkdirSync(p, { recursive: true }); }
 function write(p, content) { ensureDir(path.dirname(p)); fs.writeFileSync(p, content, 'utf8'); }
 function copy(src, dest) { ensureDir(path.dirname(dest)); fs.copyFileSync(src, dest); }
 function rmrf(p) { if (fs.existsSync(p)) fs.rmSync(p, { recursive: true, force: true }); }
+
+function basePath() {
+  const base = String(SITE.basePath || '').replace(/\/$/, '');
+  return base || '';
+}
+
+function renderManifest() {
+  const base = basePath() || '/';
+  const scoped = base.endsWith('/') ? base : `${base}/`;
+  return JSON.stringify({
+    name: 'EGXResearch — EGX /Alpha signal',
+    short_name: 'EGX /Alpha',
+    description: 'Daily public EGX /Alpha signal from EGXResearch.',
+    start_url: scoped,
+    scope: scoped,
+    display: 'standalone',
+    background_color: '#07101d',
+    theme_color: '#09111f',
+    orientation: 'portrait-primary',
+    categories: ['finance', 'news', 'productivity'],
+    lang: 'en'
+  }, null, 2) + '\n';
+}
+
+function renderServiceWorker() {
+  const base = basePath();
+  const cacheSuffix = base.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'root';
+  return `const CACHE = 'egxresearch-public-pwa-v2-${cacheSuffix}';
+const BASE = ${JSON.stringify(base)};
+const url = path => BASE + path;
+const ASSETS = [
+  url('/'),
+  url('/today/'),
+  url('/archive/'),
+  url('/search/'),
+  url('/assets/app.css'),
+  url('/assets/app.js'),
+  url('/data/latest.json'),
+  url('/data/index.json'),
+  url('/manifest.webmanifest')
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim()));
+});
+
+self.addEventListener('fetch', event => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
+  event.respondWith(
+    caches.match(req).then(cached => cached || fetch(req).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE).then(cache => cache.put(req, copy));
+      return res;
+    }).catch(() => caches.match(url('/'))))
+  );
+});
+`;
+}
 
 function archiveJsonFiles() {
   const dir = path.join(DATA_DIR, 'archive');
@@ -67,8 +131,8 @@ function main() {
 
   copy(path.join(ROOT, 'assets', 'app.css'), path.join(OUT, 'assets', 'app.css'));
   copy(path.join(ROOT, 'assets', 'app.js'), path.join(OUT, 'assets', 'app.js'));
-  copy(path.join(ROOT, 'public', 'manifest.webmanifest'), path.join(OUT, 'manifest.webmanifest'));
-  copy(path.join(ROOT, 'public', 'sw.js'), path.join(OUT, 'sw.js'));
+  write(path.join(OUT, 'manifest.webmanifest'), renderManifest());
+  write(path.join(OUT, 'sw.js'), renderServiceWorker());
   write(path.join(OUT, '.nojekyll'), '');
   console.log(`Built EGXResearch public PWA with ${items.length} archived signal(s).`);
 }
