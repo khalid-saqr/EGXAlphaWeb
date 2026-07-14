@@ -210,7 +210,7 @@ export function siteHeader(sectionLabel = SITE.signalName) {
       <a href="${rel('/today/')}">Today</a>
       <a href="${rel('/archive/')}">Archive</a>
       <a href="${rel('/search/')}">Search</a>
-      <a href="${rel('/methodology/')}">Methodology</a>
+      <a href="${rel('/methodology/')}">See methodology</a>
       <button class="button theme-toggle" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false">
         <span data-theme-label>Theme</span>
       </button>
@@ -223,8 +223,8 @@ export function megaFooter() {
     <section class="footer-branding">
       <p class="eyebrow">EGXResearch</p>
       <h2>EGX /Alpha Mind</h2>
-      <p class="small-note">Daily ranked intelligence for the Egyptian Exchange.</p>
-      <a class="button button-primary footer-cta" href="${mailtoLink()}">Request early access</a>
+      <p class="small-note">One clean EGX signal after the close.</p>
+      <a class="button button-primary footer-cta" href="${mailtoLink()}">Get early access</a>
     </section>
     <section>
       <h3>Explore</h3>
@@ -232,12 +232,12 @@ export function megaFooter() {
         <a href="${rel('/today/')}">Today</a>
         <a href="${rel('/archive/')}">Archive</a>
         <a href="${rel('/search/')}">Search</a>
-        <a href="${rel('/methodology/')}">Methodology</a>
+        <a href="${rel('/methodology/')}">See methodology</a>
       </nav>
     </section>
     <section class="footer-disclaimer">
       <h3>Research boundary</h3>
-      <p class="small-note">Research-only. Not personalised investment advice. No buy/sell/hold instruction.</p>
+      <p class="small-note">Research only. No buy/sell instruction.</p>
       <p class="small-note legal-note">© EGX Research LLP. IP management rights and disclaimer administration are managed by KNOWDYN LTD (UK).</p>
     </section>
   </footer>`;
@@ -263,7 +263,7 @@ function signalFacts(parts, payload, published) {
   const hash = shortHash(payload.integrity?.public_wire_hash);
   return compact([
     `<div><span>Rank</span><strong>${escapeHtml(parts.rankLabel)}</strong></div>`,
-    `<div><span>Window</span><strong>${escapeHtml(parts.horizon)}</strong><em>Not an intraday instruction.</em></div>`,
+    `<div><span>Window</span><strong>${escapeHtml(parts.horizon)}</strong><em>After-close view.</em></div>`,
     `<div><span>Published</span><strong>${escapeHtml(parts.publishing.published_after || 'After EGX close')}</strong><em>${escapeHtml(published)}</em></div>`,
     hash ? `<div><span>Public wire</span><strong>Verified</strong><em>${escapeHtml(hash)}</em></div>` : ''
   ]).join('');
@@ -278,7 +278,7 @@ function signalCardShell(parts, payload, published) {
   return `<article class="signal-hero-card" id="today-signal" aria-label="Today’s EGX Alpha signal">
     <div class="signal-hero-head">
       <div>
-        <p class="eyebrow">Today’s public signal</p>
+        <p class="eyebrow">Today’s EGX signal</p>
         <div class="symbol" title="${escapeHtml(parts.stockSymbol)}">${escapeHtml(parts.displaySymbol)}</div>
         <p class="symbol-subtitle">${escapeHtml(subtitle)}</p>
       </div>
@@ -294,7 +294,7 @@ function signalCardShell(parts, payload, published) {
     </div>
     <div class="signal-metrics">${metrics || `<p class="small-note">Market context appears when the public wire includes price and liquidity fields.</p>`}</div>
     <div class="signal-facts">${signalFacts(parts, payload, published)}</div>
-    <p class="small-note boundary-line">Research-only. Not personalised investment advice. No buy/sell/hold instruction.</p>
+    <p class="small-note boundary-line">Research only. No buy/sell instruction.</p>
     <p class="small-note" data-copy-status aria-live="polite"></p>
   </article>`;
 }
@@ -302,16 +302,16 @@ function signalCardShell(parts, payload, published) {
 function introPanel(parts) {
   return `<article class="mind-hero-card">
     <p class="eyebrow">${escapeHtml(SITE.mindName)}</p>
-    <h1>One public signal from the EGX ranking engine.</h1>
-    <p class="lede">A compact daily view for following one bounded public EGX /Alpha signal after market close.</p>
+    <h1>Track one EGX signal after the close.</h1>
+    <p class="lede">A sharp daily read for retail investors watching the Egyptian Exchange.</p>
     <div class="mind-summary">
       <div><span>Today</span><strong>${escapeHtml(parts.displaySymbol)}</strong></div>
       <div><span>Signal</span><strong>${escapeHtml(parts.plainDirection)}</strong></div>
       <div><span>Window</span><strong>${escapeHtml(parts.horizon)}</strong></div>
     </div>
     <div class="hero-actions">
-      <a class="button button-primary" href="${mailtoLink()}">Request early access</a>
-      <a class="button" href="${rel('/methodology/')}">Methodology</a>
+      <a class="button button-primary" href="${mailtoLink()}">Get early access</a>
+      <a class="button" href="${rel('/methodology/')}">See methodology</a>
     </div>
   </article>`;
 }
@@ -320,15 +320,15 @@ function archiveTeaser() {
   return `<section class="compact-strip" aria-label="Public signal tools">
     <a class="strip-card" href="${rel('/archive/')}">
       <span>Archive</span>
-      <strong>Dated public signal trail</strong>
+      <strong>Review past signals</strong>
     </a>
     <a class="strip-card" href="${rel('/search/')}">
       <span>Search</span>
-      <strong>Find by symbol, sector, date, or direction</strong>
+      <strong>Find any ticker fast</strong>
     </a>
     <a class="strip-card" href="${rel('/methodology/')}">
       <span>Methodology</span>
-      <strong>Public-wire publication discipline</strong>
+      <strong>How signals stay bounded</strong>
     </a>
   </section>`;
 }
@@ -457,7 +457,7 @@ export function methodologyPage() {
         <p>EGX /Alpha, EGXResearch, the public signal publication layer, public-wire design, methodology descriptions, visual presentation, and related materials are copyright EGX Research LLP unless otherwise stated.</p>
         <p>IP management rights, technical governance, research commercialisation support, and disclaimer administration are managed by KNOWDYN LTD (UK).</p>
         <p>Research-only. Not personalised investment advice. No buy, sell, or hold instruction. Public materials are provided for information, research, and market-follow-up purposes only.</p>
-        <a class="button button-primary" href="${mailtoLink()}">Request early access</a>
+        <a class="button button-primary" href="${mailtoLink()}">Get early access</a>
       </section>
     </article>
     ${megaFooter()}

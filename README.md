@@ -39,12 +39,23 @@ npm run build
 
 The generated site appears in `_site/`.
 
-## Public URL after GitHub Pages
+## Production URL
 
-If your GitHub username is `<owner>` and the repo is named `EGXResearch`, the site URL will normally be:
+The live public site is served from the custom-domain root:
 
 ```text
-https://<owner>.github.io/EGXResearch/
+https://egxresearch.com/
+```
+
+Production assets are root-relative, for example `/assets/app.css`, `/assets/app.js`, and `/manifest.webmanifest`.
+
+## Alternate preview URL
+
+For a GitHub Pages preview without the custom domain, set `EGX_BASE_PATH` and `EGX_SITE_URL` during the build, for example:
+
+```text
+EGX_BASE_PATH=/EGXResearch
+EGX_SITE_URL=https://<owner>.github.io/EGXResearch
 ```
 
 Read `INSTALL_BROWSER.md` for browser-only installation steps.

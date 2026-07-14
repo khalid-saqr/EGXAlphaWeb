@@ -1,15 +1,16 @@
-const CACHE = 'egxresearch-public-pwa-v1';
-const BASE = '/EGXResearch';
+const CACHE = 'egxresearch-public-pwa-v3-root';
+const BASE = '';
+const url = path => BASE + path;
 const ASSETS = [
-  `${BASE}/`,
-  `${BASE}/today/`,
-  `${BASE}/archive/`,
-  `${BASE}/search/`,
-  `${BASE}/assets/app.css`,
-  `${BASE}/assets/app.js`,
-  `${BASE}/data/latest.json`,
-  `${BASE}/data/index.json`,
-  `${BASE}/manifest.webmanifest`
+  url('/'),
+  url('/today/'),
+  url('/archive/'),
+  url('/search/'),
+  url('/assets/app.css'),
+  url('/assets/app.js'),
+  url('/data/latest.json'),
+  url('/data/index.json'),
+  url('/manifest.webmanifest')
 ];
 
 self.addEventListener('install', event => {
@@ -28,6 +29,6 @@ self.addEventListener('fetch', event => {
       const copy = res.clone();
       caches.open(CACHE).then(cache => cache.put(req, copy));
       return res;
-    }).catch(() => caches.match(`${BASE}/`)))
+    }).catch(() => caches.match(url('/'))))
   );
 });
