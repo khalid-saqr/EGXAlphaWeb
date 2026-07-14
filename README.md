@@ -47,6 +47,17 @@ The live public site is served from the custom-domain root:
 https://egxresearch.com/
 ```
 
+Production assets are root-relative, for example `/assets/app.css`, `/assets/app.js`, and `/manifest.webmanifest`.
+
+## Alternate preview URL
+
+For a GitHub Pages preview without the custom domain, set `EGX_BASE_PATH` and `EGX_SITE_URL` during the build, for example:
+
+```text
+EGX_BASE_PATH=/EGXResearch
+EGX_SITE_URL=https://<owner>.github.io/EGXResearch
+```
+
 Production renders critical CSS inline so the page does not depend on an external stylesheet. The small client script remains root-relative at `/assets/app.js`.
 
 ## Alternate preview URL

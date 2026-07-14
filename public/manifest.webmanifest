@@ -4,7 +4,7 @@
   "description": "Daily public EGX /Alpha signal from EGXResearch.",
   "start_url": "/",
   "scope": "/",
-  "display": "browser",
+  "display": "standalone",
   "background_color": "#07101d",
   "theme_color": "#09111f",
   "categories": ["finance", "news", "productivity"],

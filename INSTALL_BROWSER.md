@@ -38,7 +38,7 @@ https://egxresearch.com/
 
 If you test a GitHub Pages preview without the custom domain, configure `EGX_BASE_PATH` for that preview path before deployment.
 
-## 4. Test the public site
+## 4. Test the public PWA
 
 Open:
 
@@ -59,9 +59,18 @@ Check:
 - Facebook/LinkedIn share buttons open share pages
 - the layout works on mobile and desktop
 
-## 5. Clear old PWA cache if needed
+## 5. Install from browser
+
+On Android Chrome/Edge:
+
+1. Open `https://egxresearch.com/`.
+2. Tap the browser menu.
+3. Choose **Add to Home screen** or **Install app** if offered.
+4. Open the installed EGXResearch shortcut.
 
 PWA installability is intentionally disabled until the live site is visually stable. If the page ever appears as plain unstyled HTML after a deployment, hard refresh the page. If it stays stale, remove any old installed EGXResearch shortcut, clear site data, unregister any old service worker from the browser's site settings, then reopen `https://egxresearch.com/`.
+
+If the page ever appears as plain unstyled HTML after a deployment, hard refresh the page. If it stays unstyled in an installed PWA, remove the installed shortcut or unregister the old service worker from the browser's site settings, then reopen the GitHub Pages URL so the browser installs the latest cache version.
 
 ## 6. Connect the private repo later
 

@@ -14,22 +14,63 @@ function copy(src, dest) { ensureDir(path.dirname(dest)); fs.copyFileSync(src, d
 function rmrf(p) { if (fs.existsSync(p)) fs.rmSync(p, { recursive: true, force: true }); }
 
 function basePath() {
-  const base = String(SITE.basePath ?? '').replace(/\/$/, '');
+  const base = String(SITE.basePath || '').replace(/\/$/, '');
   return base || '';
 }
 
-function renderServiceWorkerCleanup() {
-  return `self.addEventListener('install', event => {
-  self.skipWaiting();
+function renderManifest() {
+  const base = basePath() || '/';
+  const scoped = base.endsWith('/') ? base : `${base}/`;
+  return JSON.stringify({
+    name: 'EGXResearch — EGX /Alpha signal',
+    short_name: 'EGX /Alpha',
+    description: 'Daily public EGX /Alpha signal from EGXResearch.',
+    start_url: scoped,
+    scope: scoped,
+    display: 'standalone',
+    background_color: '#07101d',
+    theme_color: '#09111f',
+    orientation: 'portrait-primary',
+    categories: ['finance', 'news', 'productivity'],
+    lang: 'en'
+  }, null, 2) + '\n';
+}
+
+function renderServiceWorker() {
+  const base = basePath();
+  const cacheSuffix = base.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'root';
+  return `const CACHE = 'egxresearch-public-pwa-v2-${cacheSuffix}';
+const BASE = ${JSON.stringify(base)};
+const url = path => BASE + path;
+const ASSETS = [
+  url('/'),
+  url('/today/'),
+  url('/archive/'),
+  url('/search/'),
+  url('/assets/app.css'),
+  url('/assets/app.js'),
+  url('/data/latest.json'),
+  url('/data/index.json'),
+  url('/manifest.webmanifest')
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(keys.map(key => caches.delete(key))))
-      .then(() => self.registration.unregister())
-      .then(() => self.clients.matchAll())
-      .then(clients => clients.forEach(client => client.navigate(client.url)))
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim()));
+});
+
+self.addEventListener('fetch', event => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
+  event.respondWith(
+    caches.match(req).then(cached => cached || fetch(req).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE).then(cache => cache.put(req, copy));
+      return res;
+    }).catch(() => caches.match(url('/'))))
   );
 });
 `;
@@ -89,7 +130,8 @@ function main() {
   write(path.join(OUT, 'data', 'index.json'), JSON.stringify(items, null, 2) + '\n');
 
   copy(path.join(ROOT, 'assets', 'app.js'), path.join(OUT, 'assets', 'app.js'));
-  write(path.join(OUT, 'sw.js'), renderServiceWorkerCleanup());
+  write(path.join(OUT, 'manifest.webmanifest'), renderManifest());
+  write(path.join(OUT, 'sw.js'), renderServiceWorker());
   write(path.join(OUT, '.nojekyll'), '');
   console.log(`Built EGXResearch public site with ${items.length} archived signal(s).`);
 }

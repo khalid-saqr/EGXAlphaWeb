@@ -64,6 +64,39 @@ assert.equal(appJs.includes('serviceWorker.register'), false, 'client app should
 assert.ok(sw.includes('self.registration.unregister()'), 'service worker artifact should unregister legacy workers');
 assert.equal(sw.includes('caches.open'), false, 'service worker cleanup should not precache assets');
 
+const appJs = fs.readFileSync('_site/assets/app.js', 'utf8');
+const sw = fs.readFileSync('_site/sw.js', 'utf8');
+const manifest = JSON.parse(fs.readFileSync('_site/manifest.webmanifest', 'utf8'));
+const htmlPages = [
+  '_site/index.html',
+  '_site/today/index.html',
+  '_site/archive/index.html',
+  '_site/search/index.html',
+  '_site/methodology/index.html'
+];
+const basePath = '/EGXResearch';
+const forbiddenBasePath = '/EGXAlphaWeb';
+
+for (const page of htmlPages) {
+  const html = fs.readFileSync(page, 'utf8');
+  assert.ok(html.includes(`href="${basePath}/assets/app.css"`), `${page} should link the deployed stylesheet`);
+  assert.ok(html.includes(`src="${basePath}/assets/app.js"`), `${page} should link the deployed app script`);
+  assert.ok(html.includes(`href="${basePath}/manifest.webmanifest"`), `${page} should link the deployed manifest`);
+  assert.ok(html.includes(`"basePath":"${basePath}"`), `${page} should embed the deployed base path`);
+  assert.equal(html.includes(forbiddenBasePath), false, `${page} should not reference the old deployment base path`);
+}
+
+assert.equal(appJs.includes(forbiddenBasePath), false, 'client app should not retain the old fallback base path');
+assert.ok(appJs.includes(basePath), 'client app should retain the production fallback base path');
+assert.equal(manifest.start_url, `${basePath}/`, 'manifest start_url should use the production base path');
+assert.equal(manifest.scope, `${basePath}/`, 'manifest scope should use the production base path');
+assert.ok(sw.includes(`const BASE = "${basePath}";`), 'service worker should use the production base path');
+assert.ok(sw.includes('egxresearch-public-pwa-v2-egxresearch'), 'service worker cache should be bumped for corrected asset URLs');
+for (const asset of ['/assets/app.css', '/assets/app.js', '/data/latest.json', '/data/index.json', '/manifest.webmanifest']) {
+  assert.ok(sw.includes(`url('${asset}')`), `service worker should precache ${asset}`);
+}
+assert.equal(sw.includes(forbiddenBasePath), false, 'service worker should not reference the old deployment base path');
+
 assert.match(daily, /og:title/);
 assert.match(daily, /EGX \/Alpha signal/);
 assert.match(daily, /EGX \/Alpha Mind/);
@@ -136,11 +169,13 @@ for (const privatePhrase of [
 
 execSync('EGX_BASE_PATH=/EGXResearch EGX_SITE_URL=https://example.test/EGXResearch node src/build.mjs', { stdio: 'inherit' });
 const preview = fs.readFileSync('_site/index.html', 'utf8');
+const previewManifest = JSON.parse(fs.readFileSync('_site/manifest.webmanifest', 'utf8'));
 const previewSw = fs.readFileSync('_site/sw.js', 'utf8');
-assert.ok(preview.includes('<style>'), 'preview build should inline CSS instead of depending on prefixed stylesheets');
-assert.equal(preview.includes('href="/EGXResearch/assets/app.css"'), false, 'preview build should not depend on a prefixed stylesheet path');
-assert.ok(preview.includes('"basePath":"/EGXResearch"'), 'preview build should embed the explicit prefixed base path for data/search links');
-assert.ok(previewSw.includes('self.registration.unregister()'), 'preview service worker artifact should unregister legacy workers');
+assert.ok(preview.includes('href="/EGXResearch/assets/app.css"'), 'preview build should support an explicit prefixed stylesheet path');
+assert.ok(preview.includes('"basePath":"/EGXResearch"'), 'preview build should embed the explicit prefixed base path');
+assert.equal(previewManifest.start_url, '/EGXResearch/', 'preview manifest should use the explicit prefixed start_url');
+assert.equal(previewManifest.scope, '/EGXResearch/', 'preview manifest should use the explicit prefixed scope');
+assert.ok(previewSw.includes('const BASE = "/EGXResearch";'), 'preview service worker should use the explicit prefixed base path');
 
 execSync('node src/build.mjs', { stdio: 'inherit' });
 
