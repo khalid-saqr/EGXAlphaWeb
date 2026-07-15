@@ -10,6 +10,7 @@ function fixture({
   directionBucket,
   plainDirection,
   rank,
+  comparisonCount,
   horizon,
   tradingDate,
   close,
@@ -17,7 +18,10 @@ function fixture({
   tradedValue,
   volume,
   liquidity,
-  investorRead,
+  directionExplanation,
+  rankExplanation,
+  horizonExplanation,
+  useGuidance,
   modelLabel
 }) {
   return {
@@ -45,6 +49,14 @@ function fixture({
       horizon_label: `${horizon}-session horizon`,
       source_freshness_status: 'live_observation_completed'
     },
+    ranking_context: {
+      comparison_scope: 'eligible domestic EGX shares assessed for the primary model horizon',
+      comparison_count: comparisonCount,
+      ranking_basis: 'relative model estimate of forward market-excess return',
+      rank_order: 'Rank 1 is the highest relative model rank in the eligible comparison set.',
+      public_rank_rule: `The free public card shows rank #${rank}.`,
+      rank_direction_relationship: 'Rank and direction are separate model outputs.'
+    },
     market_snapshot: {
       latest_close: close,
       daily_change_pct: dailyChange,
@@ -54,12 +66,17 @@ function fixture({
     },
     public_copy: {
       headline: `Dynamic public signal: ${displaySymbol}`,
-      investor_read: investorRead,
-      one_line_summary: `Dynamic rank ${rank} for ${horizon} sessions.`
+      investor_read: directionExplanation,
+      one_line_summary: `Dynamic rank ${rank} for ${horizon} sessions.`,
+      direction_explanation: directionExplanation,
+      rank_explanation: rankExplanation,
+      horizon_explanation: horizonExplanation,
+      use_guidance: useGuidance,
+      rank_direction_note: 'Rank and direction are separate model outputs. A high relative rank does not automatically mean the direction signal is positive.'
     },
     funnel_context: {
-      public_position: 'one public signal from the dynamic daily ranking',
-      full_product_hint: 'Dynamic full-product message for the complete ranked list and signal history.'
+      public_position: `rank #${rank} from the dynamic daily ranking`,
+      full_product_hint: 'Dynamic full-product message for every eligible ranked share and signal history.'
     },
     model_state: {
       public_label: modelLabel,
@@ -81,6 +98,7 @@ const longFixture = fixture({
   directionBucket: 'positive_model_signal',
   plainDirection: 'Constructive / upside-pressure signal',
   rank: 8,
+  comparisonCount: 41,
   horizon: 10,
   tradingDate: '2031-11-19',
   close: 123456.789,
@@ -88,7 +106,10 @@ const longFixture = fixture({
   tradedValue: 9876543210,
   volume: 456789012,
   liquidity: 'core_liquid',
-  investorRead: 'Constructive pressure with a deliberately extended investor explanation for responsive layout testing.',
+  directionExplanation: 'The model currently leans constructive over this horizon.',
+  rankExplanation: 'Ranked #8 among 41 eligible domestic EGX shares assessed for this horizon.',
+  horizonExplanation: 'This signal will be evaluated over the next 10 EGX trading sessions. This is not a suggested holding period.',
+  useGuidance: 'Use this long-fixture signal as a starting point for research and monitoring.',
   modelLabel: 'Stable public tracking'
 });
 
@@ -100,6 +121,7 @@ const sparseFixture = fixture({
   directionBucket: 'neutral_model_signal',
   plainDirection: 'Neutral watch',
   rank: 2,
+  comparisonCount: null,
   horizon: 3,
   tradingDate: '2032-02-07',
   close: 7.5,
@@ -107,7 +129,10 @@ const sparseFixture = fixture({
   tradedValue: 2200000,
   volume: 310000,
   liquidity: 'core_liquid',
-  investorRead: 'Neutral watch. This is a public market-intelligence signal to follow, not a trade instruction.',
+  directionExplanation: 'The model currently shows no strong directional lean over this horizon.',
+  rankExplanation: 'Ranked #2 among the eligible domestic EGX shares assessed for this horizon.',
+  horizonExplanation: 'This signal will be evaluated over the next 3 EGX trading sessions. This is not a suggested holding period.',
+  useGuidance: 'Use this sparse-fixture signal as a starting point for research and monitoring.',
   modelLabel: null
 });
 
@@ -126,17 +151,31 @@ for (const value of [
   'A deliberately long Egyptian listed company name for layout testing',
   'Industrial services and diversified operations',
   'Constructive / upside-pressure signal',
+  'The model currently leans constructive over this horizon.',
   '#8',
+  'of 41 eligible shares',
   '10 EGX sessions',
+  'not a suggested holding period',
+  'Rank and direction are separate model outputs.',
+  'Use this long-fixture signal as a starting point for research and monitoring.',
   '19 Nov 2031',
-  'Dynamic full-product message for the complete ranked list and signal history.'
+  'Dynamic full-product message for every eligible ranked share and signal history.'
 ]) {
   assert.ok(longHtml.includes(value), `long fixture should render dynamic value: ${value}`);
 }
 assert.ok(longHtml.includes('symbol-long'), 'long ticker should select the non-truncating long-symbol class');
 assert.equal(longHtml.includes('X1'), false, 'long fixture must not contain values from the sparse fixture');
 
-for (const value of ['X1', 'EGX:X1', 'Neutral watch', '#2', '3 EGX sessions', '07 Feb 2032']) {
+for (const value of [
+  'X1',
+  'EGX:X1',
+  'Neutral watch',
+  'The model currently shows no strong directional lean over this horizon.',
+  '#2',
+  '3 EGX sessions',
+  'Use this sparse-fixture signal as a starting point for research and monitoring.',
+  '07 Feb 2032'
+]) {
   assert.ok(sparseHtml.includes(value), `sparse fixture should render dynamic value: ${value}`);
 }
 assert.equal(sparseHtml.includes('Stable public tracking'), false, 'missing optional model label should remove the badge');
