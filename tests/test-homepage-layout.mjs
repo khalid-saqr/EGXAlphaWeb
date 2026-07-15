@@ -9,6 +9,16 @@ const latest = JSON.parse(fs.readFileSync('_site/data/latest.json', 'utf8'));
 const displaySymbol = latest.asset?.display_symbol || String(latest.asset?.symbol || latest.public_signal?.stock_symbol || '').split(':').pop();
 const rank = latest.public_signal?.rank_within_horizon ?? latest.signal?.rank_within_horizon;
 
+const removedHomepageCopy = [
+  'Rank and direction are separate model outputs.',
+  'EGXRESEARCH.COM',
+  'Research only. No buy, sell or hold instruction.',
+  'Clear model context',
+  'Read each share’s relative rank, direction and horizon together.',
+  'Trackable history',
+  'Review dated signals instead of relying on disappearing tips.'
+];
+
 for (const html of [home, today]) {
   assert.ok(html.includes('One free signal from today’s complete EGX ranking'), 'hero should explain the free-signal product rule');
   assert.ok(html.includes(`See the share EGX /Alpha ranked #${rank} after today’s market close.`), 'hero should state the incoming public rank plainly');
@@ -23,12 +33,16 @@ for (const html of [home, today]) {
   assert.equal(html.includes('class="investor-hero"'), false, 'failed two-card investor hero must be removed');
   assert.equal(html.includes('class="value-pitch-card"'), false, 'failed narrow pitch card must be removed');
   assert.equal(html.includes('class="investor-signal-card"'), false, 'failed nested investor signal card must be removed');
+  for (const removed of removedHomepageCopy) {
+    assert.equal(html.includes(removed), false, `removed homepage copy must stay absent: ${removed}`);
+  }
 }
 
 assert.ok(home.includes(displaySymbol), 'homepage should render the current symbol from the incoming payload');
 assert.ok(home.includes(latest.trading_date), 'homepage should preserve the incoming trading date in machine-readable markup');
 assert.ok(home.includes(latest.public_signal?.plain_direction || latest.public_copy?.investor_read), 'homepage should render the incoming public direction');
 assert.ok(home.includes(latest.funnel_context?.full_product_hint), 'conversion rail should use the incoming funnel message');
+assert.ok(home.includes('Copyright © EGX Research. All rights reserved.'), 'homepage should retain the requested copyright line');
 
 const toolbarStart = home.indexOf('class="share-card-toolbar"');
 const cardStart = home.indexOf('class="signal-share-card');
@@ -38,12 +52,10 @@ const cardHtml = home.slice(cardStart, cardEnd);
 assert.equal(cardHtml.includes('data-share'), false, 'share control must not appear inside the screenshot card');
 assert.equal(cardHtml.includes('data-copy'), false, 'copy control must not appear inside the screenshot card');
 assert.equal(cardHtml.includes('mailto:'), false, 'commercial CTA must not appear inside the screenshot card');
-assert.ok(cardHtml.includes('EGXRESEARCH.COM'), 'screenshot card should carry the branded domain');
 assert.ok(cardHtml.includes('Direction signal'), 'screenshot card should name the directional output clearly');
 assert.ok(cardHtml.includes('Rank in today’s model'), 'screenshot card should explain the relative rank slot');
 assert.ok(cardHtml.includes('Model horizon'), 'screenshot card should explain the dynamic horizon slot');
 assert.ok(cardHtml.includes('not a suggested holding period'), 'screenshot card should distinguish horizon from a holding recommendation');
-assert.ok(cardHtml.includes('Rank and direction are separate model outputs'), 'screenshot card should prevent rank-direction confusion');
 assert.ok(cardHtml.includes('Market context') || !Object.values(latest.market_snapshot || {}).some(value => value !== null), 'market section should render when metrics exist');
 assert.equal(cardHtml.includes('Public position'), false, 'ambiguous public-position label must be removed');
 assert.equal(cardHtml.includes('Evaluation window'), false, 'ambiguous evaluation-window label must be removed');
