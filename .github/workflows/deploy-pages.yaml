@@ -25,6 +25,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Use current main payload for pull-request validation
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags --depth=1 origin main:refs/remotes/origin/main
+          git checkout origin/main -- data/latest.json data/archive
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const payload = JSON.parse(fs.readFileSync('data/latest.json', 'utf8'));
+          const symbol = payload.asset?.symbol || payload.public_signal?.stock_symbol || payload.signal?.stock_symbol;
+          console.log(`Validating PR code with current main payload: ${payload.trading_date} ${symbol}`);
+          NODE
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -36,7 +48,7 @@ jobs:
       - name: Build production artifact
         run: npm run build
 
-      - name: Verify production output
+      - name: Verify production output and payload identity
         run: node tests/test-build-output.mjs
 
       - name: Verify square social-card homepage
