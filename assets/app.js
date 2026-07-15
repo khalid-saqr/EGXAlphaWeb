@@ -8,6 +8,30 @@
   let payload = null;
   try { if (json) payload = JSON.parse(json); } catch (_) { payload = null; }
 
+  const bulbSvg = `<svg class="theme-bulb" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M9 18h6M10 22h4M8.3 14.5A6 6 0 1 1 15.7 14.5c-.95.72-1.35 1.42-1.45 2.5h-4.5c-.1-1.08-.5-1.78-1.45-2.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+
+  function installThemeControls() {
+    if (!document.getElementById('theme-control-style')) {
+      const style = document.createElement('style');
+      style.id = 'theme-control-style';
+      style.textContent = `
+        .theme-icon-button{width:42px!important;min-width:42px!important;height:42px!important;min-height:42px!important;padding:0!important;border-radius:50%!important;font-size:0!important}
+        .theme-icon-button .theme-bulb{width:20px;height:20px;display:block;transition:transform 160ms ease,filter 160ms ease}
+        .theme-icon-button:hover .theme-bulb{transform:rotate(-8deg) scale(1.06)}
+        :root[data-theme="light"] .theme-icon-button{color:#d78b00;background:rgba(255,193,7,.12)}
+        :root[data-theme="light"] .theme-icon-button .theme-bulb{filter:drop-shadow(0 0 5px rgba(255,193,7,.45))}
+      `;
+      document.head.appendChild(style);
+    }
+    document.querySelectorAll('[data-theme-toggle]').forEach(button => {
+      button.classList.add('theme-icon-button');
+      button.innerHTML = bulbSvg;
+      button.setAttribute('aria-label', 'Toggle light and dark theme');
+    });
+  }
+
   function absoluteUrl(pathname) {
     return new URL(pathname || window.location.pathname, window.location.origin).href;
   }
@@ -34,12 +58,10 @@
       button.setAttribute('aria-pressed', resolved === 'light' ? 'true' : 'false');
       button.title = resolved === 'light' ? 'Switch to dark theme' : 'Switch to light theme';
     });
-    document.querySelectorAll('[data-theme-label]').forEach(label => {
-      label.textContent = 'Theme';
-    });
   }
 
   function initTheme() {
+    installThemeControls();
     const saved = localStorage.getItem('egxalpha-theme');
     setTheme(saved || 'dark');
     document.querySelectorAll('[data-theme-toggle]').forEach(button => {

@@ -64,11 +64,13 @@ const sw = fs.readFileSync('_site/sw.js', 'utf8');
 
 assert.ok(daily.includes(symbol) || daily.includes(display), `daily page should include ${symbol}`);
 assert.ok(daily.includes(date), `daily page should include ${date}`);
-assert.ok(daily.includes('Research only. No buy/sell instruction.'));
+assert.ok(daily.includes('Research only. No buy, sell or hold instruction.'));
 assert.ok(daily.includes('Next 5 EGX trading sessions') || daily.includes('Next 5 EGX sessions'));
 assert.ok(daily.includes('mailto:access@egxresearch.com'));
-assert.ok(home.includes('Track one EGX signal after the close.'));
-assert.ok(home.includes('Get early access'));
+assert.ok(home.includes('Turn the EGX close into a ranked market view.'));
+assert.ok(home.includes('Request full ranked access'));
+assert.ok(home.includes('Unlock the broader ranked view'));
+assert.ok(home.includes('theme-bulb'));
 
 for (const required of [
   'Public methodology white paper',
@@ -97,6 +99,7 @@ assert.equal(appJs.includes('/EGXResearch'), false);
 assert.equal(appJs.includes('/EGXAlphaWeb'), false);
 assert.equal(appJs.includes('serviceWorker.register'), false, 'client must not register a service worker');
 assert.ok(appJs.includes('registration.unregister()'), 'client should clean up legacy service workers');
+assert.ok(appJs.includes('theme-icon-button'), 'client should install the compact bulb theme control');
 
 assert.ok(sw.includes("LEGACY_CACHE_PREFIX = 'egxresearch-public-pwa-'"));
 assert.ok(sw.includes('self.registration.unregister()'));

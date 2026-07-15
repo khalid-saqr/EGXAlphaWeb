@@ -1,0 +1,348 @@
+.page-signal .site-shell {
+  --max: 1240px;
+}
+
+.investor-hero,
+.investor-hero * {
+  min-width: 0;
+}
+
+.investor-hero {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.78fr) minmax(0, 1.22fr);
+  gap: clamp(18px, 2.4vw, 30px);
+  align-items: stretch;
+}
+
+.value-pitch-card,
+.investor-signal-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px);
+}
+
+.value-pitch-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(26px, 4vw, 46px);
+  padding: clamp(30px, 4vw, 52px);
+  background:
+    radial-gradient(circle at 0 0, rgba(140,188,255,0.17), transparent 26rem),
+    linear-gradient(155deg, var(--panel-2), var(--panel));
+}
+
+.value-pitch-card h1 {
+  max-width: 10ch;
+  margin-bottom: 20px;
+  font-size: clamp(2.8rem, 5.4vw, 6rem);
+  line-height: 0.92;
+  overflow-wrap: normal;
+}
+
+.value-pitch-card .lede {
+  max-width: 46ch;
+  margin-bottom: 0;
+  font-size: clamp(1.04rem, 1.35vw, 1.24rem);
+  line-height: 1.58;
+}
+
+.value-proof-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.value-proof {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 13px;
+  align-items: start;
+  padding: 15px 16px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: rgba(255,255,255,0.055);
+}
+
+.value-proof-index {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--accent);
+  background: rgba(105,243,202,0.1);
+  border: 1px solid rgba(105,243,202,0.28);
+  font-size: 0.72rem;
+  font-weight: 950;
+}
+
+.value-proof strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.98rem;
+}
+
+.value-proof p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.48;
+}
+
+.value-pitch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.investor-signal-card {
+  padding: clamp(28px, 3.5vw, 46px);
+  border-color: rgba(105,243,202,0.28);
+  background:
+    radial-gradient(circle at 100% 0, rgba(105,243,202,0.16), transparent 25rem),
+    linear-gradient(160deg, rgba(105,243,202,0.12), rgba(140,188,255,0.06) 48%, var(--panel));
+}
+
+.signal-card-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: clamp(24px, 3vw, 34px);
+}
+
+.signal-card-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  align-items: center;
+}
+
+.signal-card-kicker .eyebrow {
+  margin: 0;
+}
+
+.signal-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  align-items: center;
+}
+
+.signal-identity-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(250px, 1.22fr);
+  gap: clamp(22px, 3vw, 38px);
+  align-items: end;
+  padding-bottom: clamp(24px, 3vw, 34px);
+  border-bottom: 1px solid var(--line);
+}
+
+.signal-symbol {
+  display: block;
+  max-width: 100%;
+  margin: 0 0 10px;
+  color: var(--text);
+  font-size: clamp(3.6rem, 8vw, 7.6rem);
+  line-height: 0.86;
+  letter-spacing: -0.095em;
+  font-weight: 950;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.signal-company {
+  margin: 0;
+  color: var(--soft);
+  font-size: clamp(0.96rem, 1.25vw, 1.14rem);
+  font-weight: 760;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.investor-verdict {
+  padding: clamp(20px, 2.4vw, 28px);
+  border: 1px solid var(--line-strong);
+  border-radius: 22px;
+  background: rgba(0,0,0,0.14);
+}
+
+.investor-verdict span,
+.decision-cell span,
+.market-context-title,
+.market-metric span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+.investor-verdict strong {
+  display: block;
+  margin: 8px 0 10px;
+  font-size: clamp(1.65rem, 3vw, 2.8rem);
+  line-height: 1;
+  letter-spacing: -0.055em;
+}
+
+.investor-verdict p {
+  margin: 0;
+  color: var(--soft);
+  font-size: clamp(0.98rem, 1.2vw, 1.1rem);
+  line-height: 1.52;
+  overflow-wrap: anywhere;
+}
+
+.investor-decision-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 11px;
+  margin: clamp(22px, 3vw, 32px) 0;
+}
+
+.decision-cell {
+  padding: 17px 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255,255,255,0.055);
+}
+
+.decision-cell strong {
+  display: block;
+  margin-top: 8px;
+  font-size: clamp(0.98rem, 1.4vw, 1.25rem);
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+
+.decision-cell em {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-style: normal;
+  overflow-wrap: anywhere;
+}
+
+.market-context {
+  padding: clamp(20px, 2.5vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255,255,255,0.04);
+}
+
+.market-context-title {
+  margin-bottom: 14px;
+}
+
+.market-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.market-metric {
+  padding: 15px 16px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.052);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.market-metric strong {
+  display: block;
+  margin-top: 7px;
+  font-size: clamp(1.05rem, 1.7vw, 1.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
+}
+
+.market-metric em {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-style: normal;
+  overflow-wrap: anywhere;
+}
+
+.signal-card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  padding-top: clamp(22px, 3vw, 30px);
+}
+
+.signal-card-footer p {
+  max-width: 44ch;
+  margin: 0;
+}
+
+@media (max-width: 1040px) {
+  .investor-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .value-pitch-card h1 {
+    max-width: 13ch;
+  }
+}
+
+@media (max-width: 760px) {
+  .value-pitch-card,
+  .investor-signal-card {
+    padding: 24px;
+    border-radius: 21px;
+  }
+
+  .signal-identity-grid,
+  .investor-decision-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .signal-card-top,
+  .signal-card-footer {
+    align-items: flex-start;
+  }
+
+  .signal-card-actions {
+    width: 100%;
+  }
+
+  .signal-card-actions .icon-button {
+    flex: 1 1 auto;
+  }
+
+  .signal-symbol {
+    font-size: clamp(3.6rem, 19vw, 6.2rem);
+  }
+}
+
+@media (max-width: 460px) {
+  .value-pitch-card,
+  .investor-signal-card {
+    padding: 20px;
+  }
+
+  .value-pitch-card h1 {
+    font-size: clamp(2.55rem, 14vw, 3.8rem);
+  }
+
+  .signal-card-actions .date-chip {
+    width: 100%;
+    justify-content: center;
+  }
+}
