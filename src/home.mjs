@@ -162,7 +162,7 @@ function payloadParts(payload) {
     published: formatPublished(payload.published_at || publishing.published_at_utc),
     publishedAfter: publishing.published_after || 'After EGX close',
     useGuidance: publicCopy.use_guidance || 'Use this signal as a starting point for research and monitoring. Read the rank, direction and model horizon together; do not treat the card alone as a buy, sell or hold instruction.',
-    rankDirectionNote: publicCopy.rank_direction_note || rankingContext.rank_direction_relationship || 'Rank and direction are separate model outputs.',
+    rankDirectionNote: publicCopy.rank_direction_note || rankingContext.rank_direction_relationship ||,
     fullProductHint: funnel.full_product_hint || 'The complete daily view includes every eligible ranked share, model context, and signal history.'
   };
 }
@@ -274,7 +274,6 @@ function shareCard(payload) {
 
     <footer class="share-card-footer">
       <p>${escapeHtml(parts.rankDirectionNote)}</p>
-      <strong>EGXRESEARCH.COM</strong>
     </footer>
   </article>`;
 }
