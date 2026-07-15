@@ -39,8 +39,11 @@ jobs:
       - name: Verify production output
         run: node tests/test-build-output.mjs
 
-      - name: Verify investor homepage
+      - name: Verify square social-card homepage
         run: node tests/test-homepage-layout.mjs
+
+      - name: Verify changing payload fixtures
+        run: node tests/test-homepage-payload-fixtures.mjs
 
       - name: Verify methodology white paper
         run: node tests/test-methodology-layout.mjs
