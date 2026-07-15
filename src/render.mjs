@@ -1,4 +1,5 @@
-import { escapeHtml, htmlShell, megaFooter, prettyState, rel, signalCard, siteHeader } from './templates.mjs';
+import { escapeHtml, htmlShell, megaFooter, prettyState, rel, siteHeader } from './templates.mjs';
+import { homePage } from './home.mjs';
 import { methodologyPage } from './methodology.mjs';
 
 function signalParts(payload) {
@@ -29,7 +30,7 @@ export function renderSignalPage(payload, canonicalPath = '/today/') {
     canonicalPath,
     payload,
     pageClass: 'page-signal',
-    body: signalCard(payload)
+    body: homePage(payload, { canonicalPath })
   });
 }
 
