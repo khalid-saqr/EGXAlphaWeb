@@ -34,7 +34,7 @@ const sw = fs.readFileSync('_site/sw.js', 'utf8');
 
 assert.ok(index.includes('<style>'));
 assert.ok(index.includes('src="/assets/app.js"'));
-assert.ok(index.includes('"basePath":""'));
+assert.ok(index.includes('"basePath":"/"'));
 assert.ok(index.includes('https://egxresearch.com/'));
 assert.ok(index.includes('Track one EGX signal after the close.'));
 assert.ok(index.includes('Get early access'));
