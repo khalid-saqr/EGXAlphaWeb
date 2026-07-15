@@ -1,7 +1,10 @@
-name: Deploy EGXResearch Public PWA
+name: Deploy EGXResearch Public Site
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
   workflow_dispatch:
@@ -12,7 +15,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -27,24 +30,21 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Test
+      - name: Test and build production artifact
         run: npm test
 
-      - name: Build
-        run: npm run build
-
-      - name: Verify Pages artifact
-        run: npm run verify:pages
-
       - name: Configure Pages
+        if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
 
   deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
