@@ -1,68 +1,55 @@
-# Private EGXResearch → Public EGXResearch handoff template
+# Private EGXResearch → public EGXAlphaWeb handoff
 
-This document describes the intended private-repo workflow. Do not put private tokens or secrets in the public PWA repo.
+This repository never reads the private repository directly. The private workflow transforms the latest free-funnel Beacon payload into the bounded public-wire schema, then commits only public JSON.
 
-## Goal
-
-The private EGXResearch repo should read:
+## Source in the private repository
 
 ```text
 memory/beacon/latest_free_funnel.json
 ```
 
-Then produce a small public wire payload and commit only:
+## Destination repository
+
+```text
+khalid-saqr/EGXAlphaWeb
+```
+
+## Files permitted to cross the boundary
 
 ```text
 data/latest.json
 data/archive/YYYY-MM-DD.json
 ```
 
-to the public repo:
+No other path should be staged or pushed.
+
+## Private repository secret
 
 ```text
-<owner>/EGXResearch
+EGX_ALPHA_WEB_PUSH_TOKEN
 ```
 
-## Required private repo secret
+Keep the token only in the private `EGXResearch` repository. It needs the minimum permission required to push the two public JSON paths to `EGXAlphaWeb`.
+
+## Implemented flow
 
 ```text
-PUBLIC_REPO_TOKEN
+EGX Alpha Beacon Payload succeeds on main
+  → checkout private EGXResearch
+  → checkout public EGXAlphaWeb using EGX_ALPHA_WEB_PUSH_TOKEN
+  → run scripts/export_public_wire.py
+  → validate egx_alpha_public_wire_v1 and forbidden-key rules
+  → write data/latest.json
+  → write data/archive/YYYY-MM-DD.json
+  → commit and push only those files
+  → EGXAlphaWeb validates, builds and deploys itself
 ```
 
-The token should have permission to commit to the public repo. Keep it only in the private repo secrets.
+The private implementation is `.github/workflows/egxalpha_publish_public_wire.yml` and `scripts/export_public_wire.py` in `EGXResearch`.
 
-## Private workflow logic
+## Anti-leak boundary
 
-Pseudo-flow:
-
-```text
-1. Run after EGX/Alpha Beacon payload generation.
-2. Read memory/beacon/latest_free_funnel.json.
-3. Extract only public-safe fields.
-4. Build egx_alpha_public_wire_v1.
-5. Validate no forbidden keys exist.
-6. Commit public JSON into the public repo.
-7. Let the public repo deploy itself through GitHub Pages.
-```
-
-## Mapping from free_funnel to public wire
-
-```text
-free_funnel.trading_date -> trading_date
-free_funnel.created_at -> published_at
-free_funnel.free_teaser.stock_symbol -> signal.stock_symbol
-free_funnel.free_teaser.rank_within_horizon -> signal.rank_within_horizon
-free_funnel.free_teaser.horizon -> signal.horizon
-free_funnel.free_teaser.direction_bucket -> signal.direction_bucket
-free_funnel.free_teaser.source_freshness_status -> signal.source_freshness_status
-free_funnel.model_context.trust_state -> context.trust_state
-free_funnel.model_context.source_quality_status -> context.source_quality_status
-free_funnel.model_context.prediction_status -> context.prediction_status
-```
-
-## Anti-leak rule
-
-Never commit these into the public repo:
+Never commit any of these private areas into `EGXAlphaWeb`:
 
 ```text
 memory/beacon/paid_subscriber
@@ -73,13 +60,4 @@ memory/observation
 models
 ```
 
-## Minimal git operation
-
-The private workflow should update only:
-
-```text
-data/latest.json
-data/archive/YYYY-MM-DD.json
-```
-
-The public repo deployment workflow will validate and build the website on push.
+The public repository validator independently rejects private keys before building the site.

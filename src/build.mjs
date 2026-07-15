@@ -1,8 +1,19 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { loadAndValidate } from './validate.mjs';
-import { SITE } from './templates.mjs';
-import { renderArchivePage, renderMethodologyPage, renderSearchPage, renderSignalPage } from './render.mjs';
+
+// Production is served from the custom-domain root. Explicit environment
+// variables remain available for deliberate preview builds.
+process.env.EGX_BASE_PATH ??= '/';
+process.env.EGX_SITE_URL ??= 'https://egxresearch.com';
+
+const { loadAndValidate } = await import('./validate.mjs');
+const { SITE } = await import('./templates.mjs');
+const {
+  renderArchivePage,
+  renderMethodologyPage,
+  renderSearchPage,
+  renderSignalPage
+} = await import('./render.mjs');
 
 const ROOT = process.cwd();
 const OUT = path.join(ROOT, '_site');
@@ -13,64 +24,23 @@ function write(p, content) { ensureDir(path.dirname(p)); fs.writeFileSync(p, con
 function copy(src, dest) { ensureDir(path.dirname(dest)); fs.copyFileSync(src, dest); }
 function rmrf(p) { if (fs.existsSync(p)) fs.rmSync(p, { recursive: true, force: true }); }
 
-function basePath() {
-  const base = String(SITE.basePath || '').replace(/\/$/, '');
-  return base || '';
-}
+function renderLegacyServiceWorkerCleanup() {
+  return `const LEGACY_CACHE_PREFIX = 'egxresearch-public-pwa-';
 
-function renderManifest() {
-  const base = basePath() || '/';
-  const scoped = base.endsWith('/') ? base : `${base}/`;
-  return JSON.stringify({
-    name: 'EGXResearch — EGX /Alpha signal',
-    short_name: 'EGX /Alpha',
-    description: 'Daily public EGX /Alpha signal from EGXResearch.',
-    start_url: scoped,
-    scope: scoped,
-    display: 'standalone',
-    background_color: '#07101d',
-    theme_color: '#09111f',
-    orientation: 'portrait-primary',
-    categories: ['finance', 'news', 'productivity'],
-    lang: 'en'
-  }, null, 2) + '\n';
-}
-
-function renderServiceWorker() {
-  const base = basePath();
-  const cacheSuffix = base.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'root';
-  return `const CACHE = 'egxresearch-public-pwa-v2-${cacheSuffix}';
-const BASE = ${JSON.stringify(base)};
-const url = path => BASE + path;
-const ASSETS = [
-  url('/'),
-  url('/today/'),
-  url('/archive/'),
-  url('/search/'),
-  url('/assets/app.css'),
-  url('/assets/app.js'),
-  url('/data/latest.json'),
-  url('/data/index.json'),
-  url('/manifest.webmanifest')
-];
-
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
+self.addEventListener('install', () => {
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim()));
-});
-
-self.addEventListener('fetch', event => {
-  const req = event.request;
-  if (req.method !== 'GET') return;
-  event.respondWith(
-    caches.match(req).then(cached => cached || fetch(req).then(res => {
-      const copy = res.clone();
-      caches.open(CACHE).then(cache => cache.put(req, copy));
-      return res;
-    }).catch(() => caches.match(url('/'))))
+  event.waitUntil(
+    Promise.all([
+      caches.keys().then(keys => Promise.all(
+        keys
+          .filter(key => key.startsWith(LEGACY_CACHE_PREFIX))
+          .map(key => caches.delete(key))
+      )),
+      self.registration.unregister()
+    ]).then(() => self.clients.claim())
   );
 });
 `;
@@ -94,7 +64,7 @@ function indexItem(payload) {
     symbol,
     display_symbol: display,
     company_name: asset.company_name || null,
-    sector: asset.sector || market.market_structure_sector || null,
+    sector: asset.sector || null,
     horizon: signal.horizon || legacy.horizon,
     horizon_label: signal.horizon_label || null,
     rank_label: signal.rank_label || legacy.rank_label,
@@ -109,6 +79,7 @@ function indexItem(payload) {
 function main() {
   rmrf(OUT);
   ensureDir(OUT);
+
   const latest = loadAndValidate(path.join(DATA_DIR, 'latest.json'));
   const items = [];
 
@@ -121,6 +92,7 @@ function main() {
   }
 
   items.sort((a, b) => b.date.localeCompare(a.date));
+
   write(path.join(OUT, 'index.html'), renderSignalPage(latest, '/'));
   write(path.join(OUT, 'today', 'index.html'), renderSignalPage(latest, '/today/'));
   write(path.join(OUT, 'archive', 'index.html'), renderArchivePage(items));
@@ -130,10 +102,10 @@ function main() {
   write(path.join(OUT, 'data', 'index.json'), JSON.stringify(items, null, 2) + '\n');
 
   copy(path.join(ROOT, 'assets', 'app.js'), path.join(OUT, 'assets', 'app.js'));
-  write(path.join(OUT, 'manifest.webmanifest'), renderManifest());
-  write(path.join(OUT, 'sw.js'), renderServiceWorker());
+  write(path.join(OUT, 'sw.js'), renderLegacyServiceWorkerCleanup());
   write(path.join(OUT, '.nojekyll'), '');
-  console.log(`Built EGXResearch public site with ${items.length} archived signal(s).`);
+
+  console.log(`Built EGXResearch public site with ${items.length} archived signal(s) for ${SITE.siteUrl || 'the configured host'}.`);
 }
 
 main();

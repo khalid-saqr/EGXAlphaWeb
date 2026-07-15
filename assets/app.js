@@ -1,8 +1,8 @@
 (function () {
   const configText = document.getElementById('site-config')?.textContent?.trim();
-  let siteConfig = { basePath: '/EGXResearch' };
+  let siteConfig = { basePath: '' };
   try { if (configText) siteConfig = JSON.parse(configText); } catch (_) {}
-  const basePath = String(siteConfig.basePath || '/EGXResearch').replace(/\/$/, '');
+  const basePath = String(siteConfig.basePath ?? '').replace(/\/$/, '');
 
   const json = document.getElementById('beacon-payload')?.textContent?.trim();
   let payload = null;
@@ -99,6 +99,7 @@
     let rows = [];
     try {
       const res = await fetch(`${basePath}/data/index.json`, { cache: 'no-cache' });
+      if (!res.ok) throw new Error(`Search index returned ${res.status}`);
       rows = await res.json();
     } catch (_) {
       output.innerHTML = '<p class="small-note">Search index is unavailable.</p>';
