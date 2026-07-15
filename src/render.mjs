@@ -1,4 +1,5 @@
-import { escapeHtml, htmlShell, megaFooter, methodologyPage, prettyState, rel, signalCard, siteHeader } from './templates.mjs';
+import { escapeHtml, htmlShell, megaFooter, prettyState, rel, signalCard, siteHeader } from './templates.mjs';
+import { methodologyPage } from './methodology.mjs';
 
 function signalParts(payload) {
   const signal = payload.public_signal || payload.signal || {};
@@ -79,7 +80,7 @@ export function renderSearchPage() {
 export function renderMethodologyPage() {
   return htmlShell({
     title: 'EGX /Alpha methodology — EGXResearch',
-    description: 'Public-facing methodology white paper for the EGXResearch signal publication layer.',
+    description: 'Public technical white paper describing the ranking-first deep-learning methodology, validation discipline and publication boundary of EGX /Alpha.',
     canonicalPath: '/methodology/',
     pageClass: 'page-methodology',
     body: methodologyPage()
