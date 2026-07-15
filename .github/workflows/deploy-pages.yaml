@@ -39,6 +39,13 @@ jobs:
       - name: Verify production output
         run: node tests/test-build-output.mjs
 
+      - name: Capture failed site artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: homepage-debug-site
+          path: _site
+
       - name: Verify investor homepage
         run: node tests/test-homepage-layout.mjs
 
