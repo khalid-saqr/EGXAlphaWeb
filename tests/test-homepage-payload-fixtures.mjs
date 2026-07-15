@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { homePage } from '../src/home.mjs';
 
-function payload(symbol, name, rank, date, change) {
+function payload({ symbol, name, rank, date, change, direction }) {
   return {
     schema_version: 'egx_alpha_public_wire_v1',
     audience: 'public',
@@ -20,8 +20,8 @@ function payload(symbol, name, rank, date, change) {
     },
     public_signal: {
       stock_symbol: `EGX:${symbol}`,
-      direction_bucket: 'neutral_model_signal',
-      plain_direction: 'Neutral watch',
+      direction_bucket: direction,
+      plain_direction: 'VERBOSE_DIRECTION_LABEL',
       rank_within_horizon: rank,
       horizon: '5',
       horizon_label: '5-session horizon'
@@ -37,13 +37,13 @@ function payload(symbol, name, rank, date, change) {
       volume: 310000
     },
     public_copy: {
-      direction_explanation: 'Neutral model reading for the fixture.',
-      rank_explanation: `Ranked #${rank} in the fixture comparison set.`,
-      use_guidance: 'Use the fixture as a research starting point.',
+      direction_explanation: 'VERBOSE_DIRECTION_EXPLANATION',
+      rank_explanation: `VERBOSE_RANK_EXPLANATION_${rank}`,
+      use_guidance: 'VERBOSE_USE_GUIDANCE',
       rank_direction_note: 'SUPPRESSED_NOTE'
     },
     funnel_context: {
-      full_product_hint: 'Fixture full-product message.'
+      full_product_hint: 'VERBOSE_FULL_PRODUCT_MESSAGE'
     },
     model_state: {},
     publishing_context: {
@@ -52,22 +52,54 @@ function payload(symbol, name, rank, date, change) {
   };
 }
 
-const longHtml = homePage(payload('ULTRALONG12', 'A deliberately long listed company name', 8, '2031-11-19', 12.34));
-const sparseHtml = homePage(payload('X1', null, 2, '2032-02-07', null));
+const positiveHtml = homePage(payload({ symbol: 'ULTRALONG12', name: 'A deliberately long listed company name', rank: 8, date: '2031-11-19', change: 12.34, direction: 'positive_model_signal' }));
+const neutralHtml = homePage(payload({ symbol: 'X1', name: null, rank: 2, date: '2032-02-07', change: null, direction: 'neutral_model_signal' }));
+const cautionHtml = homePage(payload({ symbol: 'RISK', name: 'Risk Test Company', rank: 3, date: '2032-03-01', change: -2.4, direction: 'negative_model_signal' }));
 
-for (const expected of ['ULTRALONG12', 'A deliberately long listed company name', '#8', '19 Nov 2031']) {
-  assert.ok(longHtml.includes(expected), `long fixture should render ${expected}`);
-}
-for (const expected of ['X1', 'EGX:X1', '#2', '07 Feb 2032', 'Traded value']) {
-  assert.ok(sparseHtml.includes(expected), `sparse fixture should render ${expected}`);
+for (const expected of [
+  'ULTRALONG12',
+  'A deliberately long listed company name',
+  '#8',
+  'out of 41 stocks',
+  'Positive signal',
+  'The model leans positive for this period.',
+  '19 Nov 2031'
+]) {
+  assert.ok(positiveHtml.includes(expected), `positive fixture should render ${expected}`);
 }
 
-assert.ok(longHtml.includes('symbol-long'));
-assert.equal(longHtml.includes('X1'), false);
-assert.equal(sparseHtml.includes('null'), false);
-assert.equal(sparseHtml.includes('undefined'), false);
-assert.equal(longHtml.includes('SUPPRESSED_NOTE'), false);
-assert.equal(sparseHtml.includes('SUPPRESSED_NOTE'), false);
+for (const expected of [
+  'X1',
+  'EGX:X1',
+  '#2',
+  'No clear signal',
+  'The model sees no clear direction for this period.',
+  '07 Feb 2032',
+  'Traded value'
+]) {
+  assert.ok(neutralHtml.includes(expected), `neutral fixture should render ${expected}`);
+}
+
+for (const expected of ['RISK', 'Caution signal', 'The model leans negative for this period.']) {
+  assert.ok(cautionHtml.includes(expected), `caution fixture should render ${expected}`);
+}
+
+assert.ok(positiveHtml.includes('symbol-long'));
+assert.equal(positiveHtml.includes('X1'), false);
+assert.equal(neutralHtml.includes('null'), false);
+assert.equal(neutralHtml.includes('undefined'), false);
+
+for (const suppressed of [
+  'SUPPRESSED_NOTE',
+  'VERBOSE_DIRECTION_LABEL',
+  'VERBOSE_DIRECTION_EXPLANATION',
+  'VERBOSE_RANK_EXPLANATION',
+  'VERBOSE_USE_GUIDANCE',
+  'VERBOSE_FULL_PRODUCT_MESSAGE'
+]) {
+  assert.equal(positiveHtml.includes(suppressed), false, `renderer should suppress payload jargon: ${suppressed}`);
+  assert.equal(neutralHtml.includes(suppressed), false, `renderer should suppress payload jargon: ${suppressed}`);
+}
 
 const source = fs.readFileSync('src/home.mjs', 'utf8');
 for (const forbidden of ['ULTRALONG12', 'EGX:X1', 'PHDC', 'Palm Hills']) {
