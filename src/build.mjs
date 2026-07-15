@@ -3,7 +3,7 @@ import path from 'node:path';
 
 // Production is served from the custom-domain root. Explicit environment
 // variables remain available for deliberate preview builds.
-process.env.EGX_BASE_PATH ??= '';
+process.env.EGX_BASE_PATH ??= '/';
 process.env.EGX_SITE_URL ??= 'https://egxresearch.com';
 
 const { loadAndValidate } = await import('./validate.mjs');
