@@ -17,6 +17,7 @@ function walk(dir) {
   }
   return files;
 }
+
 for (const file of scanDirs.flatMap(walk)) {
   const text = fs.readFileSync(file, 'utf8');
   for (const key of FORBIDDEN_KEYS) {
@@ -26,7 +27,7 @@ for (const file of scanDirs.flatMap(walk)) {
 
 for (const file of walk('_site').filter(p => p.endsWith('.html'))) {
   const text = fs.readFileSync(file, 'utf8');
-  for (const rejected of ['Fresh data', 'Model read', 'Signal read', 'Investor read', 'Daily ranking layer', 'Share today’s card']) {
+  for (const rejected of ['Fresh data', 'Model read', 'Signal read', 'Investor read', 'Daily ranking layer', 'Screenshot-ready public card']) {
     assert.equal(text.includes(rejected), false, `${rejected} leaked into ${file}`);
   }
 }
