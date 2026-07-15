@@ -334,7 +334,7 @@ export function homePage(payload, { canonicalPath = '/today/', recentItems = [] 
           <div><button class="icon-button" type="button" data-share aria-label="Share this public signal">Share</button><button class="icon-button" type="button" data-copy aria-label="Copy this public signal link">Copy link</button></div>
         </div>
         ${shareCard(payload)}
-        <p class="small-note share-boundary">Research only. No buy, sell or hold instruction.</p>
+        <p class="small-note share-boundary">Copyright © EGX Research. All rights reserved.</p>
         <p class="small-note" data-copy-status aria-live="polite"></p>
       </div>
       ${conversionRail(payload)}
