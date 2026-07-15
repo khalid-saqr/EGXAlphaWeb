@@ -30,8 +30,29 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Test and build production artifact
-        run: npm test
+      - name: Validate public wire
+        run: node tests/test-public-wire.mjs
+
+      - name: Build production artifact
+        run: npm run build
+
+      - name: Verify production output
+        run: node tests/test-build-output.mjs
+
+      - name: Verify investor homepage
+        run: node tests/test-homepage-layout.mjs
+
+      - name: Verify methodology white paper
+        run: node tests/test-methodology-layout.mjs
+
+      - name: Verify Pages artifact
+        run: npm run verify:pages
+
+      - name: Verify public boundary
+        run: node tests/test-no-leakage.mjs
+
+      - name: Verify text-only repository
+        run: node tests/test-no-binaries.mjs
 
       - name: Configure Pages
         if: github.event_name != 'pull_request'
