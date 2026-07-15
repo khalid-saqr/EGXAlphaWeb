@@ -8,7 +8,7 @@
     "validate": "node src/validate.mjs data/latest.json",
     "build": "node src/build.mjs",
     "verify:pages": "node tests/verify-pages-artifact.mjs",
-    "test": "node tests/test-public-wire.mjs && npm run build && node tests/test-build-output.mjs && node tests/test-methodology-layout.mjs && npm run verify:pages && node tests/test-no-leakage.mjs && node tests/test-no-binaries.mjs"
+    "test": "node tests/test-public-wire.mjs && npm run build && node tests/test-build-output.mjs && node tests/test-homepage-layout.mjs && node tests/test-methodology-layout.mjs && npm run verify:pages && node tests/test-no-leakage.mjs && node tests/test-no-binaries.mjs"
   },
   "engines": {
     "node": ">=20"
