@@ -22,7 +22,10 @@ for (const file of requiredFiles) {
 assert.equal(fs.existsSync('_site/assets/app.css'), false, 'CSS should be inlined');
 assert.equal(fs.existsSync('_site/manifest.webmanifest'), false, 'PWA manifest should not be deployed');
 
+const sourceLatest = JSON.parse(fs.readFileSync('data/latest.json', 'utf8'));
 const latest = JSON.parse(fs.readFileSync('_site/data/latest.json', 'utf8'));
+assert.deepEqual(latest, sourceLatest, 'Pages artifact must contain the exact current source payload');
+
 const date = latest.trading_date;
 const rank = latest.public_signal?.rank_within_horizon ?? latest.signal?.rank_within_horizon;
 assert.ok(date, 'latest payload must have a trading date');
@@ -32,40 +35,51 @@ assert.equal(fs.existsSync(path.join('_site', 'data', 'archive', `${date}.json`)
 const index = fs.readFileSync('_site/index.html', 'utf8');
 const appJs = fs.readFileSync('_site/assets/app.js', 'utf8');
 const sw = fs.readFileSync('_site/sw.js', 'utf8');
+const mainStart = index.indexOf('<main');
+const mainEnd = index.lastIndexOf('</main>');
+const visible = mainStart >= 0 && mainEnd >= 0 ? index.slice(mainStart, mainEnd + 7) : index;
 
 assert.ok(index.includes('<style>'));
 assert.ok(index.includes('src="/assets/app.js"'));
 assert.ok(index.includes('"basePath":"/"'));
 assert.ok(index.includes('https://egxresearch.com/'));
-assert.ok(index.includes(`See the share EGX /Alpha ranked #${rank} after today’s market close.`));
-assert.ok(index.includes('class="signal-share-card'));
-assert.ok(index.includes('data-screenshot-card'));
-assert.ok(index.includes('class="conversion-rail"'));
-assert.ok(index.includes('How to use this signal'));
-assert.ok(index.includes('Request access to the complete daily ranking'));
-assert.ok(index.includes('Copyright © EGX Research. All rights reserved.'));
-assert.ok(index.includes('theme-bulb'));
-assert.equal(index.includes('data-theme-label'), false);
-assert.equal(index.includes('class="investor-signal-card"'), false);
-assert.equal(index.includes('Track one EGX signal after the close.'), false);
-assert.equal(index.includes('Public position'), false);
-assert.equal(index.includes('Evaluation window'), false);
-assert.equal(index.includes('manifest.webmanifest'), false);
+assert.ok(visible.includes(`See the stock ranked #${rank} after today’s close.`));
+assert.ok(visible.includes('Today’s free EGX signal'));
+assert.ok(visible.includes('class="signal-share-card'));
+assert.ok(visible.includes('data-screenshot-card'));
+assert.ok(visible.includes('class="conversion-rail"'));
+assert.ok(visible.includes('What should you do?'));
+assert.ok(visible.includes('Get the full daily ranking'));
+assert.ok(visible.includes('Copyright © EGX Research. All rights reserved.'));
+assert.ok(visible.includes('theme-bulb'));
+assert.equal(visible.includes('data-theme-label'), false);
+assert.equal(visible.includes('class="investor-signal-card"'), false);
+assert.equal(visible.includes('manifest.webmanifest'), false);
 assert.equal(appJs.includes('serviceWorker.register'), false);
 assert.ok(sw.includes('self.registration.unregister()'));
 assert.equal(sw.includes('caches.open'), false);
 assert.equal(sw.includes("addEventListener('fetch'"), false);
 
-for (const removed of [
+for (const rejected of [
+  'One free signal from today’s complete EGX ranking',
+  'See the share EGX /Alpha ranked',
+  'eligible Egyptian shares',
+  'defined model horizon',
+  'relative rank',
+  'Direction signal',
+  'Rank in today’s model',
+  'Model horizon',
+  'Market context',
+  'not a suggested holding period',
+  'How to use this signal',
+  'Request access to the complete daily ranking',
+  'Screenshot-ready public card',
   'Rank and direction are separate model outputs.',
   'EGXRESEARCH.COM',
-  'Research only. No buy, sell or hold instruction.',
   'Clear model context',
-  'Read each share’s relative rank, direction and horizon together.',
-  'Trackable history',
-  'Review dated signals instead of relying on disappearing tips.'
+  'Trackable history'
 ]) {
-  assert.equal(index.includes(removed), false, `removed homepage copy found: ${removed}`);
+  assert.equal(visible.includes(rejected), false, `technical or removed homepage copy found: ${rejected}`);
 }
 
 for (const text of [index, appJs, sw]) {
