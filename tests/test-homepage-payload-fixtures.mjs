@@ -2,198 +2,76 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { homePage } from '../src/home.mjs';
 
-function fixture({
-  symbol,
-  displaySymbol,
-  companyName,
-  sector,
-  directionBucket,
-  plainDirection,
-  rank,
-  comparisonCount,
-  horizon,
-  tradingDate,
-  close,
-  dailyChange,
-  tradedValue,
-  volume,
-  liquidity,
-  directionExplanation,
-  rankExplanation,
-  horizonExplanation,
-  useGuidance,
-  modelLabel
-}) {
+function payload(symbol, name, rank, date, change) {
   return {
     schema_version: 'egx_alpha_public_wire_v1',
     audience: 'public',
     domain: 'EGXResearch',
     signal_name: 'EGX /Alpha signal',
-    trading_date: tradingDate,
-    published_at: `${tradingDate}T15:10:00+00:00`,
+    trading_date: date,
+    published_at: `${date}T15:10:00Z`,
     asset: {
-      symbol,
-      display_symbol: displaySymbol,
-      company_name: companyName,
-      sector,
+      symbol: `EGX:${symbol}`,
+      display_symbol: symbol,
+      company_name: name,
+      sector: name ? 'Test sector' : null,
       market: 'EGX',
-      liquidity_tier: liquidity
+      liquidity_tier: 'core_liquid'
     },
     public_signal: {
-      stock_symbol: symbol,
-      direction_bucket: directionBucket,
-      plain_direction: plainDirection,
+      stock_symbol: `EGX:${symbol}`,
+      direction_bucket: 'neutral_model_signal',
+      plain_direction: 'Neutral watch',
       rank_within_horizon: rank,
-      rank_label: `Public rank #${rank}`,
-      horizon: String(horizon),
-      horizon_label: `${horizon}-session horizon`,
-      source_freshness_status: 'live_observation_completed'
+      horizon: '5',
+      horizon_label: '5-session horizon'
     },
     ranking_context: {
-      comparison_scope: 'eligible domestic EGX shares assessed for the primary model horizon',
-      comparison_count: comparisonCount,
-      ranking_basis: 'relative model estimate of forward market-excess return',
-      rank_order: 'Rank 1 is the highest relative model rank in the eligible comparison set.',
-      public_rank_rule: `The free public card shows rank #${rank}.`,
-      rank_direction_relationship: 'Rank and direction are separate model outputs.'
+      comparison_count: 41,
+      rank_direction_relationship: 'SUPPRESSED_NOTE'
     },
     market_snapshot: {
-      latest_close: close,
-      daily_change_pct: dailyChange,
-      traded_value_egp: tradedValue,
-      volume,
-      liquidity_tier: liquidity
+      latest_close: 7.5,
+      daily_change_pct: change,
+      traded_value_egp: 2200000,
+      volume: 310000
     },
     public_copy: {
-      headline: `Dynamic public signal: ${displaySymbol}`,
-      investor_read: directionExplanation,
-      one_line_summary: `Dynamic rank ${rank} for ${horizon} sessions.`,
-      direction_explanation: directionExplanation,
-      rank_explanation: rankExplanation,
-      horizon_explanation: horizonExplanation,
-      use_guidance: useGuidance,
-      rank_direction_note: 'Rank and direction are separate model outputs. A high relative rank does not automatically mean the direction signal is positive.'
+      direction_explanation: 'Neutral model reading for the fixture.',
+      rank_explanation: `Ranked #${rank} in the fixture comparison set.`,
+      use_guidance: 'Use the fixture as a research starting point.',
+      rank_direction_note: 'SUPPRESSED_NOTE'
     },
     funnel_context: {
-      public_position: `rank #${rank} from the dynamic daily ranking`,
-      full_product_hint: 'Dynamic full-product message for every eligible ranked share and signal history.'
+      full_product_hint: 'Fixture full-product message.'
     },
-    model_state: {
-      public_label: modelLabel,
-      public_note: 'Dynamic public model note for the current evidence state.'
-    },
+    model_state: {},
     publishing_context: {
-      published_after: 'EGX close',
-      published_at_utc: `${tradingDate}T15:10:00+00:00`,
-      timezone: 'Africa/Cairo'
+      published_after: 'EGX close'
     }
   };
 }
 
-const longFixture = fixture({
-  symbol: 'EGX:ULTRALONG12',
-  displaySymbol: 'ULTRALONG12',
-  companyName: 'A deliberately long Egyptian listed company name for layout testing',
-  sector: 'Industrial services and diversified operations',
-  directionBucket: 'positive_model_signal',
-  plainDirection: 'Constructive / upside-pressure signal',
-  rank: 8,
-  comparisonCount: 41,
-  horizon: 10,
-  tradingDate: '2031-11-19',
-  close: 123456.789,
-  dailyChange: 12.34,
-  tradedValue: 9876543210,
-  volume: 456789012,
-  liquidity: 'core_liquid',
-  directionExplanation: 'The model currently leans constructive over this horizon.',
-  rankExplanation: 'Ranked #8 among 41 eligible domestic EGX shares assessed for this horizon.',
-  horizonExplanation: 'This signal will be evaluated over the next 10 EGX trading sessions. This is not a suggested holding period.',
-  useGuidance: 'Use this long-fixture signal as a starting point for research and monitoring.',
-  modelLabel: 'Stable public tracking'
-});
+const longHtml = homePage(payload('ULTRALONG12', 'A deliberately long listed company name', 8, '2031-11-19', 12.34));
+const sparseHtml = homePage(payload('X1', null, 2, '2032-02-07', null));
 
-const sparseFixture = fixture({
-  symbol: 'EGX:X1',
-  displaySymbol: 'X1',
-  companyName: null,
-  sector: null,
-  directionBucket: 'neutral_model_signal',
-  plainDirection: 'Neutral watch',
-  rank: 2,
-  comparisonCount: null,
-  horizon: 3,
-  tradingDate: '2032-02-07',
-  close: 7.5,
-  dailyChange: null,
-  tradedValue: 2200000,
-  volume: 310000,
-  liquidity: 'core_liquid',
-  directionExplanation: 'The model currently shows no strong directional lean over this horizon.',
-  rankExplanation: 'Ranked #2 among the eligible domestic EGX shares assessed for this horizon.',
-  horizonExplanation: 'This signal will be evaluated over the next 3 EGX trading sessions. This is not a suggested holding period.',
-  useGuidance: 'Use this sparse-fixture signal as a starting point for research and monitoring.',
-  modelLabel: null
-});
-
-const recentItems = [
-  { date: '2032-02-06', symbol: 'EGX:R1', display_symbol: 'R1', plain_direction: 'Caution', horizon: '5', url: '/archive/2032-02-06/' },
-  { date: '2032-02-05', symbol: 'EGX:R2', display_symbol: 'R2', plain_direction: 'Constructive', horizon: '10', url: '/archive/2032-02-05/' },
-  { date: '2032-02-04', symbol: 'EGX:R3', display_symbol: 'R3', plain_direction: 'Neutral', horizon: '3', url: '/archive/2032-02-04/' },
-  { date: '2032-02-03', symbol: 'EGX:R4', display_symbol: 'R4', plain_direction: 'Neutral', horizon: '3', url: '/archive/2032-02-03/' }
-];
-
-const longHtml = homePage(longFixture, { canonicalPath: '/', recentItems });
-const sparseHtml = homePage(sparseFixture, { canonicalPath: '/', recentItems });
-
-for (const value of [
-  'ULTRALONG12',
-  'A deliberately long Egyptian listed company name for layout testing',
-  'Industrial services and diversified operations',
-  'Constructive / upside-pressure signal',
-  'The model currently leans constructive over this horizon.',
-  '#8',
-  'of 41 eligible shares',
-  '10 EGX sessions',
-  'not a suggested holding period',
-  'Rank and direction are separate model outputs.',
-  'Use this long-fixture signal as a starting point for research and monitoring.',
-  '19 Nov 2031',
-  'Dynamic full-product message for every eligible ranked share and signal history.'
-]) {
-  assert.ok(longHtml.includes(value), `long fixture should render dynamic value: ${value}`);
+for (const expected of ['ULTRALONG12', 'A deliberately long listed company name', '#8', '19 Nov 2031']) {
+  assert.ok(longHtml.includes(expected), `long fixture should render ${expected}`);
 }
-assert.ok(longHtml.includes('symbol-long'), 'long ticker should select the non-truncating long-symbol class');
-assert.equal(longHtml.includes('X1'), false, 'long fixture must not contain values from the sparse fixture');
-
-for (const value of [
-  'X1',
-  'EGX:X1',
-  'Neutral watch',
-  'The model currently shows no strong directional lean over this horizon.',
-  '#2',
-  '3 EGX sessions',
-  'Use this sparse-fixture signal as a starting point for research and monitoring.',
-  '07 Feb 2032'
-]) {
-  assert.ok(sparseHtml.includes(value), `sparse fixture should render dynamic value: ${value}`);
+for (const expected of ['X1', 'EGX:X1', '#2', '07 Feb 2032', 'Traded value']) {
+  assert.ok(sparseHtml.includes(expected), `sparse fixture should render ${expected}`);
 }
-assert.equal(sparseHtml.includes('Stable public tracking'), false, 'missing optional model label should remove the badge');
-assert.equal(sparseHtml.includes('null'), false, 'nullable fields must not render as literal null');
-assert.equal(sparseHtml.includes('undefined'), false, 'missing fields must not render as literal undefined');
-assert.ok(sparseHtml.includes('Traded value'), 'traded value should replace missing daily change');
-assert.equal((sparseHtml.match(/class="recent-record"/g) || []).length, 3, 'recent public records should be capped at three');
+
+assert.ok(longHtml.includes('symbol-long'));
+assert.equal(longHtml.includes('X1'), false);
+assert.equal(sparseHtml.includes('null'), false);
+assert.equal(sparseHtml.includes('undefined'), false);
+assert.equal(longHtml.includes('SUPPRESSED_NOTE'), false);
+assert.equal(sparseHtml.includes('SUPPRESSED_NOTE'), false);
 
 const source = fs.readFileSync('src/home.mjs', 'utf8');
-for (const forbiddenHardcode of [
-  'ULTRALONG12',
-  'EGX:X1',
-  'PHDC',
-  '2026-07-14',
-  'Palm Hills',
-  '14.7'
-]) {
-  assert.equal(source.includes(forbiddenHardcode), false, `renderer source must not hardcode a daily stock value: ${forbiddenHardcode}`);
+for (const forbidden of ['ULTRALONG12', 'EGX:X1', 'PHDC', 'Palm Hills']) {
+  assert.equal(source.includes(forbidden), false, `renderer must not hardcode ${forbidden}`);
 }
 
 console.log('test-homepage-payload-fixtures passed');

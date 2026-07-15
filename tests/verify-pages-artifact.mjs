@@ -42,8 +42,8 @@ assert.ok(index.includes('class="signal-share-card'));
 assert.ok(index.includes('data-screenshot-card'));
 assert.ok(index.includes('class="conversion-rail"'));
 assert.ok(index.includes('How to use this signal'));
-assert.ok(index.includes('Rank and direction are separate model outputs'));
 assert.ok(index.includes('Request access to the complete daily ranking'));
+assert.ok(index.includes('Copyright © EGX Research. All rights reserved.'));
 assert.ok(index.includes('theme-bulb'));
 assert.equal(index.includes('data-theme-label'), false);
 assert.equal(index.includes('class="investor-signal-card"'), false);
@@ -55,6 +55,18 @@ assert.equal(appJs.includes('serviceWorker.register'), false);
 assert.ok(sw.includes('self.registration.unregister()'));
 assert.equal(sw.includes('caches.open'), false);
 assert.equal(sw.includes("addEventListener('fetch'"), false);
+
+for (const removed of [
+  'Rank and direction are separate model outputs.',
+  'EGXRESEARCH.COM',
+  'Research only. No buy, sell or hold instruction.',
+  'Clear model context',
+  'Read each share’s relative rank, direction and horizon together.',
+  'Trackable history',
+  'Review dated signals instead of relying on disappearing tips.'
+]) {
+  assert.equal(index.includes(removed), false, `removed homepage copy found: ${removed}`);
+}
 
 for (const text of [index, appJs, sw]) {
   for (const forbidden of ['/EGXResearch', '/EGXAlphaWeb']) {

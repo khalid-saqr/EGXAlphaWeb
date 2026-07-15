@@ -65,15 +65,27 @@ const sw = fs.readFileSync('_site/sw.js', 'utf8');
 
 assert.ok(daily.includes(symbol) || daily.includes(display), `daily page should include ${symbol}`);
 assert.ok(daily.includes(date), `daily page should include ${date}`);
-assert.ok(daily.includes('Research only. No buy, sell or hold instruction.'));
+assert.ok(daily.includes('Copyright © EGX Research. All rights reserved.'));
 assert.ok(daily.includes('5 EGX sessions') || daily.includes('Next 5 EGX sessions'));
 assert.ok(daily.includes('mailto:access@egxresearch.com'));
 assert.ok(home.includes(`See the share EGX /Alpha ranked #${rank} after today’s market close.`));
 assert.ok(home.includes('How to use this signal'));
-assert.ok(home.includes('Rank and direction are separate model outputs'));
 assert.ok(home.includes('Request access to the complete daily ranking'));
 assert.ok(home.includes('data-screenshot-card'));
 assert.ok(home.includes('theme-bulb'));
+
+for (const removed of [
+  'Rank and direction are separate model outputs.',
+  'EGXRESEARCH.COM',
+  'Research only. No buy, sell or hold instruction.',
+  'Clear model context',
+  'Read each share’s relative rank, direction and horizon together.',
+  'Trackable history',
+  'Review dated signals instead of relying on disappearing tips.'
+]) {
+  assert.equal(home.includes(removed), false, `removed homepage copy found: ${removed}`);
+  assert.equal(daily.includes(removed), false, `removed daily copy found: ${removed}`);
+}
 
 for (const required of [
   'Public methodology white paper',
