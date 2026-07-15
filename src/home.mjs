@@ -162,7 +162,6 @@ function payloadParts(payload) {
     published: formatPublished(payload.published_at || publishing.published_at_utc),
     publishedAfter: publishing.published_after || 'After EGX close',
     useGuidance: publicCopy.use_guidance || 'Use this signal as a starting point for research and monitoring. Read the rank, direction and model horizon together; do not treat the card alone as a buy, sell or hold instruction.',
-    rankDirectionNote: publicCopy.rank_direction_note || rankingContext.rank_direction_relationship ||,
     fullProductHint: funnel.full_product_hint || 'The complete daily view includes every eligible ranked share, model context, and signal history.'
   };
 }
@@ -271,10 +270,6 @@ function shareCard(payload) {
     </section>
 
     ${marketMetrics(parts)}
-
-    <footer class="share-card-footer">
-      <p>${escapeHtml(parts.rankDirectionNote)}</p>
-    </footer>
   </article>`;
 }
 
@@ -290,8 +285,6 @@ function conversionRail(payload) {
     <div class="rail-state rail-guidance"><span>How to use this signal</span><p>${escapeHtml(parts.useGuidance)}</p></div>
     <div class="rail-includes" aria-label="Complete view includes">
       <div><strong>Complete daily ranking</strong><span>See all eligible shares in model order, not only the one public rank.</span></div>
-      <div><strong>Clear model context</strong><span>Read each share’s relative rank, direction and horizon together.</span></div>
-      <div><strong>Trackable history</strong><span>Review dated signals instead of relying on disappearing tips.</span></div>
     </div>
     <p class="rail-lede">${escapeHtml(parts.fullProductHint)}</p>
     ${modelNote}
