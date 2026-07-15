@@ -48,7 +48,7 @@ for (const page of htmlPages) {
   assert.equal(html.includes('href="/assets/app.css"'), false, `${page} should not depend on external CSS`);
   assert.equal(html.includes('manifest.webmanifest'), false, `${page} should not enable PWA installability`);
   assert.ok(html.includes('src="/assets/app.js"'), `${page} should use the custom-domain root script path`);
-  assert.ok(html.includes('"basePath":""'), `${page} should embed an empty production base path`);
+  assert.ok(html.includes('"basePath":"/"'), `${page} should embed the explicit production root`);
   assert.ok(html.includes('https://egxresearch.com'), `${page} should use the production canonical host`);
   for (const forbidden of forbiddenBasePaths) {
     assert.equal(html.includes(forbidden), false, `${page} should not reference ${forbidden}`);
