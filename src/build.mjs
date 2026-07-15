@@ -81,20 +81,20 @@ function main() {
   ensureDir(OUT);
 
   const latest = loadAndValidate(path.join(DATA_DIR, 'latest.json'));
-  const items = [];
-
-  for (const name of archiveJsonFiles()) {
+  const records = archiveJsonFiles().map(name => {
     const payload = loadAndValidate(path.join(DATA_DIR, 'archive', name));
+    return { payload, item: indexItem(payload) };
+  }).sort((a, b) => b.item.date.localeCompare(a.item.date));
+  const items = records.map(record => record.item);
+
+  for (const { payload } of records) {
     const date = payload.trading_date;
-    items.push(indexItem(payload));
-    write(path.join(OUT, 'archive', date, 'index.html'), renderSignalPage(payload, `/archive/${date}/`));
+    write(path.join(OUT, 'archive', date, 'index.html'), renderSignalPage(payload, `/archive/${date}/`, items));
     write(path.join(OUT, 'data', 'archive', `${date}.json`), JSON.stringify(payload, null, 2) + '\n');
   }
 
-  items.sort((a, b) => b.date.localeCompare(a.date));
-
-  write(path.join(OUT, 'index.html'), renderSignalPage(latest, '/'));
-  write(path.join(OUT, 'today', 'index.html'), renderSignalPage(latest, '/today/'));
+  write(path.join(OUT, 'index.html'), renderSignalPage(latest, '/', items));
+  write(path.join(OUT, 'today', 'index.html'), renderSignalPage(latest, '/today/', items));
   write(path.join(OUT, 'archive', 'index.html'), renderArchivePage(items));
   write(path.join(OUT, 'search', 'index.html'), renderSearchPage());
   write(path.join(OUT, 'methodology', 'index.html'), renderMethodologyPage());

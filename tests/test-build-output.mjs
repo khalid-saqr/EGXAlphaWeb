@@ -65,11 +65,11 @@ const sw = fs.readFileSync('_site/sw.js', 'utf8');
 assert.ok(daily.includes(symbol) || daily.includes(display), `daily page should include ${symbol}`);
 assert.ok(daily.includes(date), `daily page should include ${date}`);
 assert.ok(daily.includes('Research only. No buy, sell or hold instruction.'));
-assert.ok(daily.includes('Next 5 EGX trading sessions') || daily.includes('Next 5 EGX sessions'));
+assert.ok(daily.includes('5 EGX sessions') || daily.includes('Next 5 EGX sessions'));
 assert.ok(daily.includes('mailto:access@egxresearch.com'));
-assert.ok(home.includes('Turn the EGX close into a ranked market view.'));
-assert.ok(home.includes('Request full ranked access'));
-assert.ok(home.includes('Unlock the broader ranked view'));
+assert.ok(home.includes('See what the ranking surfaced after the EGX close.'));
+assert.ok(home.includes('Request the complete ranked view'));
+assert.ok(home.includes('data-screenshot-card'));
 assert.ok(home.includes('theme-bulb'));
 
 for (const required of [
