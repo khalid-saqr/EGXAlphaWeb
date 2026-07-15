@@ -35,17 +35,24 @@ function formatCompactNumber(value, digits = 1) {
   return formatNumber(number, digits);
 }
 
+function formatPercentage(value) {
+  if (!hasValue(value)) return null;
+  const number = Number(value);
+  if (!Number.isFinite(number)) return String(value);
+  const sign = number > 0 ? '+' : '';
+  return `${sign}${number.toFixed(2).replace(/\.00$/, '')}%`;
+}
+
 function horizonText(value, label) {
   const raw = String(value ?? '').trim();
-  if (/^\d+(\.0+)?$/.test(raw)) return `Next ${parseInt(raw, 10)} EGX trading sessions`;
   const fromLabel = String(label ?? '').trim();
-  const match = fromLabel.match(/(\d+)/);
-  if (match) return `Next ${parseInt(match[1], 10)} EGX trading sessions`;
-  return fromLabel || raw || 'Defined EGX trading horizon';
+  const match = fromLabel.match(/(\d+)/) || raw.match(/(\d+)/);
+  if (match) return `${parseInt(match[1], 10)} EGX sessions`;
+  return fromLabel || raw || 'Defined horizon';
 }
 
 function formatPublished(value) {
-  if (!value) return 'Cairo time';
+  if (!value) return null;
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return String(value);
   return date.toLocaleString('en-GB', {
@@ -58,10 +65,40 @@ function formatPublished(value) {
   }) + ' Cairo';
 }
 
+function formatTradingDate(value) {
+  if (!value) return 'Latest record';
+  const date = new Date(`${value}T12:00:00Z`);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC'
+  });
+}
+
 function directionTone(value) {
-  if (value === 'positive_model_signal') return 'tone-positive';
-  if (value === 'negative_model_signal') return 'tone-negative';
-  return 'tone-neutral';
+  if (value === 'positive_model_signal') return 'positive';
+  if (value === 'negative_model_signal') return 'negative';
+  return 'neutral';
+}
+
+function symbolSizeClass(symbol) {
+  const length = String(symbol || '').length;
+  if (length <= 4) return 'symbol-short';
+  if (length <= 7) return 'symbol-medium';
+  return 'symbol-long';
+}
+
+function cleanInvestorRead(value) {
+  return String(value || '')
+    .replace(/\s*This is a public market-intelligence signal to follow, not a trade instruction\.?$/i, '')
+    .trim();
+}
+
+function sameText(a, b) {
+  const normalise = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  return normalise(a) === normalise(b);
 }
 
 function payloadParts(payload) {
@@ -71,35 +108,44 @@ function payloadParts(payload) {
   const market = payload.market_snapshot || {};
   const publicCopy = payload.public_copy || {};
   const publishing = payload.publishing_context || {};
+  const modelState = payload.model_state || {};
+  const funnel = payload.funnel_context || {};
   const stockSymbol = asset.symbol || signal.stock_symbol || legacySignal.stock_symbol || 'EGX signal';
   const displaySymbol = asset.display_symbol || displaySymbolFrom(stockSymbol);
   const directionBucket = signal.direction_bucket || legacySignal.direction_bucket;
   const plainDirection = signal.plain_direction || prettyState(directionBucket);
-  const rank = signal.rank_within_horizon || legacySignal.rank_within_horizon;
-  const rankLabel = signal.rank_label || legacySignal.rank_label || (rank ? `Public rank #${rank}` : 'Selected public signal');
-  const investorRead = publicCopy.investor_read || publicCopy.one_line_summary || `${plainDirection}.`;
-  const signalSentence = String(investorRead)
-    .replace(/\s*This is a public market-intelligence signal to follow, not a trade instruction\.?$/i, '')
-    .trim();
+  const rank = signal.rank_within_horizon ?? legacySignal.rank_within_horizon;
+  const rankDisplay = hasValue(rank) ? `#${rank}` : (signal.rank_label || legacySignal.rank_label || 'Selected');
+  const investorRead = cleanInvestorRead(publicCopy.investor_read);
+  const supportingRead = investorRead && !sameText(investorRead, plainDirection) ? investorRead : '';
+  const identity = compact([asset.company_name, asset.sector]).join(' · ') || stockSymbol;
   return {
     signal,
     asset,
     market,
     publishing,
+    modelState,
+    funnel,
     stockSymbol,
     displaySymbol,
+    symbolClass: symbolSizeClass(displaySymbol),
+    identity,
     directionBucket,
+    tone: directionTone(directionBucket),
     plainDirection,
-    rankLabel,
-    signalSentence: signalSentence || plainDirection,
+    supportingRead,
+    rankDisplay,
     horizon: horizonText(signal.horizon || legacySignal.horizon, signal.horizon_label),
+    tradingDate: formatTradingDate(payload.trading_date),
     published: formatPublished(payload.published_at || publishing.published_at_utc),
-    publishedAfter: publishing.published_after || 'After EGX close'
+    publishedAfter: publishing.published_after || 'After EGX close',
+    publicPosition: funnel.public_position || 'one public signal from the daily EGX /Alpha ranking',
+    fullProductHint: funnel.full_product_hint || 'The complete view includes the full ranked list, model context and signal history.'
   };
 }
 
 function mailtoLink() {
-  return `mailto:${SITE.accessEmail}?subject=${encodeURIComponent('EGX Alpha full ranked access request')}`;
+  return `mailto:${SITE.accessEmail}?subject=${encodeURIComponent('EGX Alpha complete ranked view request')}`;
 }
 
 function bulbIcon() {
@@ -119,116 +165,154 @@ function homeHeader(sectionLabel = SITE.signalName) {
       <a href="${rel('/archive/')}">Archive</a>
       <a href="${rel('/search/')}">Search</a>
       <a href="${rel('/methodology/')}">Methodology</a>
-      <button class="button theme-toggle theme-icon-button" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false" title="Switch theme">
-        ${bulbIcon()}
-      </button>
+      <button class="button theme-toggle theme-icon-button" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false" title="Switch theme">${bulbIcon()}</button>
     </nav>
   </header>`;
 }
 
-function proof(index, title, body) {
-  return `<div class="value-proof">
-    <span class="value-proof-index">${escapeHtml(index)}</span>
-    <div><strong>${escapeHtml(title)}</strong><p>${escapeHtml(body)}</p></div>
-  </div>`;
-}
-
-function valuePitch() {
-  return `<article class="value-pitch-card">
+function productHero(canonicalPath) {
+  const archived = String(canonicalPath || '').startsWith('/archive/');
+  if (archived) {
+    return `<section class="product-hero product-hero-record">
+      <div>
+        <p class="eyebrow">Dated public signal record</p>
+        <h1>Review the signal exactly as it entered the public archive.</h1>
+        <p class="lede">A permanent, research-only record from the wider EGX /Alpha ranking process.</p>
+      </div>
+      <a class="text-link" href="${rel('/archive/')}">Return to the archive →</a>
+    </section>`;
+  }
+  return `<section class="product-hero">
     <div>
-      <p class="eyebrow">EGX /Alpha Mind</p>
-      <h1>Turn the EGX close into a ranked market view.</h1>
-      <p class="lede">EGX /Alpha monitors the Egyptian Exchange after the close, ranks liquid domestic shares across defined horizons, and publishes one signal you can track rather than a stream of disconnected tips.</p>
+      <p class="eyebrow">One public signal from a market-wide EGX ranking</p>
+      <h1>See what the ranking surfaced after the EGX close.</h1>
+      <p class="lede">EGX /Alpha monitors the market, compares eligible domestic shares and publishes one bounded result for public follow-up. The complete ranked view remains private.</p>
     </div>
-    <div class="value-proof-grid" aria-label="EGX Alpha value">
-      ${proof('01', 'Ranked, not guessed', 'The system compares eligible EGX shares before selecting the bounded public signal.')}
-      ${proof('02', 'Time-locked after close', 'The reading is formed after the market observation window has stabilised in Cairo time.')}
-      ${proof('03', 'Built to be followed', 'Every public signal receives a dated record so the idea can be revisited rather than forgotten.')}
-    </div>
-    <div class="value-pitch-actions">
-      <a class="button button-primary" href="${mailtoLink()}">Request full ranked access</a>
-      <a class="button" href="${rel('/methodology/')}">Read the methodology</a>
-    </div>
-  </article>`;
-}
-
-function marketMetric(label, value, note = '') {
-  if (!hasValue(value)) return '';
-  return `<div class="market-metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong>${note ? `<em>${escapeHtml(note)}</em>` : ''}</div>`;
-}
-
-function marketContext(parts) {
-  const market = parts.market;
-  const metrics = compact([
-    marketMetric('Close', formatNumber(market.latest_close, 4), 'EGP per share'),
-    marketMetric('Traded value', formatCompactNumber(market.traded_value_egp, 1), hasValue(market.traded_value_egp) ? 'EGP' : ''),
-    marketMetric('Volume', formatCompactNumber(market.volume, 1), 'shares'),
-    marketMetric('Liquidity', prettyState(market.liquidity_tier || parts.asset.liquidity_tier)),
-    marketMetric('Sector', parts.asset.sector)
-  ]).join('');
-  if (!metrics) return '';
-  return `<section class="market-context" aria-label="Market context">
-    <span class="market-context-title">Market context</span>
-    <div class="market-metrics">${metrics}</div>
+    <a class="text-link" href="${rel('/methodology/')}">How the ranking works →</a>
   </section>`;
 }
 
-function decisionCell(label, value, note = '') {
-  return `<div class="decision-cell"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong>${note ? `<em>${escapeHtml(note)}</em>` : ''}</div>`;
+function metric(label, value, note = '') {
+  if (!hasValue(value)) return null;
+  return `<div class="share-metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong>${note ? `<em>${escapeHtml(note)}</em>` : ''}</div>`;
 }
 
-function investorSignalCard(payload, canonicalPath) {
+function marketMetrics(parts) {
+  const market = parts.market;
+  const selected = [
+    metric('Latest close', formatNumber(market.latest_close, 4), 'EGP / share'),
+    hasValue(market.daily_change_pct)
+      ? metric('Daily move', formatPercentage(market.daily_change_pct))
+      : metric('Traded value', formatCompactNumber(market.traded_value_egp, 1), 'EGP'),
+    metric('Volume', formatCompactNumber(market.volume, 1), 'shares'),
+    metric('Liquidity', prettyState(market.liquidity_tier || parts.asset.liquidity_tier))
+  ].filter(Boolean).slice(0, 4);
+  if (!selected.length) return '';
+  return `<section class="share-market" aria-label="Market context">
+    <span class="share-section-label">Market context</span>
+    <div class="share-metric-grid share-metric-count-${selected.length}">${selected.join('')}</div>
+  </section>`;
+}
+
+function shareCard(payload) {
   const parts = payloadParts(payload);
-  const recordLabel = String(canonicalPath || '').startsWith('/archive/') ? 'Public signal record' : 'Today’s public signal';
-  const company = compact([parts.asset.company_name, parts.asset.sector]).join(' • ') || parts.stockSymbol;
-  return `<article class="investor-signal-card" id="today-signal" aria-label="EGX Alpha public signal">
-    <div class="signal-card-top">
-      <div class="signal-card-kicker">
-        <p class="eyebrow">${escapeHtml(recordLabel)}</p>
-        <span class="date-chip">${escapeHtml(payload.trading_date)}</span>
-      </div>
-      <div class="signal-card-actions" aria-label="Signal actions">
-        <button class="icon-button" type="button" data-share aria-label="Share this public signal">Share</button>
-        <button class="icon-button" type="button" data-copy aria-label="Copy this public signal link">Copy</button>
-      </div>
-    </div>
+  const status = hasValue(parts.modelState.public_label)
+    ? `<span class="share-status">${escapeHtml(parts.modelState.public_label)}</span>`
+    : '';
+  const supporting = parts.supportingRead ? `<p>${escapeHtml(parts.supportingRead)}</p>` : '';
+  const published = compact([parts.publishedAfter, parts.published]).join(' · ');
+  return `<article class="signal-share-card tone-${parts.tone}" id="public-signal-card" data-screenshot-card aria-label="EGX Alpha public signal card">
+    <header class="share-card-header">
+      <div class="share-brand"><strong>EGX /ALPHA</strong><span>PUBLIC SIGNAL</span></div>
+      <div class="share-header-meta"><time datetime="${escapeHtml(payload.trading_date)}">${escapeHtml(parts.tradingDate)}</time>${status}</div>
+    </header>
 
-    <section class="signal-identity-grid">
-      <div>
-        <div class="signal-symbol" title="${escapeHtml(parts.stockSymbol)}">${escapeHtml(parts.displaySymbol)}</div>
-        <p class="signal-company">${escapeHtml(company)}</p>
-      </div>
-      <div class="investor-verdict ${directionTone(parts.directionBucket)}">
-        <span>Model view</span>
-        <strong>${escapeHtml(parts.plainDirection)}</strong>
-        <p>${escapeHtml(parts.signalSentence)}</p>
-      </div>
+    <section class="share-asset">
+      <div class="share-symbol ${parts.symbolClass}" title="${escapeHtml(parts.stockSymbol)}">${escapeHtml(parts.displaySymbol)}</div>
+      <p>${escapeHtml(parts.identity)}</p>
     </section>
 
-    <section class="investor-decision-grid" aria-label="Public signal decision frame">
-      ${decisionCell('Public position', parts.rankLabel)}
-      ${decisionCell('Evaluation window', parts.horizon)}
-      ${decisionCell('Publication', parts.publishedAfter, parts.published)}
+    <section class="share-model-view">
+      <span class="share-section-label">Model view</span>
+      <strong>${escapeHtml(parts.plainDirection)}</strong>
+      ${supporting}
     </section>
 
-    ${marketContext(parts)}
+    <section class="share-decision" aria-label="Public signal decision frame">
+      <div><span>Public position</span><strong>${escapeHtml(parts.rankDisplay)}</strong></div>
+      <div><span>Evaluation window</span><strong>${escapeHtml(parts.horizon)}</strong></div>
+      <div><span>Publication</span><strong>${escapeHtml(parts.publishedAfter)}</strong>${published && parts.published ? `<em>${escapeHtml(parts.published)}</em>` : ''}</div>
+    </section>
 
-    <footer class="signal-card-footer">
-      <p class="small-note">Research only. No buy, sell or hold instruction. The public page shows one bounded signal, not the complete ranked market view.</p>
-      <a class="button button-primary" href="${mailtoLink()}">Unlock the broader ranked view</a>
-      <p class="small-note" data-copy-status aria-live="polite"></p>
+    ${marketMetrics(parts)}
+
+    <footer class="share-card-footer">
+      <p>${escapeHtml(parts.publicPosition)}</p>
+      <strong>EGXRESEARCH.COM</strong>
     </footer>
   </article>`;
 }
 
-export function homePage(payload, { canonicalPath = '/today/' } = {}) {
+function conversionRail(payload) {
+  const parts = payloadParts(payload);
+  const modelNote = hasValue(parts.modelState.public_note)
+    ? `<div class="rail-state"><span>${escapeHtml(parts.modelState.public_label || 'Public model state')}</span><p>${escapeHtml(parts.modelState.public_note)}</p></div>`
+    : '';
+  return `<aside class="conversion-rail" aria-label="Full access information">
+    <p class="eyebrow">Beyond the public card</p>
+    <h2>One result is public. The wider ranked market view is not.</h2>
+    <p class="rail-lede">${escapeHtml(parts.fullProductHint)}</p>
+    <div class="rail-includes" aria-label="Full view includes">
+      <div><strong>Complete daily ranking</strong><span>See the broader cross-market ordering, not one selected result.</span></div>
+      <div><strong>Model context</strong><span>Follow the research state around each published view.</span></div>
+      <div><strong>Signal history</strong><span>Review dated records instead of relying on disappearing tips.</span></div>
+    </div>
+    ${modelNote}
+    <a class="button button-primary rail-cta" href="${mailtoLink()}">Request the complete ranked view</a>
+    <p class="small-note">Research access only. No personalised investment advice.</p>
+  </aside>`;
+}
+
+function recordHorizon(item) {
+  return horizonText(item.horizon, item.horizon_label);
+}
+
+function recentRecords(items, currentDate) {
+  const candidates = (Array.isArray(items) ? items : []).filter(item => item?.date !== currentDate).slice(0, 3);
+  if (!candidates.length) return '';
+  const rows = candidates.map(item => `<a class="recent-record" href="${rel(item.url)}">
+    <time datetime="${escapeHtml(item.date)}">${escapeHtml(formatTradingDate(item.date))}</time>
+    <strong>${escapeHtml(item.display_symbol || displaySymbolFrom(item.symbol))}</strong>
+    <span>${escapeHtml(item.plain_direction || prettyState(item.direction_bucket))}</span>
+    <em>${escapeHtml(recordHorizon(item))}</em>
+  </a>`).join('');
+  return `<section class="recent-public-records" aria-labelledby="recent-records-title">
+    <div class="recent-records-heading">
+      <div><p class="eyebrow">Public signal memory</p><h2 id="recent-records-title">Recent public records</h2></div>
+      <a class="text-link" href="${rel('/archive/')}">View full archive →</a>
+    </div>
+    <div class="recent-record-list">${rows}</div>
+  </section>`;
+}
+
+export function homePage(payload, { canonicalPath = '/today/', recentItems = [] } = {}) {
   return `<style data-home-styles>${HOME_CSS.replaceAll('</style', '<\/style')}</style>
   <main class="site-shell page-home" data-page="signal">
     ${homeHeader(SITE.signalName)}
-    <section class="investor-hero">
-      ${valuePitch()}
-      ${investorSignalCard(payload, canonicalPath)}
+    ${productHero(canonicalPath)}
+    <section class="signal-product-grid">
+      <div class="share-card-stage">
+        <div class="share-card-toolbar">
+          <span>Screenshot-ready public card</span>
+          <div><button class="icon-button" type="button" data-share aria-label="Share this public signal">Share</button><button class="icon-button" type="button" data-copy aria-label="Copy this public signal link">Copy link</button></div>
+        </div>
+        ${shareCard(payload)}
+        <p class="small-note share-boundary">Research only. No buy, sell or hold instruction.</p>
+        <p class="small-note" data-copy-status aria-live="polite"></p>
+      </div>
+      ${conversionRail(payload)}
     </section>
+    ${recentRecords(recentItems, payload.trading_date)}
     ${megaFooter()}
   </main>`;
 }
