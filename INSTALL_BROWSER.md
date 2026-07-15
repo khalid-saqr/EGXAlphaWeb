@@ -1,77 +1,62 @@
-# Browser-only deployment guide
+# Browser-only deployment checks
 
-Use this when you have the ZIP package and want to launch the public site through the GitHub website only.
-
-## 1. Create the public repo
-
-1. Open GitHub in your browser.
-2. Create a new **public** repository.
-3. Name it exactly:
-
-```text
-EGXResearch
-```
-
-4. Do not add a README from GitHub. The ZIP already includes one.
-
-## 2. Upload the files
-
-1. Extract the ZIP on your computer or phone file manager.
-2. Open the new GitHub repo in the browser.
-3. Choose **Add file → Upload files**.
-4. Upload all extracted files and folders.
-5. Commit to `main`.
-
-## 3. Enable GitHub Pages
-
-1. Go to **Settings → Pages**.
-2. Under **Build and deployment**, select **GitHub Actions**.
-3. Go to the **Actions** tab.
-4. Run or wait for **Deploy EGXResearch Public PWA**.
-5. Open the deployment URL.
-
-Production URL:
+`EGXAlphaWeb` deploys automatically through GitHub Actions. The production destination is:
 
 ```text
 https://egxresearch.com/
 ```
 
-If you test a GitHub Pages preview without the custom domain, configure `EGX_BASE_PATH` for that preview path before deployment.
+## GitHub Pages settings
 
-## 4. Test the public PWA
+1. Open **Settings → Pages** in `khalid-saqr/EGXAlphaWeb`.
+2. Under **Build and deployment**, select **GitHub Actions**.
+3. Confirm the custom domain is `egxresearch.com` and HTTPS enforcement is enabled when available.
+4. Open the **Actions** tab and inspect **Deploy EGXResearch Public Site**.
 
-Open:
+Pull requests run validation only. A merge or direct push to `main` creates and deploys `_site/`.
+
+## Production acceptance routes
+
+Check these paths after deployment:
 
 ```text
 /
 /today/
 /archive/
-/archive/2026-07-09/
 /search/
+/methodology/
+/data/latest.json
+/data/index.json
 ```
 
-Check:
+Also open the dated route matching `trading_date` in `/data/latest.json`:
 
-- the signal card appears
-- the archive opens
-- search works by `EGX:DEMO` and `2026-07`
-- copy-link works
-- Facebook/LinkedIn share buttons open share pages
-- the layout works on mobile and desktop
+```text
+/archive/YYYY-MM-DD/
+/data/archive/YYYY-MM-DD.json
+```
 
-## 5. Install from browser
+Verify navigation, search by symbol and date, copy/share controls, theme switching, methodology printing, mobile layout and the early-access mail link.
 
-On Android Chrome/Edge:
+## Legacy PWA cleanup
 
-1. Open `https://egxresearch.com/`.
-2. Tap the browser menu.
-3. Choose **Add to Home screen** or **Install app** if offered.
-4. Open the installed EGXResearch shortcut.
+PWA installation is disabled. The generated `/sw.js` exists only to unregister old service workers and delete caches left by earlier deployments.
 
-PWA installability is intentionally disabled until the live site is visually stable. If the page ever appears as plain unstyled HTML after a deployment, hard refresh the page. If it stays stale, remove any old installed EGXResearch shortcut, clear site data, unregister any old service worker from the browser's site settings, then reopen `https://egxresearch.com/`.
+When a browser still shows a stale or unstyled version:
 
-If the page ever appears as plain unstyled HTML after a deployment, hard refresh the page. If it stays unstyled in an installed PWA, remove the installed shortcut or unregister the old service worker from the browser's site settings, then reopen the GitHub Pages URL so the browser installs the latest cache version.
+1. Hard refresh `https://egxresearch.com/`.
+2. Remove any previously installed EGXResearch shortcut.
+3. Clear site data for `egxresearch.com`.
+4. Unregister any remaining service worker in browser site/developer settings.
+5. Reopen the production URL.
 
-## 6. Connect the private repo later
+## Private-repository handoff
 
-After the public site is working, follow `PRIVATE_HANDOFF_TEMPLATE.md` from the private EGXResearch repo. The private repo should push only `data/latest.json` and `data/archive/YYYY-MM-DD.json` into this public repo.
+The private `EGXResearch` workflow pushes only:
+
+```text
+data/latest.json
+data/archive/YYYY-MM-DD.json
+```
+
+See `PRIVATE_HANDOFF_TEMPLATE.md` for the current boundary and secret name.
