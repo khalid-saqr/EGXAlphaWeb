@@ -7,14 +7,16 @@ const homeCss = fs.readFileSync('assets/home.css', 'utf8');
 const appJs = fs.readFileSync('_site/assets/app.js', 'utf8');
 const latest = JSON.parse(fs.readFileSync('_site/data/latest.json', 'utf8'));
 const displaySymbol = latest.asset?.display_symbol || String(latest.asset?.symbol || latest.public_signal?.stock_symbol || '').split(':').pop();
+const rank = latest.public_signal?.rank_within_horizon ?? latest.signal?.rank_within_horizon;
 
 for (const html of [home, today]) {
-  assert.ok(html.includes('See what the ranking surfaced after the EGX close.'), 'hero should pitch the market-wide ranking value');
+  assert.ok(html.includes('One free signal from today’s complete EGX ranking'), 'hero should explain the free-signal product rule');
+  assert.ok(html.includes(`See the share EGX /Alpha ranked #${rank} after today’s market close.`), 'hero should state the incoming public rank plainly');
   assert.ok(html.includes('data-screenshot-card'), 'page should render the screenshot-ready public card');
   assert.ok(html.includes('class="signal-share-card'), 'signal should use the square social-card component');
-  assert.ok(html.includes('class="conversion-rail"'), 'full-access explanation should sit outside the public card');
-  assert.ok(html.includes('One result is public. The wider ranked market view is not.'), 'conversion rail should explain the missing wider view');
-  assert.ok(html.includes('Request the complete ranked view'), 'page should contain the single primary conversion CTA');
+  assert.ok(html.includes('class="conversion-rail"'), 'signal guidance should sit outside the public card');
+  assert.ok(html.includes('How to use this signal'), 'page should give the investor a safe practical use framework');
+  assert.ok(html.includes('Request access to the complete daily ranking'), 'page should contain the clear primary conversion CTA');
   assert.ok(html.includes('Screenshot-ready public card'), 'share controls should be clearly separated from the card');
   assert.ok(html.includes('theme-bulb'), 'theme control should render the bulb icon');
   assert.equal(html.includes('data-theme-label'), false, 'theme control must not contain visible Theme text');
@@ -37,9 +39,14 @@ assert.equal(cardHtml.includes('data-share'), false, 'share control must not app
 assert.equal(cardHtml.includes('data-copy'), false, 'copy control must not appear inside the screenshot card');
 assert.equal(cardHtml.includes('mailto:'), false, 'commercial CTA must not appear inside the screenshot card');
 assert.ok(cardHtml.includes('EGXRESEARCH.COM'), 'screenshot card should carry the branded domain');
-assert.ok(cardHtml.includes('Public position'), 'screenshot card should show the public rank slot');
-assert.ok(cardHtml.includes('Evaluation window'), 'screenshot card should show the dynamic horizon slot');
+assert.ok(cardHtml.includes('Direction signal'), 'screenshot card should name the directional output clearly');
+assert.ok(cardHtml.includes('Rank in today’s model'), 'screenshot card should explain the relative rank slot');
+assert.ok(cardHtml.includes('Model horizon'), 'screenshot card should explain the dynamic horizon slot');
+assert.ok(cardHtml.includes('not a suggested holding period'), 'screenshot card should distinguish horizon from a holding recommendation');
+assert.ok(cardHtml.includes('Rank and direction are separate model outputs'), 'screenshot card should prevent rank-direction confusion');
 assert.ok(cardHtml.includes('Market context') || !Object.values(latest.market_snapshot || {}).some(value => value !== null), 'market section should render when metrics exist');
+assert.equal(cardHtml.includes('Public position'), false, 'ambiguous public-position label must be removed');
+assert.equal(cardHtml.includes('Evaluation window'), false, 'ambiguous evaluation-window label must be removed');
 
 for (const required of [
   'grid-template-columns: minmax(0, 720px) minmax(300px, 1fr)',

@@ -51,6 +51,13 @@ function horizonText(value, label) {
   return fromLabel || raw || 'Defined horizon';
 }
 
+function horizonSessions(value, label) {
+  const raw = String(value ?? '').trim();
+  const fromLabel = String(label ?? '').trim();
+  const match = fromLabel.match(/(\d+)/) || raw.match(/(\d+)/);
+  return match ? parseInt(match[1], 10) : null;
+}
+
 function formatPublished(value) {
   if (!value) return null;
   const date = new Date(value);
@@ -96,11 +103,6 @@ function cleanInvestorRead(value) {
     .trim();
 }
 
-function sameText(a, b) {
-  const normalise = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-  return normalise(a) === normalise(b);
-}
-
 function payloadParts(payload) {
   const signal = payload.public_signal || payload.signal || {};
   const legacySignal = payload.signal || {};
@@ -110,15 +112,29 @@ function payloadParts(payload) {
   const publishing = payload.publishing_context || {};
   const modelState = payload.model_state || {};
   const funnel = payload.funnel_context || {};
+  const rankingContext = payload.ranking_context || {};
   const stockSymbol = asset.symbol || signal.stock_symbol || legacySignal.stock_symbol || 'EGX signal';
   const displaySymbol = asset.display_symbol || displaySymbolFrom(stockSymbol);
   const directionBucket = signal.direction_bucket || legacySignal.direction_bucket;
   const plainDirection = signal.plain_direction || prettyState(directionBucket);
   const rank = signal.rank_within_horizon ?? legacySignal.rank_within_horizon;
   const rankDisplay = hasValue(rank) ? `#${rank}` : (signal.rank_label || legacySignal.rank_label || 'Selected');
+  const sessions = horizonSessions(signal.horizon || legacySignal.horizon, signal.horizon_label);
   const investorRead = cleanInvestorRead(publicCopy.investor_read);
-  const supportingRead = investorRead && !sameText(investorRead, plainDirection) ? investorRead : '';
-  const identity = compact([asset.company_name, asset.sector]).join(' · ') || stockSymbol;
+  const directionExplanation = publicCopy.direction_explanation || investorRead || plainDirection;
+  const comparisonCount = Number.isFinite(Number(rankingContext.comparison_count))
+    ? Number(rankingContext.comparison_count)
+    : null;
+  const rankExplanation = publicCopy.rank_explanation || (
+    comparisonCount
+      ? `Ranked ${rankDisplay} among ${comparisonCount} eligible domestic EGX shares assessed for this horizon.`
+      : `Ranked ${rankDisplay} among the eligible domestic EGX shares assessed for this horizon.`
+  );
+  const horizonExplanation = publicCopy.horizon_explanation || (
+    sessions
+      ? `This signal will be evaluated over the next ${sessions} EGX trading sessions. This is not a suggested holding period.`
+      : 'This signal will be evaluated over the stated model horizon. This is not a suggested holding period.'
+  );
   return {
     signal,
     asset,
@@ -126,26 +142,33 @@ function payloadParts(payload) {
     publishing,
     modelState,
     funnel,
+    rankingContext,
+    publicCopy,
     stockSymbol,
     displaySymbol,
     symbolClass: symbolSizeClass(displaySymbol),
-    identity,
+    identity: compact([asset.company_name, asset.sector]).join(' · ') || stockSymbol,
     directionBucket,
     tone: directionTone(directionBucket),
     plainDirection,
-    supportingRead,
+    directionExplanation,
+    rank,
     rankDisplay,
+    rankExplanation,
+    comparisonCount,
     horizon: horizonText(signal.horizon || legacySignal.horizon, signal.horizon_label),
+    horizonExplanation,
     tradingDate: formatTradingDate(payload.trading_date),
     published: formatPublished(payload.published_at || publishing.published_at_utc),
     publishedAfter: publishing.published_after || 'After EGX close',
-    publicPosition: funnel.public_position || 'one public signal from the daily EGX /Alpha ranking',
-    fullProductHint: funnel.full_product_hint || 'The complete view includes the full ranked list, model context and signal history.'
+    useGuidance: publicCopy.use_guidance || 'Use this signal as a starting point for research and monitoring. Read the rank, direction and model horizon together; do not treat the card alone as a buy, sell or hold instruction.',
+    rankDirectionNote: publicCopy.rank_direction_note || rankingContext.rank_direction_relationship || 'Rank and direction are separate model outputs.',
+    fullProductHint: funnel.full_product_hint || 'The complete daily view includes every eligible ranked share, model context, and signal history.'
   };
 }
 
 function mailtoLink() {
-  return `mailto:${SITE.accessEmail}?subject=${encodeURIComponent('EGX Alpha complete ranked view request')}`;
+  return `mailto:${SITE.accessEmail}?subject=${encodeURIComponent('EGX Alpha complete daily ranking access request')}`;
 }
 
 function bulbIcon() {
@@ -170,7 +193,7 @@ function homeHeader(sectionLabel = SITE.signalName) {
   </header>`;
 }
 
-function productHero(canonicalPath) {
+function productHero(payload, canonicalPath) {
   const archived = String(canonicalPath || '').startsWith('/archive/');
   if (archived) {
     return `<section class="product-hero product-hero-record">
@@ -182,11 +205,12 @@ function productHero(canonicalPath) {
       <a class="text-link" href="${rel('/archive/')}">Return to the archive →</a>
     </section>`;
   }
+  const parts = payloadParts(payload);
   return `<section class="product-hero">
     <div>
-      <p class="eyebrow">One public signal from a market-wide EGX ranking</p>
-      <h1>See what the ranking surfaced after the EGX close.</h1>
-      <p class="lede">EGX /Alpha monitors the market, compares eligible domestic shares and publishes one bounded result for public follow-up. The complete ranked view remains private.</p>
+      <p class="eyebrow">One free signal from today’s complete EGX ranking</p>
+      <h1>See the share EGX /Alpha ranked ${escapeHtml(parts.rankDisplay)} after today’s market close.</h1>
+      <p class="lede">EGX /Alpha compares eligible Egyptian shares over a defined model horizon. The free card reveals one relative rank, its separate direction signal and the market context available at publication. Full access reveals the complete daily ranking and signal history.</p>
     </div>
     <a class="text-link" href="${rel('/methodology/')}">How the ranking works →</a>
   </section>`;
@@ -200,7 +224,7 @@ function metric(label, value, note = '') {
 function marketMetrics(parts) {
   const market = parts.market;
   const selected = [
-    metric('Latest close', formatNumber(market.latest_close, 4), 'EGP / share'),
+    metric('Latest recorded close', formatNumber(market.latest_close, 4), 'EGP / share'),
     hasValue(market.daily_change_pct)
       ? metric('Daily move', formatPercentage(market.daily_change_pct))
       : metric('Traded value', formatCompactNumber(market.traded_value_egp, 1), 'EGP'),
@@ -219,8 +243,10 @@ function shareCard(payload) {
   const status = hasValue(parts.modelState.public_label)
     ? `<span class="share-status">${escapeHtml(parts.modelState.public_label)}</span>`
     : '';
-  const supporting = parts.supportingRead ? `<p>${escapeHtml(parts.supportingRead)}</p>` : '';
   const published = compact([parts.publishedAfter, parts.published]).join(' · ');
+  const rankNote = parts.comparisonCount
+    ? `of ${parts.comparisonCount} eligible shares`
+    : 'relative model rank';
   return `<article class="signal-share-card tone-${parts.tone}" id="public-signal-card" data-screenshot-card aria-label="EGX Alpha public signal card">
     <header class="share-card-header">
       <div class="share-brand"><strong>EGX /ALPHA</strong><span>PUBLIC SIGNAL</span></div>
@@ -233,21 +259,21 @@ function shareCard(payload) {
     </section>
 
     <section class="share-model-view">
-      <span class="share-section-label">Model view</span>
+      <span class="share-section-label">Direction signal</span>
       <strong>${escapeHtml(parts.plainDirection)}</strong>
-      ${supporting}
+      <p>${escapeHtml(parts.directionExplanation)}</p>
     </section>
 
-    <section class="share-decision" aria-label="Public signal decision frame">
-      <div><span>Public position</span><strong>${escapeHtml(parts.rankDisplay)}</strong></div>
-      <div><span>Evaluation window</span><strong>${escapeHtml(parts.horizon)}</strong></div>
+    <section class="share-decision" aria-label="Public signal interpretation">
+      <div><span>Rank in today’s model</span><strong>${escapeHtml(parts.rankDisplay)}</strong><em>${escapeHtml(rankNote)}</em></div>
+      <div><span>Model horizon</span><strong>${escapeHtml(parts.horizon)}</strong><em>not a suggested holding period</em></div>
       <div><span>Publication</span><strong>${escapeHtml(parts.publishedAfter)}</strong>${published && parts.published ? `<em>${escapeHtml(parts.published)}</em>` : ''}</div>
     </section>
 
     ${marketMetrics(parts)}
 
     <footer class="share-card-footer">
-      <p>${escapeHtml(parts.publicPosition)}</p>
+      <p>${escapeHtml(parts.rankDirectionNote)}</p>
       <strong>EGXRESEARCH.COM</strong>
     </footer>
   </article>`;
@@ -258,17 +284,19 @@ function conversionRail(payload) {
   const modelNote = hasValue(parts.modelState.public_note)
     ? `<div class="rail-state"><span>${escapeHtml(parts.modelState.public_label || 'Public model state')}</span><p>${escapeHtml(parts.modelState.public_note)}</p></div>`
     : '';
-  return `<aside class="conversion-rail" aria-label="Full access information">
-    <p class="eyebrow">Beyond the public card</p>
-    <h2>One result is public. The wider ranked market view is not.</h2>
-    <p class="rail-lede">${escapeHtml(parts.fullProductHint)}</p>
-    <div class="rail-includes" aria-label="Full view includes">
-      <div><strong>Complete daily ranking</strong><span>See the broader cross-market ordering, not one selected result.</span></div>
-      <div><strong>Model context</strong><span>Follow the research state around each published view.</span></div>
-      <div><strong>Signal history</strong><span>Review dated records instead of relying on disappearing tips.</span></div>
+  return `<aside class="conversion-rail" aria-label="Signal guidance and full access information">
+    <p class="eyebrow">What the free card shows</p>
+    <h2>You are seeing ${escapeHtml(parts.rankDisplay)} from today’s model.</h2>
+    <p class="rail-lede">${escapeHtml(parts.rankExplanation)}</p>
+    <div class="rail-state rail-guidance"><span>How to use this signal</span><p>${escapeHtml(parts.useGuidance)}</p></div>
+    <div class="rail-includes" aria-label="Complete view includes">
+      <div><strong>Complete daily ranking</strong><span>See all eligible shares in model order, not only the one public rank.</span></div>
+      <div><strong>Clear model context</strong><span>Read each share’s relative rank, direction and horizon together.</span></div>
+      <div><strong>Trackable history</strong><span>Review dated signals instead of relying on disappearing tips.</span></div>
     </div>
+    <p class="rail-lede">${escapeHtml(parts.fullProductHint)}</p>
     ${modelNote}
-    <a class="button button-primary rail-cta" href="${mailtoLink()}">Request the complete ranked view</a>
+    <a class="button button-primary rail-cta" href="${mailtoLink()}">Request access to the complete daily ranking</a>
     <p class="small-note">Research access only. No personalised investment advice.</p>
   </aside>`;
 }
@@ -299,7 +327,7 @@ export function homePage(payload, { canonicalPath = '/today/', recentItems = [] 
   return `<style data-home-styles>${HOME_CSS.replaceAll('</style', '<\/style')}</style>
   <main class="site-shell page-home" data-page="signal">
     ${homeHeader(SITE.signalName)}
-    ${productHero(canonicalPath)}
+    ${productHero(payload, canonicalPath)}
     <section class="signal-product-grid">
       <div class="share-card-stage">
         <div class="share-card-toolbar">
