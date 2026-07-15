@@ -24,7 +24,7 @@
     "public_position": "one public signal from the daily EGX /Alpha ranking"
   },
   "integrity": {
-    "public_wire_hash": "sha256:49638a0d273205f502455b5e12283a46ba974f888e023320e7d6d36f5593c365",
+    "public_wire_hash": "sha256:f5233dd8a7a7c2ed28853c6afdb0ffed6e20f40401613f774a4f1d5485e51e45",
     "source_payload_hash": "sha256:201d69b1476441a6c2b7cbddef5dec84d2f957558713f8706171fc618b2e1c19"
   },
   "market_snapshot": {
@@ -58,13 +58,14 @@
     "source_freshness_status": "live_observation_completed",
     "stock_symbol": "EGX:PHDC"
   },
-  "published_at": "2026-07-14T15:08:17.844707+00:00",
+  "published_at": "2026-07-15T12:50:51.955463+00:00",
   "publishing_context": {
     "next_expected_signal": "next EGX trading day",
     "published_after": "EGX close",
     "published_at_utc": "2026-07-14T15:07:58.393195+00:00",
     "timezone": "Africa/Cairo"
   },
+  "ranking_context": {},
   "schema_version": "egx_alpha_public_wire_v1",
   "signal": {
     "direction_bucket": "negative_model_signal",
