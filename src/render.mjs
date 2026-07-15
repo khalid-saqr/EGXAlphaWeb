@@ -20,7 +20,7 @@ function horizonDisplay(item) {
   return label || raw || 'Selected window';
 }
 
-export function renderSignalPage(payload, canonicalPath = '/today/') {
+export function renderSignalPage(payload, canonicalPath = '/today/', recentItems = []) {
   const { symbol, display, company } = signalParts(payload);
   const title = `EGX /Alpha signal — ${display} — ${payload.trading_date}`;
   const description = `EGX /Alpha Mind daily public signal for ${payload.trading_date}: ${symbol}${company}. Research-only EGX market intelligence.`;
@@ -30,7 +30,7 @@ export function renderSignalPage(payload, canonicalPath = '/today/') {
     canonicalPath,
     payload,
     pageClass: 'page-signal',
-    body: homePage(payload, { canonicalPath })
+    body: homePage(payload, { canonicalPath, recentItems })
   });
 }
 
