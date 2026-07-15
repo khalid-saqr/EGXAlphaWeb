@@ -1,72 +1,69 @@
 # EGXResearch — EGX /Alpha signal
 
-A static GitHub Pages site for publishing a compact public **EGX /Alpha signal** dashboard and methodology page.
+A payload-first static GitHub Pages site for publishing the bounded public **EGX /Alpha signal** and its methodology.
 
-This repository is designed as the public shell. It receives only a tiny public signal payload from the private EGXResearch system, validates it, builds static pages, and deploys to GitHub Pages.
+The repository is the public shell for the private `khalid-saqr/EGXResearch` engine. It receives only the validated public wire, builds static pages, and deploys them to GitHub Pages.
 
-## What it publishes
+## Public routes
 
-- Latest public signal at `/today/`
-- Permanent daily signal pages at `/archive/YYYY-MM-DD/`
-- Search by symbol/date at `/search/`
-- Public methodology white paper at `/methodology/`
-- Static JSON at `/data/latest.json` and `/data/archive/YYYY-MM-DD.json`
+- Latest signal: `/` and `/today/`
+- Dated records: `/archive/YYYY-MM-DD/`
+- Archive index: `/archive/`
+- Symbol/date search: `/search/`
+- Public methodology: `/methodology/`
+- Public JSON: `/data/latest.json` and `/data/archive/YYYY-MM-DD.json`
 
-## What it never contains
+## Payload boundary
 
-- paid subscriber payloads
-- creator/internal payloads
-- raw predictions
-- model scores or logits
-- private memory files
-- tokens or secrets
-- images or binary files
+The site accepts only `egx_alpha_public_wire_v1`. The validator rejects private or subscriber fields, including model scores, logits, full predictions, private memory and operational paths.
 
-## Early access CTA
-
-The public site uses a static email CTA only:
+The private repository publishes only:
 
 ```text
-mailto:access@egxresearch.com
+data/latest.json
+data/archive/YYYY-MM-DD.json
 ```
 
-## Local commands
+No token or private-repository content belongs in this repository.
+
+## Build
+
+Requirements: Node.js 20 or later.
 
 ```bash
 npm test
-npm run build
 ```
 
-The generated site appears in `_site/`.
+`npm test` validates the public payload, builds `_site/`, verifies the production Pages artifact, checks for private-field leakage and rejects binary files.
 
-## Production URL
+## Production deployment
 
-The live public site is served from the custom-domain root:
+The production site is served from the custom-domain root:
 
 ```text
 https://egxresearch.com/
 ```
 
-Production assets are root-relative, for example `/assets/app.css`, `/assets/app.js`, and `/manifest.webmanifest`.
+Production URLs are root-relative. CSS is inlined into generated HTML, the small client script is emitted at `/assets/app.js`, and PWA installation is disabled. A cleanup-only `/sw.js` is retained temporarily to remove legacy service workers and caches from earlier deployments.
 
-## Alternate preview URL
+The workflow validates pull requests without deploying them. Pushes to `main` build and deploy `_site/` through GitHub Pages.
 
-For a GitHub Pages preview without the custom domain, set `EGX_BASE_PATH` and `EGX_SITE_URL` during the build, for example:
+## Explicit preview builds
 
-```text
-EGX_BASE_PATH=/EGXResearch
-EGX_SITE_URL=https://<owner>.github.io/EGXResearch
+A prefixed preview remains possible only when deliberately configured:
+
+```bash
+EGX_BASE_PATH=/EGXAlphaWeb \
+EGX_SITE_URL=https://khalid-saqr.github.io/EGXAlphaWeb \
+node src/build.mjs
 ```
 
-Production renders critical CSS inline so the page does not depend on an external stylesheet. The small client script remains root-relative at `/assets/app.js`.
+The production workflow does not use a repository subpath.
 
-## Alternate preview URL
+## Early access
 
-For a GitHub Pages preview without the custom domain, set `EGX_BASE_PATH` and `EGX_SITE_URL` during the build, for example:
+The public CTA is static:
 
 ```text
-EGX_BASE_PATH=/EGXResearch
-EGX_SITE_URL=https://<owner>.github.io/EGXResearch
+mailto:access@egxresearch.com
 ```
-
-Read `INSTALL_BROWSER.md` for browser-only deployment checks. PWA installability is intentionally disabled until the live site is visually stable.
