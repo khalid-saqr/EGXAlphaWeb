@@ -26,6 +26,7 @@ const latest = JSON.parse(fs.readFileSync('_site/data/latest.json', 'utf8'));
 const date = latest.trading_date;
 const symbol = latest.asset?.symbol || latest.public_signal?.stock_symbol || latest.signal?.stock_symbol;
 const display = latest.asset?.display_symbol || String(symbol || '').split(':').pop();
+const rank = latest.public_signal?.rank_within_horizon ?? latest.signal?.rank_within_horizon;
 
 assert.ok(date, 'latest payload must include trading_date');
 assert.ok(symbol, 'latest payload must include a stock symbol');
@@ -67,8 +68,10 @@ assert.ok(daily.includes(date), `daily page should include ${date}`);
 assert.ok(daily.includes('Research only. No buy, sell or hold instruction.'));
 assert.ok(daily.includes('5 EGX sessions') || daily.includes('Next 5 EGX sessions'));
 assert.ok(daily.includes('mailto:access@egxresearch.com'));
-assert.ok(home.includes('See what the ranking surfaced after the EGX close.'));
-assert.ok(home.includes('Request the complete ranked view'));
+assert.ok(home.includes(`See the share EGX /Alpha ranked #${rank} after today’s market close.`));
+assert.ok(home.includes('How to use this signal'));
+assert.ok(home.includes('Rank and direction are separate model outputs'));
+assert.ok(home.includes('Request access to the complete daily ranking'));
 assert.ok(home.includes('data-screenshot-card'));
 assert.ok(home.includes('theme-bulb'));
 
@@ -106,7 +109,7 @@ assert.ok(sw.includes('self.registration.unregister()'));
 assert.equal(sw.includes("addEventListener('fetch'"), false, 'cleanup worker must not intercept requests');
 assert.equal(sw.includes('caches.open'), false, 'cleanup worker must not cache assets');
 
-for (const rejected of ['Fresh data', 'Model read', 'Signal read', 'Investor read', 'Daily ranking layer', 'Share today’s card']) {
+for (const rejected of ['Fresh data', 'Model read', 'Signal read', 'Investor read', 'Daily ranking layer', 'Share today’s card', 'Public position', 'Evaluation window']) {
   assert.equal(home.includes(rejected), false, `rejected homepage copy found: ${rejected}`);
   assert.equal(daily.includes(rejected), false, `rejected daily copy found: ${rejected}`);
 }
