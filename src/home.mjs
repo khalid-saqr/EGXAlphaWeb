@@ -205,7 +205,7 @@ function investorSignalCard(payload, canonicalPath) {
       </div>
     </section>
 
-    <section class="investor-decision-grid" aria-label="Investor reading frame">
+    <section class="investor-decision-grid" aria-label="Public signal decision frame">
       ${decisionCell('Public position', parts.rankLabel)}
       ${decisionCell('Evaluation window', parts.horizon)}
       ${decisionCell('Publication', parts.publishedAfter, parts.published)}
