@@ -6,6 +6,7 @@ process.env.EGX_SITE_URL ??= 'https://egxresearch.com';
 
 const { loadAndValidate } = await import('./validate.mjs');
 const { SITE } = await import('./templates.mjs');
+const { forecastWindows, primaryHorizon, topLevelSignals, universeForHorizon } = await import('./research-view.mjs');
 const { renderArchivePage, renderInstitutionalPage, renderMethodologyPage, renderSearchPage, renderSignalPage, renderSymbolDossierPage } = await import('./render.mjs');
 
 const DEFAULT_ROOT = process.cwd();
@@ -30,77 +31,61 @@ function archiveJsonFiles(dataDir) {
   return fs.readdirSync(dir).filter(name => name.endsWith('.json')).sort();
 }
 
-export function signalsFor(payload) {
-  if (Array.isArray(payload?.signals)) {
-    return [...payload.signals].sort((a, b) => Number(a.rank_within_horizon) - Number(b.rank_within_horizon));
-  }
-  const signal = payload?.public_signal || payload?.signal || {};
-  if (!signal.stock_symbol) return [];
-  const asset = payload.asset || {};
-  return [{
-    stock_symbol: signal.stock_symbol,
-    rank_within_horizon: signal.rank_within_horizon,
-    horizon: signal.horizon,
-    direction_bucket: signal.direction_bucket,
-    source_freshness_status: signal.source_freshness_status,
-    company_name: asset.company_name || null,
-    sector: asset.sector || null,
-    latest_close: payload.market_snapshot?.latest_close ?? null,
-    daily_change_pct: payload.market_snapshot?.daily_change_pct ?? null,
-    plain_direction: signal.plain_direction || null,
-    rank_label: signal.rank_label || null,
-    horizon_label: signal.horizon_label || null
-  }];
-}
-
-function payloadUniverseCount(payload) {
-  const value = Number(payload?.universe_count ?? payload?.ranking_context?.comparison_count);
-  return Number.isInteger(value) && value > 0 ? value : null;
-}
-
-function payloadHorizon(payload, rows) {
-  return String(payload?.primary_horizon || rows[0]?.horizon || payload?.public_signal?.horizon || payload?.signal?.horizon || '5').replace(/\.0+$/, '');
+export function signalsFor(payload, horizon = primaryHorizon(payload)) {
+  const windows = forecastWindows(payload);
+  const window = windows[String(horizon)];
+  if (window) return [...window.signals];
+  return topLevelSignals(payload);
 }
 
 export function indexItems(payload) {
-  const rows = signalsFor(payload);
-  const universeCount = payloadUniverseCount(payload);
-  const horizon = payloadHorizon(payload, rows);
+  const windows = forecastWindows(payload);
   const asset = payload.asset || {};
-  return rows.map(row => {
-    const symbol = row.stock_symbol;
-    const display = displaySymbol(symbol);
-    return {
-      date: payload.trading_date,
-      symbol,
-      display_symbol: display,
-      company_name: row.company_name || (rows.length === 1 ? asset.company_name || null : null),
-      sector: row.sector || (rows.length === 1 ? asset.sector || null : null),
-      horizon,
-      horizon_label: row.horizon_label || null,
-      rank_within_horizon: Number(row.rank_within_horizon),
-      rank_label: row.rank_label || null,
-      direction_bucket: row.direction_bucket,
-      plain_direction: row.plain_direction || null,
-      source_freshness_status: row.source_freshness_status,
-      latest_close: row.latest_close ?? null,
-      daily_change_pct: row.daily_change_pct ?? null,
-      universe_count: universeCount,
-      record_origin: payload.record_origin || (payload.schema_version === 'egx_alpha_public_wire_v2' ? 'live' : 'v1_compatibility'),
-      schema_version: payload.schema_version,
-      url: `/archive/${payload.trading_date}/`,
-      symbol_url: `/symbol/${encodeURIComponent(display)}/`
-    };
-  });
+  const rows = [];
+
+  for (const [horizon, window] of Object.entries(windows)) {
+    const universeCount = universeForHorizon(payload, horizon);
+    const signals = window.signals || [];
+    for (const row of signals) {
+      const symbol = row.stock_symbol;
+      const display = displaySymbol(symbol);
+      rows.push({
+        date: payload.trading_date,
+        symbol,
+        display_symbol: display,
+        company_name: row.company_name || (signals.length === 1 ? asset.company_name || null : null),
+        sector: row.sector || (signals.length === 1 ? asset.sector || null : null),
+        horizon,
+        horizon_label: row.horizon_label || null,
+        rank_within_horizon: Number(row.rank_within_horizon),
+        rank_label: row.rank_label || null,
+        direction_bucket: row.direction_bucket,
+        plain_direction: row.plain_direction || null,
+        source_freshness_status: row.source_freshness_status,
+        latest_close: row.latest_close ?? null,
+        daily_change_pct: row.daily_change_pct ?? null,
+        universe_count: universeCount,
+        record_origin: payload.record_origin || (payload.schema_version === 'egx_alpha_public_wire_v2' ? 'live' : 'v1_compatibility'),
+        schema_version: payload.schema_version,
+        url: `/archive/${payload.trading_date}/`,
+        symbol_url: `/symbol/${encodeURIComponent(display)}/`
+      });
+    }
+  }
+  return rows;
 }
 
 export function sessionItem(payload) {
-  const rows = signalsFor(payload);
+  const windows = forecastWindows(payload);
+  const primary = primaryHorizon(payload);
+  const rows = windows[primary]?.signals || topLevelSignals(payload);
   return {
     date: payload.trading_date,
-    universe_count: payloadUniverseCount(payload),
+    universe_count: universeForHorizon(payload, primary),
     published_count: rows.length,
-    horizon: payloadHorizon(payload, rows),
+    horizon: primary,
+    horizons: Object.keys(windows),
+    multi_horizon: Object.keys(windows).length > 1,
     record_origin: payload.record_origin || (payload.schema_version === 'egx_alpha_public_wire_v2' ? 'live' : 'v1_compatibility'),
     schema_version: payload.schema_version,
     url: `/archive/${payload.trading_date}/`
@@ -114,14 +99,16 @@ export function previousPayloadFor(records, tradingDate) {
 export function buildSymbolHistories(items) {
   const grouped = new Map();
   for (const item of items) {
-    if (!item.display_symbol || !item.date) continue;
-    const list = grouped.get(item.display_symbol) || [];
+    if (!item.display_symbol || !item.date || !item.horizon) continue;
+    const key = `${item.display_symbol}::${item.horizon}`;
+    const list = grouped.get(key) || [];
     list.push(item);
-    grouped.set(item.display_symbol, list);
+    grouped.set(key, list);
   }
 
   const histories = new Map();
-  for (const [symbol, list] of grouped.entries()) {
+  for (const [key, list] of grouped.entries()) {
+    const [symbol, horizon] = key.split('::');
     const chronological = [...list].sort((a, b) => a.date.localeCompare(b.date));
     let previousRank = null;
     const decorated = chronological.map(item => {
@@ -130,6 +117,7 @@ export function buildSymbolHistories(items) {
       previousRank = rank;
       return {
         date: item.date,
+        horizon,
         rank,
         direction_bucket: item.direction_bucket,
         movement,
@@ -138,7 +126,13 @@ export function buildSymbolHistories(items) {
         schema_version: item.schema_version
       };
     }).reverse();
-    histories.set(symbol, decorated);
+
+    const existing = histories.get(symbol) || [];
+    histories.set(symbol, [...existing, ...decorated]);
+  }
+
+  for (const [symbol, history] of histories.entries()) {
+    histories.set(symbol, [...history].sort((a, b) => b.date.localeCompare(a.date) || Number(a.horizon) - Number(b.horizon)));
   }
   return histories;
 }
@@ -155,7 +149,7 @@ export function buildSite({ root = DEFAULT_ROOT, outDir = path.join(root, '_site
   const sessions = records.map(record => sessionItem(record.payload));
   const searchItems = records
     .flatMap(record => indexItems(record.payload))
-    .sort((a, b) => b.date.localeCompare(a.date) || a.rank_within_horizon - b.rank_within_horizon);
+    .sort((a, b) => b.date.localeCompare(a.date) || Number(a.horizon) - Number(b.horizon) || a.rank_within_horizon - b.rank_within_horizon);
 
   for (const { payload } of records) {
     const date = payload.trading_date;

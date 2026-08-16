@@ -1,0 +1,151 @@
+
+.horizon-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+.horizon-switcher > span,
+.evidence-window-label span {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .64rem;
+  letter-spacing: .08em;
+}
+.horizon-switcher > div { display: flex; gap: 4px; }
+.horizon-switcher button {
+  min-width: 58px;
+  min-height: 34px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+.horizon-switcher button:hover,
+.horizon-switcher button.active,
+.horizon-switcher button[aria-pressed="true"] {
+  border-color: var(--blue);
+  color: var(--text);
+  background: var(--bg);
+}
+.horizon-panel[hidden],
+.evidence-horizon[hidden] { display: none !important; }
+
+.model-evidence {
+  margin-top: 28px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+}
+.model-evidence > header {
+  display: grid;
+  grid-template-columns: minmax(220px,.8fr) minmax(280px,1fr);
+  gap: 32px;
+  align-items: end;
+  padding: 22px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.model-evidence > header h2 { margin: 0; font-size: 1.35rem; }
+.model-evidence > header > p { margin: 0; color: var(--muted); font-size: .82rem; }
+.evidence-scale {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  border-bottom: 1px solid var(--line);
+}
+.evidence-scale > div,
+.evidence-stat {
+  min-height: 92px;
+  padding: 16px 18px;
+  border-right: 1px solid var(--line);
+}
+.evidence-scale > div:last-child { border-right: 0; }
+.evidence-scale span,
+.evidence-stat span,
+.evidence-scale strong,
+.evidence-stat strong,
+.evidence-scale em,
+.evidence-stat em {
+  display: block;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.evidence-scale span,
+.evidence-stat span {
+  color: var(--muted);
+  font-size: .62rem;
+  letter-spacing: .07em;
+}
+.evidence-scale strong,
+.evidence-stat strong {
+  margin-top: 8px;
+  font-size: 1.08rem;
+}
+.evidence-stat em {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: .63rem;
+  font-style: normal;
+}
+.evidence-window-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+.evidence-window-label strong { font-family: var(--mono); font-size: .84rem; }
+.evidence-horizon {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  border-bottom: 1px solid var(--line);
+}
+.evidence-horizon .evidence-stat:nth-child(4n) { border-right: 0; }
+.evidence-governance {
+  display: grid;
+  grid-template-columns: 120px minmax(0,1fr) auto;
+  gap: 18px;
+  align-items: center;
+  padding: 14px 18px;
+}
+.evidence-governance span,
+.evidence-governance strong {
+  font-family: var(--mono);
+  font-size: .66rem;
+  letter-spacing: .06em;
+}
+.evidence-governance span { color: var(--blue); }
+.evidence-governance p { margin: 0; color: var(--muted); font-size: .78rem; }
+.evidence-governance strong { color: var(--soft); text-transform: uppercase; }
+
+@media (max-width: 820px) {
+  .model-evidence > header { grid-template-columns: 1fr; gap: 10px; }
+  .evidence-scale, .evidence-horizon { grid-template-columns: repeat(2,1fr); }
+  .evidence-scale > div:nth-child(2n),
+  .evidence-horizon .evidence-stat:nth-child(2n) { border-right: 0; }
+  .evidence-scale > div:nth-child(-n+2),
+  .evidence-horizon .evidence-stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .evidence-governance { grid-template-columns: 1fr; gap: 6px; }
+}
+@media (max-width: 620px) {
+  .horizon-switcher {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+    padding: 11px 12px;
+  }
+  .horizon-switcher > div { display: grid; grid-template-columns: repeat(4,1fr); }
+  .horizon-switcher button { min-width: 0; padding: 0 6px; }
+  .evidence-scale > div, .evidence-stat { min-height: 82px; padding: 13px 12px; }
+  .evidence-scale strong, .evidence-stat strong { font-size: .93rem; }
+}

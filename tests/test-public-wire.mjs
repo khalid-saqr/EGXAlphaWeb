@@ -6,7 +6,19 @@ import { asPublicV2Fixture } from './helpers/v2-fixture.mjs';
 const v1 = JSON.parse(fs.readFileSync('data/latest.json', 'utf8'));
 assert.equal(validatePublicWire(v1).ok, true, 'current production V1 wire must remain valid during transition');
 
-for (const key of ['paid_subscriber', 'creator_full', 'ranking_score', 'direction_logit', 'predictions', 'model_version', 'prediction_id', 'feature_builder_version', 'run_id']) {
+for (const key of [
+  'paid_subscriber',
+  'creator_full',
+  'ranking_score',
+  'return_forecast',
+  'direction_logit',
+  'predictions',
+  'model_version',
+  'prediction_id',
+  'feature_builder_version',
+  'run_id',
+  'hit_rate'
+]) {
   const clone = structuredClone(v1);
   clone[key] = 'leak';
   assert.equal(validatePublicWire(clone).ok, false, `Expected ${key} to be rejected`);
@@ -44,6 +56,14 @@ expectInvalid(p => { p.record_origin = 'historical_fixture'; }, 'unknown record 
 expectInvalid(p => { p.signals[0].ranking_score = 0.99; }, 'private ranking score must be rejected');
 expectInvalid(p => { p.signals[0].company_name = 'Unexpected enrichment'; }, 'V2 row fields outside the allowlist must be rejected');
 expectInvalid(p => { p.extra_public_field = 'not contracted'; }, 'V2 top-level fields outside the allowlist must be rejected');
+expectInvalid(p => { p.forecast_windows = {}; }, 'forecast windows must not be published without research evidence');
+expectInvalid(p => { p.research_evidence = {}; }, 'research evidence must not be published without forecast windows');
+expectInvalid(p => {
+  p.forecast_windows = {};
+  p.research_evidence = {
+    model_evidence_state: {}
+  };
+}, 'private evidence-state keys must remain recursively forbidden');
 
 const unknown = structuredClone(july9);
 unknown.schema_version = 'egx_alpha_public_wire_v3';
