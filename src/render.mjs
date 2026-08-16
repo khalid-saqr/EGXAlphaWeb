@@ -1,6 +1,7 @@
 import { escapeHtml, htmlShell, megaFooter, prettyState, rel, siteHeader, SITE } from './templates.mjs';
 import { homePage } from './home.mjs';
 import { methodologyPage } from './methodology.mjs';
+import { PUBLIC_HORIZONS } from './research-view.mjs';
 
 function signalParts(payload) {
   const signal = payload.public_signal || payload.signal || payload.signals?.[0] || {};
@@ -11,8 +12,14 @@ function signalParts(payload) {
 }
 
 function horizonDisplay(item) {
+  if (item?.multi_horizon) return '1 / 3 / 5 / 10 EGX sessions';
   const raw = String(item.horizon || '').trim();
   return /^\d+(\.0+)?$/.test(raw) ? `${parseInt(raw, 10)} EGX sessions` : (item.horizon_label || raw || 'Primary horizon');
+}
+
+function orderedHorizons(history) {
+  const set = new Set((history || []).map(row => String(row.horizon || '')).filter(Boolean));
+  return PUBLIC_HORIZONS.filter(h => set.has(h)).concat([...set].filter(h => !PUBLIC_HORIZONS.includes(h)));
 }
 
 export function renderSignalPage(payload, canonicalPath = '/today/', recentItems = [], previousPayload = null) {
@@ -38,7 +45,9 @@ export function renderArchivePage(items) {
       : knownUniverse
         ? `${item.published_count || 1} public row / ${item.universe_count} universe`
         : `${item.published_count || 1} public row / universe unavailable`;
-    const state = isV2 ? prettyState(item.record_origin) : 'Single-row public record';
+    const state = isV2
+      ? `${item.multi_horizon ? 'Multi-window · ' : ''}${prettyState(item.record_origin)}`
+      : 'Single-row public record';
     return `<a class="archive-row" href="${rel(item.url)}"><span>${escapeHtml(item.date)}</span><strong>${escapeHtml(publication)}</strong><em>${escapeHtml(horizonDisplay(item))}</em><small>${escapeHtml(state)}</small></a>`;
   }).join('');
   return htmlShell({
@@ -52,9 +61,9 @@ export function renderArchivePage(items) {
 export function renderSearchPage() {
   return htmlShell({
     title: 'Search EGX /Alpha history — EGXResearch',
-    description: 'Search public EGX /Alpha model records by date or symbol.',
+    description: 'Search public EGX /Alpha model records by date, symbol or forecast horizon.',
     canonicalPath: '/search/',
-    body: `<main class="site-shell page-search">${siteHeader('SEARCH')}<section class="page-hero"><p class="eyebrow">PUBLIC MODEL MEMORY</p><h1>Search the research archive.</h1><p class="lede">Find a published model record by ticker, date, horizon or public model view.</p></section><section class="card search-panel"><input class="search-input" data-search-input type="search" placeholder="EGX symbol or YYYY-MM-DD" aria-label="Search model records"><div class="search-results" data-search-results aria-live="polite"></div></section>${megaFooter()}</main>`
+    body: `<main class="site-shell page-search">${siteHeader('SEARCH')}<section class="page-hero"><p class="eyebrow">PUBLIC MODEL MEMORY</p><h1>Search the research archive.</h1><p class="lede">Find a published model record by ticker, date, forecast window or public model view.</p></section><section class="card search-panel"><input class="search-input" data-search-input type="search" placeholder="EGX symbol, horizon or YYYY-MM-DD" aria-label="Search model records"><div class="search-results" data-search-results aria-live="polite"></div></section>${megaFooter()}</main>`
   });
 }
 
@@ -72,15 +81,28 @@ export function renderInstitutionalPage() {
   });
 }
 
+function dossierWindow(symbol, rows, horizon, isPrimary) {
+  const ordered = [...rows].sort((a, b) => b.date.localeCompare(a.date));
+  const latest = ordered[0] || {};
+  const table = ordered.map(row => `<div class="archive-row"><span>${escapeHtml(row.date)}</span><strong>#${escapeHtml(row.rank)}${row.universe_count ? ` / ${escapeHtml(row.universe_count)}` : ''}</strong><em>${escapeHtml(prettyState(row.direction_bucket))}</em><small>${escapeHtml(row.movement == null ? '—' : `${row.movement > 0 ? '+' : ''}${row.movement}`)}</small></div>`).join('');
+  return `<section class="symbol-horizon-panel" data-horizon-panel="${escapeHtml(horizon)}"${isPrimary ? '' : ' hidden'}>
+    <div class="meta-row"><span class="badge">LATEST RANK #${escapeHtml(latest.rank ?? '—')}${latest.universe_count ? ` / ${escapeHtml(latest.universe_count)}` : ''}</span><span class="badge">${escapeHtml(prettyState(latest.direction_bucket))}</span></div>
+    <section class="card archive-list">${table || `<p class="small-note">No ${escapeHtml(horizon)}S public history.</p>`}</section>
+  </section>`;
+}
+
 export function renderSymbolDossierPage(symbol, history) {
-  const rows = [...(history || [])].sort((a, b) => b.date.localeCompare(a.date));
-  const latest = rows[0] || {};
-  const table = rows.map(row => `<div class="archive-row"><span>${escapeHtml(row.date)}</span><strong>#${escapeHtml(row.rank)}</strong><em>${escapeHtml(prettyState(row.direction_bucket))}</em><small>${escapeHtml(row.movement == null ? '—' : `${row.movement > 0 ? '+' : ''}${row.movement}`)}</small></div>`).join('');
-  const latestUniverse = latest.universe_count ? ` / ${latest.universe_count}` : '';
+  const rows = [...(history || [])].map(row => ({ ...row, horizon: String(row.horizon || '5') }));
+  const horizons = orderedHorizons(rows);
+  const primary = horizons.includes('5') ? '5' : horizons[0] || '5';
+  const multi = horizons.length > 1;
+  const switcher = multi ? `<div class="horizon-switcher symbol-horizon-switcher" role="group" aria-label="Forecast window"><span>FORECAST WINDOW</span><div>${horizons.map(h => `<button type="button" class="${h === primary ? 'active' : ''}" data-horizon-select="${escapeHtml(h)}" aria-pressed="${h === primary ? 'true' : 'false'}">${escapeHtml(h)}S</button>`).join('')}</div></div>` : '';
+
+  const localStyle = `<style>.symbol-horizon-switcher{margin-top:24px;padding:12px 0;border-bottom:0;background:transparent}.symbol-horizon-switcher>div{display:flex;gap:5px}.symbol-horizon-switcher button{min-width:58px;min-height:34px;padding:0 11px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:var(--muted);font-family:var(--mono);font-size:.7rem;font-weight:700}.symbol-horizon-switcher button.active,.symbol-horizon-switcher button[aria-pressed="true"]{border-color:var(--blue);color:var(--text);background:var(--bg)}.symbol-horizon-panel[hidden]{display:none!important}@media(max-width:650px){.symbol-horizon-switcher{align-items:stretch;display:flex;flex-direction:column;gap:8px}.symbol-horizon-switcher>div{display:grid;grid-template-columns:repeat(4,1fr)}.symbol-horizon-switcher button{min-width:0}}</style>`;
   return htmlShell({
     title: `${symbol} — EGX /Alpha model history`,
     description: `Public EGX /Alpha model history for ${symbol}.`,
     canonicalPath: `/symbol/${symbol}/`,
-    body: `<main class="site-shell page-symbol">${siteHeader('INSTRUMENT INTELLIGENCE')}<section class="page-hero"><p class="eyebrow">INSTRUMENT INTELLIGENCE</p><h1>${escapeHtml(symbol)}</h1><p class="lede">Longitudinal public /Alpha ranking history for this EGX security, including validated V2 historical backfills when present.</p><div class="meta-row"><span class="badge">LATEST RANK #${escapeHtml(latest.rank ?? '—')}${escapeHtml(latestUniverse)}</span><span class="badge">${escapeHtml(prettyState(latest.direction_bucket))}</span></div></section><section class="card archive-list">${table || '<p class="small-note">No public history.</p>'}</section>${megaFooter()}</main>`
+    body: `${localStyle}<main class="site-shell page-symbol">${siteHeader('INSTRUMENT INTELLIGENCE')}<section class="page-hero"><p class="eyebrow">INSTRUMENT INTELLIGENCE</p><h1>${escapeHtml(symbol)}</h1><p class="lede">Longitudinal public /Alpha ranking history for this EGX security. Rank movement is calculated only against the previous completed session at the same forecast horizon.</p>${switcher}</section>${horizons.map(h => dossierWindow(symbol, rows.filter(row => String(row.horizon) === h), h, h === primary)).join('') || '<section class="card"><p class="small-note">No public history.</p></section>'}${megaFooter()}</main>`
   });
 }

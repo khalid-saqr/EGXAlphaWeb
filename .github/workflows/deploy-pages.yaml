@@ -60,6 +60,9 @@ jobs:
       - name: Verify genuine archived-universe fixtures
         run: node tests/test-homepage-payload-fixtures.mjs
 
+      - name: Verify multi-horizon evidence interface
+        run: node tests/test-multi-horizon-interface.mjs
+
       - name: Verify methodology white paper
         run: node tests/test-methodology-layout.mjs
 
