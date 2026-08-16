@@ -1,8 +1,42 @@
-import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
-for(const file of ['_site/index.html','_site/today/index.html','_site/archive/index.html','_site/search/index.html','_site/methodology/index.html','_site/institutional/index.html','_site/assets/app.js','_site/sw.js','_site/data/latest.json','_site/data/index.json','_site/.nojekyll'])assert.equal(fs.existsSync(file),true,`${file} should exist before deployment`);
-assert.equal(fs.existsSync('_site/assets/app.css'),false);assert.equal(fs.existsSync('_site/manifest.webmanifest'),false);
-const source=JSON.parse(fs.readFileSync('data/latest.json','utf8'));const built=JSON.parse(fs.readFileSync('_site/data/latest.json','utf8'));assert.deepEqual(built,source);
-assert.equal(fs.existsSync(path.join('_site','archive',built.trading_date,'index.html')),true);
-const index=fs.readFileSync('_site/index.html','utf8');const mainStart=index.indexOf('<main');const mainEnd=index.lastIndexOf('</main>');const visible=mainStart>=0&&mainEnd>=0?index.slice(mainStart,mainEnd+7):index;for(const required of ['LATEST COMPLETED MODEL RUN','DEEP-LEARNING MARKET RANKING','PUBLICATION COMPATIBILITY STATE','Research and information only'])assert.ok(visible.includes(required));for(const removed of ['Today’s free EGX signal','Want the full ranking?','Get early access'])assert.equal(visible.includes(removed),false);
-for(const text of [index,fs.readFileSync('_site/assets/app.js','utf8'),fs.readFileSync('_site/sw.js','utf8')])for(const forbidden of ['/EGXResearch','/EGXAlphaWeb'])assert.equal(text.includes(forbidden),false,`artifact should not include ${forbidden}`);
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+
+for (const file of [
+  '_site/index.html',
+  '_site/today/index.html',
+  '_site/archive/index.html',
+  '_site/search/index.html',
+  '_site/methodology/index.html',
+  '_site/institutional/index.html',
+  '_site/assets/app.js',
+  '_site/sw.js',
+  '_site/data/latest.json',
+  '_site/data/index.json',
+  '_site/.nojekyll'
+]) assert.equal(fs.existsSync(file), true, `${file} should exist before deployment`);
+
+assert.equal(fs.existsSync('_site/assets/app.css'), false);
+assert.equal(fs.existsSync('_site/manifest.webmanifest'), false);
+
+const source = JSON.parse(fs.readFileSync('data/latest.json', 'utf8'));
+const built = JSON.parse(fs.readFileSync('_site/data/latest.json', 'utf8'));
+assert.deepEqual(built, source);
+assert.equal(fs.existsSync(path.join('_site', 'archive', built.trading_date, 'index.html')), true);
+
+const index = fs.readFileSync('_site/index.html', 'utf8');
+const mainStart = index.indexOf('<main');
+const mainEnd = index.lastIndexOf('</main>');
+const visible = mainStart >= 0 && mainEnd >= 0 ? index.slice(mainStart, mainEnd + 7) : index;
+
+for (const required of ['LATEST COMPLETED MODEL RUN', 'DEEP-LEARNING MARKET RANKING', 'PUBLICATION NOTE', 'Research and information only']) assert.ok(visible.includes(required));
+for (const removed of ['Today’s free EGX signal', 'Want the full ranking?', 'Get early access', 'PUBLICATION COMPATIBILITY STATE']) assert.equal(visible.includes(removed), false);
+
+const archive = fs.readFileSync('_site/archive/index.html', 'utf8');
+assert.equal(archive.includes('1 public row / 1 universe'), false, 'Pages artifact must not misstate unknown legacy universe size');
+
+for (const text of [index, fs.readFileSync('_site/assets/app.js', 'utf8'), fs.readFileSync('_site/sw.js', 'utf8')]) {
+  for (const forbidden of ['/EGXResearch', '/EGXAlphaWeb']) assert.equal(text.includes(forbidden), false, `artifact should not include ${forbidden}`);
+}
+
 console.log('verify-pages-artifact passed');
