@@ -1,311 +1,168 @@
 import fs from 'node:fs';
-import { SITE, escapeHtml, megaFooter, prettyState, rel } from './templates.mjs';
+import { SITE, escapeHtml, megaFooter, prettyState, rel, siteHeader } from './templates.mjs';
 
 const HOME_CSS = fs.readFileSync(new URL('../assets/home.css', import.meta.url), 'utf8');
 
-function hasValue(value) {
-  return value !== null && value !== undefined && String(value).trim() !== '';
-}
-
-function compact(items) {
-  return items.filter(Boolean);
-}
-
-function displaySymbolFrom(symbol) {
+function displaySymbol(symbol) {
   const text = String(symbol || '').trim();
-  if (!text) return 'EGX';
-  return text.includes(':') ? text.split(':').pop() : text;
+  return text.includes(':') ? text.split(':').pop() : text || 'EGX';
 }
 
-function formatNumber(value, digits = 2) {
-  if (!hasValue(value)) return null;
-  const number = Number(value);
-  if (!Number.isFinite(number)) return String(value);
-  return new Intl.NumberFormat('en-GB', { maximumFractionDigits: digits }).format(number);
-}
-
-function formatCompactNumber(value, digits = 1) {
-  if (!hasValue(value)) return null;
-  const number = Number(value);
-  if (!Number.isFinite(number)) return String(value);
-  const abs = Math.abs(number);
-  if (abs >= 1_000_000_000) return `${(number / 1_000_000_000).toFixed(digits).replace(/\.0+$/, '')}B`;
-  if (abs >= 1_000_000) return `${(number / 1_000_000).toFixed(digits).replace(/\.0+$/, '')}M`;
-  if (abs >= 1_000) return `${(number / 1_000).toFixed(digits).replace(/\.0+$/, '')}K`;
-  return formatNumber(number, digits);
-}
-
-function formatPercentage(value) {
-  if (!hasValue(value)) return null;
-  const number = Number(value);
-  if (!Number.isFinite(number)) return String(value);
-  const sign = number > 0 ? '+' : '';
-  return `${sign}${number.toFixed(2).replace(/\.00$/, '')}%`;
-}
-
-function horizonText(value, label) {
-  const raw = String(value ?? '').trim();
-  const fromLabel = String(label ?? '').trim();
-  const match = fromLabel.match(/(\d+)/) || raw.match(/(\d+)/);
-  if (match) return `${parseInt(match[1], 10)} EGX sessions`;
-  return fromLabel || raw || 'Set period';
-}
-
-function formatPublished(value) {
-  if (!value) return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return String(value);
-  return date.toLocaleString('en-GB', {
-    timeZone: 'Africa/Cairo',
-    day: '2-digit',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  }) + ' Cairo';
-}
-
-function formatTradingDate(value) {
+function formatDate(value) {
   if (!value) return 'Latest';
   const date = new Date(`${value}T12:00:00Z`);
   if (Number.isNaN(date.getTime())) return String(value);
-  return date.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC'
-  });
+  return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }).toUpperCase();
 }
 
-function directionTone(value) {
-  if (value === 'positive_model_signal') return 'positive';
-  if (value === 'negative_model_signal') return 'negative';
+function tone(bucket) {
+  if (bucket === 'positive_model_signal') return 'positive';
+  if (bucket === 'negative_model_signal') return 'negative';
   return 'neutral';
 }
 
-function directionLabel(value) {
-  const labels = {
-    positive_model_signal: 'Positive signal',
-    negative_model_signal: 'Caution signal',
-    neutral_model_signal: 'No clear signal'
-  };
-  return labels[value] || 'Signal unavailable';
-}
-
-function directionMessage(value) {
-  const messages = {
-    positive_model_signal: 'The model leans positive for this period.',
-    negative_model_signal: 'The model leans negative for this period.',
-    neutral_model_signal: 'The model sees no clear direction for this period.'
-  };
-  return messages[value] || 'No direction is available today.';
-}
-
-function symbolSizeClass(symbol) {
-  const length = String(symbol || '').length;
-  if (length <= 4) return 'symbol-short';
-  if (length <= 7) return 'symbol-medium';
-  return 'symbol-long';
-}
-
-function payloadParts(payload) {
-  const signal = payload.public_signal || payload.signal || {};
-  const legacySignal = payload.signal || {};
+function signalsFrom(payload) {
+  if (Array.isArray(payload?.signals) && payload.signals.length) return payload.signals;
+  const signal = payload?.public_signal || payload?.signal || {};
+  if (!signal.stock_symbol) return [];
   const asset = payload.asset || {};
-  const market = payload.market_snapshot || {};
-  const publishing = payload.publishing_context || {};
-  const modelState = payload.model_state || {};
-  const rankingContext = payload.ranking_context || {};
-  const stockSymbol = asset.symbol || signal.stock_symbol || legacySignal.stock_symbol || 'EGX signal';
-  const displaySymbol = asset.display_symbol || displaySymbolFrom(stockSymbol);
-  const directionBucket = signal.direction_bucket || legacySignal.direction_bucket;
-  const rank = signal.rank_within_horizon ?? legacySignal.rank_within_horizon;
-  const rankDisplay = hasValue(rank) ? `#${rank}` : (signal.rank_label || legacySignal.rank_label || 'Selected');
-  const comparisonCount = Number.isFinite(Number(rankingContext.comparison_count))
-    ? Number(rankingContext.comparison_count)
-    : null;
-  return {
-    asset,
-    market,
-    modelState,
-    stockSymbol,
-    displaySymbol,
-    symbolClass: symbolSizeClass(displaySymbol),
-    identity: compact([asset.company_name, asset.sector]).join(' · ') || stockSymbol,
-    tone: directionTone(directionBucket),
-    signalLabel: directionLabel(directionBucket),
-    signalMessage: directionMessage(directionBucket),
-    rankDisplay,
-    rankNote: comparisonCount ? `out of ${comparisonCount} stocks` : 'today’s model',
-    rankSummary: comparisonCount
-      ? `This stock ranked ${rankDisplay} out of ${comparisonCount} stocks today.`
-      : `This stock ranked ${rankDisplay} today.`,
-    horizon: horizonText(signal.horizon || legacySignal.horizon, signal.horizon_label),
-    tradingDate: formatTradingDate(payload.trading_date),
-    published: formatPublished(payload.published_at || publishing.published_at_utc),
-    publishedAfter: publishing.published_after || 'After close'
-  };
+  return [{
+    stock_symbol: signal.stock_symbol,
+    rank_within_horizon: signal.rank_within_horizon,
+    horizon: signal.horizon,
+    direction_bucket: signal.direction_bucket,
+    source_freshness_status: signal.source_freshness_status,
+    company_name: asset.company_name || null
+  }];
 }
 
-function mailtoLink() {
-  return `mailto:${SITE.accessEmail}?subject=${encodeURIComponent('EGX Alpha full daily ranking request')}`;
+function isFullUniverse(payload) {
+  return Array.isArray(payload?.signals) && payload.signals.length > 1;
 }
 
-function bulbIcon() {
-  return `<svg class="theme-bulb" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path d="M9 18h6M10 22h4M8.3 14.5A6 6 0 1 1 15.7 14.5c-.95.72-1.35 1.42-1.45 2.5h-4.5c-.1-1.08-.5-1.78-1.45-2.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>`;
+function universeCount(payload, rows) {
+  const value = Number(payload?.universe_count ?? payload?.ranking_context?.comparison_count);
+  return Number.isFinite(value) && value > 0 ? value : rows.length;
 }
 
-function homeHeader(sectionLabel = SITE.signalName) {
-  return `<header class="topbar" aria-label="Site header">
-    <a class="brand" href="${rel('/')}">
-      <span class="brand-mark" aria-hidden="true">EGX</span>
-      <span><strong>${escapeHtml(SITE.domain)}</strong><em>${escapeHtml(sectionLabel)}</em></span>
-    </a>
-    <nav class="navlinks" aria-label="Primary navigation">
-      <a href="${rel('/today/')}">Today</a>
-      <a href="${rel('/archive/')}">Past signals</a>
-      <a href="${rel('/search/')}">Search</a>
-      <a href="${rel('/methodology/')}">How it works</a>
-      <button class="button theme-toggle theme-icon-button" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false" title="Switch theme">${bulbIcon()}</button>
-    </nav>
-  </header>`;
+function horizon(payload, rows) {
+  return String(payload?.primary_horizon || rows[0]?.horizon || payload?.public_signal?.horizon || payload?.signal?.horizon || '5').replace(/\.0+$/, '');
 }
 
-function productHero(payload, canonicalPath) {
-  const archived = String(canonicalPath || '').startsWith('/archive/');
-  if (archived) {
-    return `<section class="product-hero product-hero-record">
-      <div>
-        <p class="eyebrow">Past signal</p>
-        <h1>See what the model showed that day.</h1>
-        <p class="lede">Saved exactly as published.</p>
-      </div>
-      <a class="text-link" href="${rel('/archive/')}">Back to past signals →</a>
-    </section>`;
+function previousRanks(previousPayload) {
+  const map = new Map();
+  for (const row of signalsFrom(previousPayload || {})) {
+    const rank = Number(row.rank_within_horizon);
+    if (row.stock_symbol && Number.isFinite(rank)) map.set(row.stock_symbol, rank);
   }
-  const parts = payloadParts(payload);
-  return `<section class="product-hero">
-    <div>
-      <p class="eyebrow">Today’s free EGX signal</p>
-      <h1>See the stock ranked ${escapeHtml(parts.rankDisplay)} after today’s close.</h1>
-      <p class="lede">EGX /Alpha checks Egyptian stocks after every trading day. One stock is free. The full ranking shows the rest.</p>
+  return map;
+}
+
+function movement(row, previous) {
+  const current = Number(row.rank_within_horizon);
+  const prior = previous.get(row.stock_symbol);
+  if (!Number.isFinite(current) || !Number.isFinite(prior)) return { value: null, label: '—', className: 'flat' };
+  const delta = prior - current;
+  if (!delta) return { value: 0, label: '—', className: 'flat' };
+  return { value: delta, label: `${delta > 0 ? '+' : ''}${delta}`, className: delta > 0 ? 'up' : 'down' };
+}
+
+function processRibbon() {
+  return `<div class="process-ribbon" aria-label="EGX Alpha research process">
+    <span><b>01</b> OBSERVE</span><i>→</i><span><b>02</b> VALIDATE</span><i>→</i><span><b>03</b> INFER</span><i>→</i><span><b>04</b> RANK</span><i>→</i><span><b>05</b> PUBLISH</span>
+  </div>`;
+}
+
+function runHeader(payload, rows, canonicalPath) {
+  const full = isFullUniverse(payload);
+  const count = universeCount(payload, rows);
+  const date = formatDate(payload.trading_date);
+  const h = horizon(payload, rows);
+  const archived = String(canonicalPath || '').startsWith('/archive/');
+  const origin = payload.record_origin || (archived ? 'archive' : 'live');
+  return `<section class="run-hero">
+    <div class="run-title-block">
+      <p class="eyebrow">${archived ? 'HISTORICAL MODEL RECORD' : 'LATEST COMPLETED MODEL RUN'}</p>
+      <h1>EGX /ALPHA<br><span>DEEP-LEARNING MARKET RANKING</span></h1>
+      <p class="run-deck">Systematic cross-sectional intelligence for the Egyptian Exchange. The primary public research horizon is ${escapeHtml(h)} trading sessions.</p>
     </div>
-    <a class="text-link" href="${rel('/methodology/')}">How it works →</a>
+    <div class="run-date"><span>ANALYSIS DATE</span><strong>${escapeHtml(date)}</strong><em>POST-CLOSE / CAIRO</em></div>
+    <div class="run-metrics" aria-label="Run integrity">
+      <div><span>UNIVERSE</span><strong>${escapeHtml(count)}</strong><em>${full ? `${rows.length} / ${count} published` : 'eligible comparison set'}</em></div>
+      <div><span>FORECAST</span><strong>${escapeHtml(h)}S</strong><em>primary horizon</em></div>
+      <div><span>SOURCE</span><strong>VALIDATED</strong><em>${escapeHtml(prettyState(rows[0]?.source_freshness_status || 'live_observation_completed'))}</em></div>
+      <div><span>PUBLICATION</span><strong>${full ? 'COMPLETE' : 'V1'}</strong><em>${full ? prettyState(origin) : 'compatibility wire'}</em></div>
+    </div>
+    ${processRibbon()}
   </section>`;
 }
 
-function metric(label, value, note = '') {
-  if (!hasValue(value)) return null;
-  return `<div class="share-metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong>${note ? `<em>${escapeHtml(note)}</em>` : ''}</div>`;
+function modelRow(row, previous) {
+  const rank = Number(row.rank_within_horizon);
+  const move = movement(row, previous);
+  const bucket = row.direction_bucket || 'neutral_model_signal';
+  const label = prettyState(bucket);
+  const symbol = displaySymbol(row.stock_symbol);
+  return `<div class="model-row" data-model-row data-direction="${escapeHtml(tone(bucket))}" data-search-text="${escapeHtml(`${symbol} ${row.stock_symbol || ''} ${row.company_name || ''}`.toLowerCase())}">
+    <div class="rank-cell"><span>#</span>${String(rank).padStart(3, '0')}</div>
+    <div class="move-cell move-${move.className}" title="Rank change versus previous completed session">${escapeHtml(move.label)}</div>
+    <div class="symbol-cell"><strong>${escapeHtml(symbol)}</strong><span>${escapeHtml(row.company_name || row.stock_symbol || '')}</span></div>
+    <div class="view-cell tone-${tone(bucket)}"><i aria-hidden="true"></i>${escapeHtml(label)}</div>
+  </div>`;
 }
 
-function marketMetrics(parts) {
-  const market = parts.market;
-  const selected = [
-    metric('Latest price', formatNumber(market.latest_close, 4), 'EGP'),
-    hasValue(market.daily_change_pct)
-      ? metric('Price move', formatPercentage(market.daily_change_pct))
-      : metric('Traded value', formatCompactNumber(market.traded_value_egp, 1), 'EGP'),
-    metric('Volume', formatCompactNumber(market.volume, 1), 'shares'),
-    metric('Liquidity', prettyState(market.liquidity_tier || parts.asset.liquidity_tier))
-  ].filter(Boolean).slice(0, 4);
-  if (!selected.length) return '';
-  return `<section class="share-market" aria-label="Today’s numbers">
-    <span class="share-section-label">Today’s numbers</span>
-    <div class="share-metric-grid share-metric-count-${selected.length}">${selected.join('')}</div>
-  </section>`;
-}
-
-function shareCard(payload) {
-  const parts = payloadParts(payload);
-  const status = hasValue(parts.modelState.public_label)
-    ? `<span class="share-status">${escapeHtml(parts.modelState.public_label)}</span>`
-    : '';
-  const published = compact([parts.publishedAfter, parts.published]).join(' · ');
-  return `<article class="signal-share-card tone-${parts.tone}" id="public-signal-card" data-screenshot-card aria-label="EGX Alpha public signal card">
-    <header class="share-card-header">
-      <div class="share-brand"><strong>EGX /ALPHA</strong><span>TODAY’S SIGNAL</span></div>
-      <div class="share-header-meta"><time datetime="${escapeHtml(payload.trading_date)}">${escapeHtml(parts.tradingDate)}</time>${status}</div>
+function rankingPanel(payload, rows, previousPayload) {
+  const full = isFullUniverse(payload);
+  const previous = previousRanks(previousPayload);
+  const count = universeCount(payload, rows);
+  const body = rows.map(row => modelRow(row, previous)).join('');
+  return `<section class="model-output" aria-labelledby="model-output-title">
+    <header class="output-head">
+      <div><p class="eyebrow">MODEL OUTPUT</p><h2 id="model-output-title">Cross-sectional ranking</h2></div>
+      <div class="output-count"><strong>${full ? rows.length : 1}</strong><span>${full ? `OF ${count} SECURITIES` : `PUBLIC ROW / ${count} UNIVERSE`}</span></div>
     </header>
-
-    <section class="share-asset">
-      <div class="share-symbol ${parts.symbolClass}" title="${escapeHtml(parts.stockSymbol)}">${escapeHtml(parts.displaySymbol)}</div>
-      <p>${escapeHtml(parts.identity)}</p>
-    </section>
-
-    <section class="share-model-view">
-      <span class="share-section-label">Signal</span>
-      <strong>${escapeHtml(parts.signalLabel)}</strong>
-      <p>${escapeHtml(parts.signalMessage)}</p>
-    </section>
-
-    <section class="share-decision" aria-label="Public signal summary">
-      <div><span>Rank today</span><strong>${escapeHtml(parts.rankDisplay)}</strong><em>${escapeHtml(parts.rankNote)}</em></div>
-      <div><span>Time frame</span><strong>${escapeHtml(parts.horizon)}</strong><em>signal period</em></div>
-      <div><span>Published</span><strong>${escapeHtml(parts.publishedAfter)}</strong>${published && parts.published ? `<em>${escapeHtml(parts.published)}</em>` : ''}</div>
-    </section>
-
-    ${marketMetrics(parts)}
-  </article>`;
-}
-
-function conversionRail(payload) {
-  const parts = payloadParts(payload);
-  return `<aside class="conversion-rail" aria-label="Full ranking access">
-    <p class="eyebrow">One stock is free</p>
-    <h2>Want the full ranking?</h2>
-    <p class="rail-lede">${escapeHtml(parts.rankSummary)}</p>
-    <div class="rail-state rail-guidance"><span>What should you do?</span><p>Research the company. Check the news, price and your risk before you trade.</p></div>
-    <div class="rail-includes" aria-label="Full ranking includes">
-      <div><strong>See every ranked stock</strong><span>Know what came above and below today’s free stock.</span></div>
+    ${full ? `<div class="output-controls">
+      <label class="model-search"><span>SEARCH</span><input type="search" data-model-search placeholder="Ticker" aria-label="Search model output by ticker"></label>
+      <div class="filter-set" aria-label="Filter model output">
+        <button class="active" type="button" data-model-filter="all">ALL</button>
+        <button type="button" data-model-filter="positive">CONSTRUCTIVE</button>
+        <button type="button" data-model-filter="neutral">NEUTRAL</button>
+        <button type="button" data-model-filter="negative">CAUTION</button>
+      </div>
+    </div>` : `<div class="compatibility-note" role="note"><strong>PUBLICATION COMPATIBILITY STATE</strong><p>The current production wire publishes one bounded model observation. This interface is prepared for the complete primary-horizon universe without inventing unpublished rows.</p></div>`}
+    <div class="model-table" role="table" aria-label="EGX Alpha model ranking">
+      <div class="model-head" role="row"><span>RANK</span><span>Δ</span><span>SYMBOL</span><span>MODEL VIEW</span></div>
+      <div class="model-body" data-model-body>${body || '<p class="small-note">No published model output.</p>'}</div>
     </div>
-    <a class="button button-primary rail-cta" href="${mailtoLink()}">Get the full daily ranking</a>
-    <p class="small-note">Research tool. You make the decision.</p>
-  </aside>`;
-}
-
-function recordHorizon(item) {
-  return horizonText(item.horizon, item.horizon_label);
-}
-
-function recentRecords(items, currentDate) {
-  const candidates = (Array.isArray(items) ? items : []).filter(item => item?.date !== currentDate).slice(0, 3);
-  if (!candidates.length) return '';
-  const rows = candidates.map(item => `<a class="recent-record" href="${rel(item.url)}">
-    <time datetime="${escapeHtml(item.date)}">${escapeHtml(formatTradingDate(item.date))}</time>
-    <strong>${escapeHtml(item.display_symbol || displaySymbolFrom(item.symbol))}</strong>
-    <span>${escapeHtml(item.plain_direction || prettyState(item.direction_bucket))}</span>
-    <em>${escapeHtml(recordHorizon(item))}</em>
-  </a>`).join('');
-  return `<section class="recent-public-records" aria-labelledby="recent-records-title">
-    <div class="recent-records-heading">
-      <div><p class="eyebrow">Past signals</p><h2 id="recent-records-title">See earlier signals</h2></div>
-      <a class="text-link" href="${rel('/archive/')}">View all →</a>
-    </div>
-    <div class="recent-record-list">${rows}</div>
+    <p class="output-empty small-note" data-model-empty hidden>No securities match this view.</p>
   </section>`;
 }
 
-export function homePage(payload, { canonicalPath = '/today/', recentItems = [] } = {}) {
-  return `<style data-home-styles>${HOME_CSS.replaceAll('</style', '<\/style')}</style>
+function researchStrip() {
+  return `<section class="research-strip" aria-label="Research system links">
+    <a href="${rel('/archive/')}"><span>01 / HISTORY</span><strong>Inspect completed analysis sessions</strong><p>Every public model record remains date-addressable.</p></a>
+    <a href="${rel('/methodology/')}"><span>02 / RESEARCH</span><strong>Review the forecasting discipline</strong><p>Understand the ranking objective, validation gates and publication boundary.</p></a>
+    <a href="${rel('/institutional/')}"><span>03 / INSTITUTIONAL</span><strong>Research and technology enquiries</strong><p>Explore distribution, integration and strategic research applications.</p></a>
+  </section>`;
+}
+
+function recentSessions(items, currentDate) {
+  const rows = (Array.isArray(items) ? items : []).filter(item => item?.date && item.date !== currentDate).slice(0, 5);
+  if (!rows.length) return '';
+  return `<section class="recent-runs"><header><p class="eyebrow">RECENT RUNS</p><a href="${rel('/archive/')}">VIEW HISTORY →</a></header>${rows.map(item => `<a href="${rel(item.url)}"><time>${escapeHtml(item.date)}</time><strong>${escapeHtml(item.display_symbol || displaySymbol(item.symbol))}</strong><span>${escapeHtml(prettyState(item.direction_bucket))}</span></a>`).join('')}</section>`;
+}
+
+export function homePage(payload, { canonicalPath = '/today/', recentItems = [], previousPayload = null } = {}) {
+  const rows = signalsFrom(payload);
+  return `<style data-home-styles>${HOME_CSS.replaceAll('</style', '<\\/style')}</style>
   <main class="site-shell page-home" data-page="signal">
-    ${homeHeader(SITE.signalName)}
-    ${productHero(payload, canonicalPath)}
-    <section class="signal-product-grid">
-      <div class="share-card-stage">
-        <div class="share-card-toolbar">
-          <span>Share today’s card</span>
-          <div><button class="icon-button" type="button" data-share aria-label="Share this public signal">Share</button><button class="icon-button" type="button" data-copy aria-label="Copy this public signal link">Copy link</button></div>
-        </div>
-        ${shareCard(payload)}
-        <p class="small-note share-boundary">Copyright © EGX Research. All rights reserved.</p>
-        <p class="small-note" data-copy-status aria-live="polite"></p>
-      </div>
-      ${conversionRail(payload)}
-    </section>
-    ${recentRecords(recentItems, payload.trading_date)}
+    ${siteHeader('QUANTITATIVE EQUITY INTELLIGENCE')}
+    ${runHeader(payload, rows, canonicalPath)}
+    ${rankingPanel(payload, rows, previousPayload)}
+    ${researchStrip()}
+    ${recentSessions(recentItems, payload.trading_date)}
     ${megaFooter()}
   </main>`;
 }
+
+export { signalsFrom, movement };
