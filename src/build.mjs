@@ -53,9 +53,9 @@ export function signalsFor(payload) {
   }];
 }
 
-function payloadUniverseCount(payload, rows) {
+function payloadUniverseCount(payload) {
   const value = Number(payload?.universe_count ?? payload?.ranking_context?.comparison_count);
-  return Number.isInteger(value) && value > 0 ? value : rows.length;
+  return Number.isInteger(value) && value > 0 ? value : null;
 }
 
 function payloadHorizon(payload, rows) {
@@ -64,7 +64,7 @@ function payloadHorizon(payload, rows) {
 
 export function indexItems(payload) {
   const rows = signalsFor(payload);
-  const universeCount = payloadUniverseCount(payload, rows);
+  const universeCount = payloadUniverseCount(payload);
   const horizon = payloadHorizon(payload, rows);
   const asset = payload.asset || {};
   return rows.map(row => {
@@ -98,7 +98,7 @@ export function sessionItem(payload) {
   const rows = signalsFor(payload);
   return {
     date: payload.trading_date,
-    universe_count: payloadUniverseCount(payload, rows),
+    universe_count: payloadUniverseCount(payload),
     published_count: rows.length,
     horizon: payloadHorizon(payload, rows),
     record_origin: payload.record_origin || (payload.schema_version === 'egx_alpha_public_wire_v2' ? 'live' : 'v1_compatibility'),

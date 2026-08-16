@@ -32,8 +32,13 @@ export function renderSignalPage(payload, canonicalPath = '/today/', recentItems
 export function renderArchivePage(items) {
   const rows = items.map(item => {
     const isV2 = item.schema_version === 'egx_alpha_public_wire_v2';
-    const publication = isV2 ? `${item.published_count} / ${item.universe_count} published` : `${item.published_count || 1} public row / ${item.universe_count} universe`;
-    const state = isV2 ? prettyState(item.record_origin) : 'V1 compatibility';
+    const knownUniverse = Number.isInteger(item.universe_count) && item.universe_count > 0;
+    const publication = isV2
+      ? `${item.published_count} / ${item.universe_count} published`
+      : knownUniverse
+        ? `${item.published_count || 1} public row / ${item.universe_count} universe`
+        : `${item.published_count || 1} public row / universe unavailable`;
+    const state = isV2 ? prettyState(item.record_origin) : 'Single-row public record';
     return `<a class="archive-row" href="${rel(item.url)}"><span>${escapeHtml(item.date)}</span><strong>${escapeHtml(publication)}</strong><em>${escapeHtml(horizonDisplay(item))}</em><small>${escapeHtml(state)}</small></a>`;
   }).join('');
   return htmlShell({

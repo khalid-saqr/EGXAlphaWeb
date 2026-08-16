@@ -42,9 +42,9 @@ function isFullUniverse(payload) {
   return Array.isArray(payload?.signals);
 }
 
-function universeCount(payload, rows) {
+function universeCount(payload) {
   const value = Number(payload?.universe_count ?? payload?.ranking_context?.comparison_count);
-  return Number.isFinite(value) && value > 0 ? value : rows.length;
+  return Number.isInteger(value) && value > 0 ? value : null;
 }
 
 function horizon(payload, rows) {
@@ -77,7 +77,13 @@ function processRibbon() {
 
 function runHeader(payload, rows, canonicalPath) {
   const full = isFullUniverse(payload);
-  const count = universeCount(payload, rows);
+  const count = universeCount(payload);
+  const countLabel = count ?? '—';
+  const universeNote = full
+    ? `${rows.length} / ${count ?? rows.length} published`
+    : count
+      ? 'eligible comparison set'
+      : 'universe unavailable';
   const date = formatDate(payload.trading_date);
   const h = horizon(payload, rows);
   const archived = String(canonicalPath || '').startsWith('/archive/');
@@ -90,10 +96,10 @@ function runHeader(payload, rows, canonicalPath) {
     </div>
     <div class="run-date"><span>ANALYSIS DATE</span><strong>${escapeHtml(date)}</strong><em>POST-CLOSE / CAIRO</em></div>
     <div class="run-metrics" aria-label="Run integrity">
-      <div><span>UNIVERSE</span><strong>${escapeHtml(count)}</strong><em>${full ? `${rows.length} / ${count} published` : 'eligible comparison set'}</em></div>
+      <div><span>UNIVERSE</span><strong>${escapeHtml(countLabel)}</strong><em>${escapeHtml(universeNote)}</em></div>
       <div><span>FORECAST</span><strong>${escapeHtml(h)}S</strong><em>primary horizon</em></div>
       <div><span>SOURCE</span><strong>VALIDATED</strong><em>${escapeHtml(prettyState(rows[0]?.source_freshness_status || 'live_observation_completed'))}</em></div>
-      <div><span>PUBLICATION</span><strong>${full ? 'COMPLETE' : 'V1'}</strong><em>${full ? prettyState(origin) : 'compatibility wire'}</em></div>
+      <div><span>PUBLICATION</span><strong>${full ? 'COMPLETE' : 'CURRENT'}</strong><em>${full ? prettyState(origin) : 'single-row public format'}</em></div>
     </div>
     ${processRibbon()}
   </section>`;
@@ -117,12 +123,17 @@ function modelRow(row, previous) {
 function rankingPanel(payload, rows, previousPayload) {
   const full = isFullUniverse(payload);
   const previous = previousRanks(previousPayload);
-  const count = universeCount(payload, rows);
+  const count = universeCount(payload);
   const body = rows.map(row => modelRow(row, previous)).join('');
+  const countContext = full
+    ? `OF ${count ?? rows.length} SECURITIES`
+    : count
+      ? `PUBLIC ROW / ${count} UNIVERSE`
+      : 'PUBLIC ROW / UNIVERSE UNAVAILABLE';
   return `<section class="model-output" aria-labelledby="model-output-title">
     <header class="output-head">
       <div><p class="eyebrow">MODEL OUTPUT</p><h2 id="model-output-title">Cross-sectional ranking</h2></div>
-      <div class="output-count"><strong>${full ? rows.length : 1}</strong><span>${full ? `OF ${count} SECURITIES` : `PUBLIC ROW / ${count} UNIVERSE`}</span></div>
+      <div class="output-count"><strong>${full ? rows.length : 1}</strong><span>${escapeHtml(countContext)}</span></div>
     </header>
     ${full ? `<div class="output-controls">
       <label class="model-search"><span>SEARCH</span><input type="search" data-model-search placeholder="Ticker" aria-label="Search model output by ticker"></label>
@@ -132,7 +143,7 @@ function rankingPanel(payload, rows, previousPayload) {
         <button type="button" data-model-filter="neutral">NEUTRAL</button>
         <button type="button" data-model-filter="negative">CAUTION</button>
       </div>
-    </div>` : `<div class="compatibility-note" role="note"><strong>PUBLICATION COMPATIBILITY STATE</strong><p>The current production wire publishes one bounded model observation. This interface is prepared for the complete primary-horizon universe without inventing unpublished rows.</p></div>`}
+    </div>` : `<div class="compatibility-note" role="note"><strong>PUBLICATION NOTE</strong><p>The current public feed contains one model observation for this session. Complete-universe publication will appear here when available.</p></div>`}
     <div class="model-table" role="table" aria-label="EGX Alpha model ranking">
       <div class="model-head" role="row"><span>RANK</span><span>Δ</span><span>SYMBOL</span><span>MODEL VIEW</span></div>
       <div class="model-body" data-model-body>${body || '<p class="small-note">No published model output.</p>'}</div>
@@ -156,7 +167,7 @@ function recentSessions(items, currentDate) {
     const full = item.schema_version === 'egx_alpha_public_wire_v2';
     const count = Number(item.universe_count || item.published_count || 0);
     const publication = full ? `${count} SECURITIES` : `${item.published_count || 1} PUBLIC ROW`;
-    const state = full ? prettyState(item.record_origin || 'live') : 'V1 compatibility';
+    const state = full ? prettyState(item.record_origin || 'live') : 'Single-row record';
     return `<a href="${rel(item.url)}"><time>${escapeHtml(item.date)}</time><strong>${escapeHtml(publication)}</strong><span>${escapeHtml(state)}</span></a>`;
   }).join('')}</section>`;
 }
