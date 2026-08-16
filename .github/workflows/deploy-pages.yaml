@@ -63,6 +63,9 @@ jobs:
       - name: Verify multi-horizon evidence interface
         run: node tests/test-multi-horizon-interface.mjs
 
+      - name: Verify historical backfill evidence provenance
+        run: node tests/test-historical-backfill-evidence.mjs
+
       - name: Verify methodology white paper
         run: node tests/test-methodology-layout.mjs
 

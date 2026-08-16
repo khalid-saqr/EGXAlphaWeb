@@ -284,7 +284,7 @@ function requirePositiveIntegerField(object, key, label, errors) {
   if (!positiveInteger(object?.[key])) errors.push(`${label}.${key} must be a positive integer`);
 }
 
-function validateResearchEvidence(evidence, errors) {
+function validateResearchEvidence(evidence, errors, { allowNullLiveValidation = false } = {}) {
   requireKeys(evidence, ['system_scale', 'historical_validation', 'live_validation', 'governance'], 'research_evidence', errors);
   rejectUnexpectedKeys(evidence, RESEARCH_EVIDENCE_KEYS, 'research_evidence', errors);
   if (!evidence || typeof evidence !== 'object' || Array.isArray(evidence)) return;
@@ -312,32 +312,40 @@ function validateResearchEvidence(evidence, errors) {
     }
   }
 
-  const live = evidence.live_validation || {};
-  requireKeys(live, ['status', 'governance_threshold_days', 'total_matured_outcomes', 'scored_prediction_days', 'pending_outcomes', 'by_horizon'], 'research_evidence.live_validation', errors);
-  rejectUnexpectedKeys(live, LIVE_VALIDATION_KEYS, 'research_evidence.live_validation', errors);
-  if (typeof live.status !== 'string' || !live.status.trim()) errors.push('research_evidence.live_validation.status must be a non-empty string');
-  requirePositiveIntegerField(live, 'governance_threshold_days', 'research_evidence.live_validation', errors);
-  for (const key of ['total_matured_outcomes', 'scored_prediction_days', 'pending_outcomes']) {
-    const value = Number(live[key]);
-    if (!Number.isInteger(value) || value < 0) errors.push(`research_evidence.live_validation.${key} must be a non-negative integer`);
-  }
-  const liveByHorizon = live.by_horizon || {};
-  if (Object.keys(liveByHorizon).sort((a, b) => Number(a) - Number(b)).join(',') !== PUBLIC_HORIZONS.join(',')) {
-    errors.push('research_evidence.live_validation.by_horizon must contain exactly 1, 3, 5 and 10');
-  }
-  for (const horizon of PUBLIC_HORIZONS) {
-    const row = liveByHorizon[horizon] || {};
-    requireKeys(row, [...LIVE_HORIZON_KEYS], `research_evidence.live_validation.by_horizon.${horizon}`, errors);
-    rejectUnexpectedKeys(row, LIVE_HORIZON_KEYS, `research_evidence.live_validation.by_horizon.${horizon}`, errors);
-    for (const key of ['matured_outcomes', 'matured_prediction_days']) {
-      const value = Number(row[key]);
-      if (!Number.isInteger(value) || value < 0) errors.push(`research_evidence.live_validation.by_horizon.${horizon}.${key} must be a non-negative integer`);
+  const live = evidence.live_validation;
+  if (live === null) {
+    if (!allowNullLiveValidation) {
+      errors.push('research_evidence.live_validation may be null only for historical_backfill records');
     }
-    if (typeof row.live_metrics_ready !== 'boolean') errors.push(`research_evidence.live_validation.by_horizon.${horizon}.live_metrics_ready must be boolean`);
-    for (const key of ['live_mean_rank_ic', 'live_top_bottom_spread_return']) {
-      if (!finiteNumberOrNull(row[key])) errors.push(`research_evidence.live_validation.by_horizon.${horizon}.${key} must be a finite number or null`);
-      if (row.live_metrics_ready === false && row[key] !== null) errors.push(`research_evidence.live_validation.by_horizon.${horizon}.${key} must remain null before maturity`);
-      if (row.live_metrics_ready === true && row[key] === null) errors.push(`research_evidence.live_validation.by_horizon.${horizon}.${key} is required after maturity`);
+  } else {
+    requireKeys(live, ['status', 'governance_threshold_days', 'total_matured_outcomes', 'scored_prediction_days', 'pending_outcomes', 'by_horizon'], 'research_evidence.live_validation', errors);
+    rejectUnexpectedKeys(live, LIVE_VALIDATION_KEYS, 'research_evidence.live_validation', errors);
+    if (live && typeof live === 'object' && !Array.isArray(live)) {
+      if (typeof live.status !== 'string' || !live.status.trim()) errors.push('research_evidence.live_validation.status must be a non-empty string');
+      requirePositiveIntegerField(live, 'governance_threshold_days', 'research_evidence.live_validation', errors);
+      for (const key of ['total_matured_outcomes', 'scored_prediction_days', 'pending_outcomes']) {
+        const value = Number(live[key]);
+        if (!Number.isInteger(value) || value < 0) errors.push(`research_evidence.live_validation.${key} must be a non-negative integer`);
+      }
+      const liveByHorizon = live.by_horizon || {};
+      if (Object.keys(liveByHorizon).sort((a, b) => Number(a) - Number(b)).join(',') !== PUBLIC_HORIZONS.join(',')) {
+        errors.push('research_evidence.live_validation.by_horizon must contain exactly 1, 3, 5 and 10');
+      }
+      for (const horizon of PUBLIC_HORIZONS) {
+        const row = liveByHorizon[horizon] || {};
+        requireKeys(row, [...LIVE_HORIZON_KEYS], `research_evidence.live_validation.by_horizon.${horizon}`, errors);
+        rejectUnexpectedKeys(row, LIVE_HORIZON_KEYS, `research_evidence.live_validation.by_horizon.${horizon}`, errors);
+        for (const key of ['matured_outcomes', 'matured_prediction_days']) {
+          const value = Number(row[key]);
+          if (!Number.isInteger(value) || value < 0) errors.push(`research_evidence.live_validation.by_horizon.${horizon}.${key} must be a non-negative integer`);
+        }
+        if (typeof row.live_metrics_ready !== 'boolean') errors.push(`research_evidence.live_validation.by_horizon.${horizon}.live_metrics_ready must be boolean`);
+        for (const key of ['live_mean_rank_ic', 'live_top_bottom_spread_return']) {
+          if (!finiteNumberOrNull(row[key])) errors.push(`research_evidence.live_validation.by_horizon.${horizon}.${key} must be a finite number or null`);
+          if (row.live_metrics_ready === false && row[key] !== null) errors.push(`research_evidence.live_validation.by_horizon.${horizon}.${key} must remain null before maturity`);
+          if (row.live_metrics_ready === true && row[key] === null) errors.push(`research_evidence.live_validation.by_horizon.${horizon}.${key} is required after maturity`);
+        }
+      }
     }
   }
 
@@ -386,7 +394,7 @@ function validateV2(payload, errors) {
   const hasEvidence = Object.prototype.hasOwnProperty.call(payload, 'research_evidence');
   if (hasWindows !== hasEvidence) errors.push('V2 forecast_windows and research_evidence must be published together');
   if (hasWindows) validateForecastWindows(payload, errors);
-  if (hasEvidence) validateResearchEvidence(payload.research_evidence, errors);
+  if (hasEvidence) validateResearchEvidence(payload.research_evidence, errors, { allowNullLiveValidation: payload.record_origin === 'historical_backfill' });
 }
 
 export function validatePublicWire(payload) {

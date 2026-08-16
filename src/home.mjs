@@ -142,6 +142,7 @@ function rankingWindow(payload, previousPayload, h, isPrimary) {
 function rankingPanel(payload, previousPayload) {
   const full = isFullUniverse(payload);
   const primary = primaryHorizon(payload);
+  const windows = forecastWindows(payload);
   const horizons = availableHorizons(payload);
   const rows = signalsFrom(payload, primary);
   const count = universeForHorizon(payload, primary);
@@ -199,8 +200,18 @@ function formatSpread(value) {
 
 function evidenceHorizonPanel(payload, h, isPrimary) {
   const historical = historicalEvidenceFor(payload, h) || {};
+  const liveValidation = payload?.research_evidence?.live_validation;
+  if (liveValidation === null) {
+    return `<div class="evidence-horizon" data-horizon-panel="${escapeHtml(h)}"${isPrimary ? '' : ' hidden'}>
+      <div class="evidence-stat"><span>HELD-OUT RANKIC</span><strong>${escapeHtml(formatRankIc(historical.heldout_mean_date_rank_ic))}</strong><em>${escapeHtml(h)}S historical validation</em></div>
+      <div class="evidence-stat"><span>TOP–BOTTOM SPREAD</span><strong>${escapeHtml(formatSpread(historical.heldout_top_bottom_spread_return))}</strong><em>held-out test</em></div>
+      <div class="evidence-stat"><span>LIVE REALISED EVIDENCE</span><strong>NOT RECONSTRUCTED</strong><em>not retroactively inferred for this historical record</em></div>
+      <div class="evidence-stat"><span>AS-OF EVIDENCE STATE</span><strong>UNAVAILABLE</strong><em>historical publication provenance</em></div>
+    </div>`;
+  }
+
   const live = liveEvidenceFor(payload, h) || {};
-  const threshold = Number(payload?.research_evidence?.live_validation?.governance_threshold_days || 60);
+  const threshold = Number(liveValidation?.governance_threshold_days || 60);
   const ready = live.live_metrics_ready === true;
   return `<div class="evidence-horizon" data-horizon-panel="${escapeHtml(h)}"${isPrimary ? '' : ' hidden'}>
     <div class="evidence-stat"><span>HELD-OUT RANKIC</span><strong>${escapeHtml(formatRankIc(historical.heldout_mean_date_rank_ic))}</strong><em>${escapeHtml(h)}S historical validation</em></div>
@@ -216,28 +227,38 @@ function researchEvidencePanel(payload) {
   const evidence = payload?.research_evidence;
   if (!evidence) return '';
   const scale = evidence.system_scale || {};
-  const live = evidence.live_validation || {};
+  const live = evidence.live_validation;
+  const historicalBackfillWithoutLive = payload?.record_origin === 'historical_backfill' && live === null;
   const governance = evidence.governance || {};
   const primary = primaryHorizon(payload);
   const horizons = availableHorizons(payload);
+  const headerCopy = historicalBackfillWithoutLive
+    ? 'Historical held-out validation is preserved for this reconstructed model record. Live realised evidence was not retroactively reconstructed.'
+    : 'Historical validation and live realised-outcome tracking are shown separately. Live ranking metrics remain withheld until the existing evidence-maturity threshold is reached.';
+  const fourthScale = historicalBackfillWithoutLive
+    ? '<div><span>LIVE EVIDENCE</span><strong>NOT RECONSTRUCTED</strong></div>'
+    : `<div><span>LIVE OUTCOMES SCORED</span><strong>${escapeHtml(formatInteger(live?.total_matured_outcomes))}</strong></div>`;
+  const governanceState = historicalBackfillWithoutLive
+    ? 'HISTORICAL BACKFILL'
+    : prettyState(live?.status || 'evidence_accumulating');
 
   return `<section class="model-evidence" aria-labelledby="model-evidence-title">
     <header>
       <div><p class="eyebrow">MODEL EVIDENCE</p><h2 id="model-evidence-title">Research proof, accumulated over time.</h2></div>
-      <p>Historical validation and live realised-outcome tracking are shown separately. Live ranking metrics remain withheld until the existing evidence-maturity threshold is reached.</p>
+      <p>${escapeHtml(headerCopy)}</p>
     </header>
     <div class="evidence-scale">
       <div><span>MODEL SAMPLES</span><strong>${escapeHtml(formatInteger(scale.historical_model_samples))}</strong></div>
       <div><span>TRAINING SECURITIES</span><strong>${escapeHtml(formatInteger(scale.training_universe_count))}</strong></div>
       <div><span>HELD-OUT TEST DATES</span><strong>${escapeHtml(formatInteger(scale.heldout_test_dates))}</strong></div>
-      <div><span>LIVE OUTCOMES SCORED</span><strong>${escapeHtml(formatInteger(live.total_matured_outcomes))}</strong></div>
+      ${fourthScale}
     </div>
     <div class="evidence-window-label"><span>SELECTED FORECAST EVIDENCE</span><strong><span data-active-horizon>${escapeHtml(primary)}</span>S</strong></div>
     ${horizons.map(h => evidenceHorizonPanel(payload, h, h === primary)).join('')}
     <div class="evidence-governance">
       <span>GOVERNANCE</span>
       <p>${governance.outcomes_scored_after_horizon_maturity ? 'Forecasts are scored only after their horizon matures.' : ''} ${governance.automatic_promotion === false && governance.human_review_required === true ? 'Model promotion is not automatic; human review is required.' : ''}</p>
-      <strong>${escapeHtml(prettyState(live.status || 'evidence_accumulating'))}</strong>
+      <strong>${escapeHtml(governanceState)}</strong>
     </div>
   </section>`;
 }
