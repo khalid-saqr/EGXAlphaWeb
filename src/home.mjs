@@ -21,8 +21,10 @@ function tone(bucket) {
   return 'neutral';
 }
 
-function signalsFrom(payload) {
-  if (Array.isArray(payload?.signals) && payload.signals.length) return payload.signals;
+export function signalsFrom(payload) {
+  if (Array.isArray(payload?.signals)) {
+    return [...payload.signals].sort((a, b) => Number(a.rank_within_horizon) - Number(b.rank_within_horizon));
+  }
   const signal = payload?.public_signal || payload?.signal || {};
   if (!signal.stock_symbol) return [];
   const asset = payload.asset || {};
@@ -37,7 +39,7 @@ function signalsFrom(payload) {
 }
 
 function isFullUniverse(payload) {
-  return Array.isArray(payload?.signals) && payload.signals.length > 1;
+  return Array.isArray(payload?.signals);
 }
 
 function universeCount(payload, rows) {
@@ -58,7 +60,7 @@ function previousRanks(previousPayload) {
   return map;
 }
 
-function movement(row, previous) {
+export function movement(row, previous) {
   const current = Number(row.rank_within_horizon);
   const prior = previous.get(row.stock_symbol);
   if (!Number.isFinite(current) || !Number.isFinite(prior)) return { value: null, label: '—', className: 'flat' };
@@ -103,10 +105,11 @@ function modelRow(row, previous) {
   const bucket = row.direction_bucket || 'neutral_model_signal';
   const label = prettyState(bucket);
   const symbol = displaySymbol(row.stock_symbol);
+  const symbolHref = rel(`/symbol/${encodeURIComponent(symbol)}/`);
   return `<div class="model-row" data-model-row data-direction="${escapeHtml(tone(bucket))}" data-search-text="${escapeHtml(`${symbol} ${row.stock_symbol || ''} ${row.company_name || ''}`.toLowerCase())}">
     <div class="rank-cell"><span>#</span>${String(rank).padStart(3, '0')}</div>
     <div class="move-cell move-${move.className}" title="Rank change versus previous completed session">${escapeHtml(move.label)}</div>
-    <div class="symbol-cell"><strong>${escapeHtml(symbol)}</strong><span>${escapeHtml(row.company_name || row.stock_symbol || '')}</span></div>
+    <a class="symbol-cell" href="${symbolHref}" aria-label="Open ${escapeHtml(symbol)} model history"><strong>${escapeHtml(symbol)}</strong><span>${escapeHtml(row.company_name || row.stock_symbol || '')}</span></a>
     <div class="view-cell tone-${tone(bucket)}"><i aria-hidden="true"></i>${escapeHtml(label)}</div>
   </div>`;
 }
@@ -149,7 +152,13 @@ function researchStrip() {
 function recentSessions(items, currentDate) {
   const rows = (Array.isArray(items) ? items : []).filter(item => item?.date && item.date !== currentDate).slice(0, 5);
   if (!rows.length) return '';
-  return `<section class="recent-runs"><header><p class="eyebrow">RECENT RUNS</p><a href="${rel('/archive/')}">VIEW HISTORY →</a></header>${rows.map(item => `<a href="${rel(item.url)}"><time>${escapeHtml(item.date)}</time><strong>${escapeHtml(item.display_symbol || displaySymbol(item.symbol))}</strong><span>${escapeHtml(prettyState(item.direction_bucket))}</span></a>`).join('')}</section>`;
+  return `<section class="recent-runs"><header><p class="eyebrow">RECENT RUNS</p><a href="${rel('/archive/')}">VIEW HISTORY →</a></header>${rows.map(item => {
+    const full = item.schema_version === 'egx_alpha_public_wire_v2';
+    const count = Number(item.universe_count || item.published_count || 0);
+    const publication = full ? `${count} SECURITIES` : `${item.published_count || 1} PUBLIC ROW`;
+    const state = full ? prettyState(item.record_origin || 'live') : 'V1 compatibility';
+    return `<a href="${rel(item.url)}"><time>${escapeHtml(item.date)}</time><strong>${escapeHtml(publication)}</strong><span>${escapeHtml(state)}</span></a>`;
+  }).join('')}</section>`;
 }
 
 export function homePage(payload, { canonicalPath = '/today/', recentItems = [], previousPayload = null } = {}) {
@@ -164,5 +173,3 @@ export function homePage(payload, { canonicalPath = '/today/', recentItems = [],
     ${megaFooter()}
   </main>`;
 }
-
-export { signalsFrom, movement };

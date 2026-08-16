@@ -42,7 +42,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Validate public wire
+      - name: Validate V1 and V2 public wires
         run: node tests/test-public-wire.mjs
 
       - name: Build production artifact
@@ -51,10 +51,13 @@ jobs:
       - name: Verify production output and payload identity
         run: node tests/test-build-output.mjs
 
-      - name: Verify square social-card homepage
+      - name: Verify V2 full-universe build
+        run: node tests/test-v2-build.mjs
+
+      - name: Verify institutional homepage
         run: node tests/test-homepage-layout.mjs
 
-      - name: Verify changing payload fixtures
+      - name: Verify genuine archived-universe fixtures
         run: node tests/test-homepage-payload-fixtures.mjs
 
       - name: Verify methodology white paper
