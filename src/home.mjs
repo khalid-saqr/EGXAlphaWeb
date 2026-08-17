@@ -9,11 +9,12 @@ import {
   topLevelSignals,
   universeForHorizon
 } from './research-view.mjs';
-import { displaySymbol, formatPercentile, horizonLabel, signalLabel, signalTone } from './product-view.mjs';
+import { displaySymbol, formatPercentile, horizonLabel, rankPercentile, signalLabel, signalTone } from './product-view.mjs';
 
 const HOME_CSS = fs.readFileSync(new URL('../assets/home.css', import.meta.url), 'utf8');
 const MULTI_HORIZON_CSS = fs.readFileSync(new URL('../assets/multi-horizon.css', import.meta.url), 'utf8');
 const PRODUCT_HOME_CSS = fs.readFileSync(new URL('../assets/product-home.css', import.meta.url), 'utf8');
+const FORWARD_HERO_CSS = fs.readFileSync(new URL('../assets/forward-hero.css', import.meta.url), 'utf8');
 
 function formatDate(value) {
   if (!value) return 'Latest';
@@ -49,33 +50,51 @@ export function movement(row, previous) {
   return { value: delta, label: `${delta > 0 ? '+' : ''}${delta}`, className: delta > 0 ? 'up' : 'down' };
 }
 
+function heroForecastRow(row, previous, universe) {
+  const rank = Number(row.rank_within_horizon);
+  const percentile = rankPercentile(rank, universe);
+  const zoomed = percentile == null ? 0 : Math.max(0, Math.min(100, (percentile - 90) * 10));
+  const move = movement(row, previous);
+  const symbol = displaySymbol(row.stock_symbol);
+  const tone = signalTone(row.direction_bucket);
+  const signal = signalLabel(row.direction_bucket);
+  return `<a class="hero-forecast-row tone-${escapeHtml(tone)}" href="${rel(`/symbol/${encodeURIComponent(symbol)}/`)}" style="--forecast-fill:${zoomed.toFixed(1)}%" aria-label="${escapeHtml(symbol)} ${escapeHtml(signal)}, rank ${escapeHtml(rank)} of ${escapeHtml(universe)}">
+    <div class="forecast-symbol"><strong>${escapeHtml(symbol)}</strong><span>#${escapeHtml(rank)} / ${escapeHtml(universe)}</span></div>
+    <div class="forecast-plot"><div class="forecast-rail"><i aria-hidden="true"></i></div><div class="forecast-scale"><span>90</span><span>${escapeHtml(formatPercentile(rank, universe))} PCTL</span><span>100</span></div></div>
+    <div class="forecast-meta"><span class="forecast-signal">${escapeHtml(signal)}</span><strong class="move-${move.className}">Δ ${escapeHtml(move.label)}</strong></div>
+  </a>`;
+}
+function heroForecastPanel(payload, previousPayload, horizon, single = false) {
+  const rows = signalsFrom(payload, horizon).slice(0, 5);
+  const previous = previousRanks(previousPayload, horizon);
+  const universe = universeForHorizon(payload, horizon) || rows.length;
+  return `<div class="hero-forecast-panel${single ? ' single-panel' : ''}" data-hero-forecast-panel="${escapeHtml(horizon)}">${rows.map(row => heroForecastRow(row, previous, universe)).join('') || '<p class="chart-empty">No published forecasts for this outlook.</p>'}</div>`;
+}
 function hero(payload, previousPayload, canonicalPath) {
-  const primary = primaryHorizon(payload);
-  const rows = signalsFrom(payload, primary);
-  const universe = universeForHorizon(payload, primary) || rows.length;
-  const leader = rows[0] || {};
-  const previous = previousRanks(previousPayload, primary);
-  const move = movement(leader, previous);
-  const symbol = displaySymbol(leader.stock_symbol);
+  const horizons = availableHorizons(payload);
+  const heroHorizons = ['1', '3'].filter(h => horizons.includes(h));
+  const fallback = heroHorizons[0] || primaryHorizon(payload);
+  const rows = signalsFrom(payload, fallback);
+  const universe = universeForHorizon(payload, fallback) || rows.length;
   const archived = String(canonicalPath || '').startsWith('/archive/');
   const date = formatDate(payload.trading_date);
-  const signal = signalLabel(leader.direction_bucket);
-  const tone = signalTone(leader.direction_bucket);
-  const percentile = formatPercentile(leader.rank_within_horizon, universe);
-  return `<section class="product-hero">
+  const hasOneDay = heroHorizons.includes('1');
+  const liveTitle = hasOneDay ? "Tomorrow's strongest model forecasts." : 'Strongest forward model forecasts.';
+  const liveDeck = hasOneDay ? 'After each EGX close, /Alpha ranks the eligible market for the next trading day. Start with the 1D outlook, or look three trading days ahead.' : 'After each EGX close, /Alpha ranks the eligible market for the published forward outlook.';
+  const tabs = heroHorizons.length > 1 ? `<input class="hero-forecast-radio" type="radio" name="hero-forward-outlook" id="hero-forward-1" value="1" checked><input class="hero-forecast-radio" type="radio" name="hero-forward-outlook" id="hero-forward-3" value="3"><div class="hero-forecast-tabs" role="tablist" aria-label="Forward outlook"><label for="hero-forward-1" role="tab">1D <small>NEXT TRADING DAY</small></label><label for="hero-forward-3" role="tab">3D <small>THREE TRADING DAYS</small></label></div>` : `<div class="hero-forecast-tabs single"><span>${escapeHtml(horizonLabel(fallback))} FORWARD OUTLOOK</span></div>`;
+  return `<section class="product-hero forward-hero">
     <div class="hero-copy">
-      <p class="eyebrow">${archived ? 'HISTORICAL MODEL RECORD' : 'LATEST COMPLETED MODEL RUN'}</p>
-      <h1>See how the model ranks the Egyptian market.</h1>
-      <p class="hero-deck">EGX /Alpha applies a reviewed deep-learning ranking model to eligible EGX stocks across 1, 3, 5 and 10 trading-day outlooks. Rankings update after each completed market session.</p>
+      <p class="eyebrow">${archived ? 'HISTORICAL FORWARD FORECAST' : 'NEXT MODEL OUTLOOK'}</p>
+      <h1>${archived ? 'What /Alpha saw next from this session.' : liveTitle}</h1>
+      <p class="hero-deck">${archived ? 'This archived record preserves the forward-looking ranking that was available after that completed EGX session.' : liveDeck}</p>
       <div class="hero-runline"><span>${escapeHtml(date)}</span><strong>${escapeHtml(universe)} STOCKS ANALYSED</strong><em>POST-CLOSE · CAIRO</em></div>
-      <a class="primary-action" href="#ranking">EXPLORE ${archived ? 'THIS' : 'TODAY\'S'} RANKING →</a>
+      <a class="primary-action" href="#ranking">EXPLORE ${archived ? 'THIS' : 'THE FULL'} RANKING →</a>
     </div>
-    <article class="leader-card" aria-label="Selected outlook leader">
-      <header><span>${archived ? 'MODEL LEADER' : "TODAY'S MODEL LEADER"}</span><strong>${escapeHtml(horizonLabel(primary))} OUTLOOK</strong></header>
-      <div class="leader-topline"><a href="${rel(`/symbol/${encodeURIComponent(symbol)}/`)}">${escapeHtml(symbol)}</a><span class="tone-${tone}">${escapeHtml(signal)}</span></div>
-      <div class="leader-metrics"><div><span>RANK</span><strong>#${escapeHtml(leader.rank_within_horizon ?? '—')} / ${escapeHtml(universe)}</strong></div><div><span>RANK PERCENTILE</span><strong>${escapeHtml(percentile)}</strong></div><div><span>Δ RANK</span><strong class="move-${move.className}">${escapeHtml(move.label)}</strong></div></div>
-      <div class="rank-chart" data-hero-chart data-hero-symbol="${escapeHtml(symbol)}" data-hero-horizon="${escapeHtml(primary)}" data-hero-as-of="${escapeHtml(payload.trading_date || '')}"><p class="chart-empty">Loading historical rank percentile…</p></div>
-      <p class="chart-note">Rank percentile shows relative position within the eligible EGX universe. It is not a probability or confidence score.</p>
+    <article class="forward-board" aria-label="Highest-ranked forward model forecasts" data-hero-forecast-board>
+      <header class="forward-board-head"><div><span>${archived ? 'FORWARD FORECAST SNAPSHOT' : 'WHAT /ALPHA SEES NEXT'}</span><strong>Highest-ranked public forecasts</strong></div><em>RANK PERCENTILE · ZOOMED 90–100</em></header>
+      ${tabs}
+      <div class="hero-forecast-panels">${(heroHorizons.length ? heroHorizons : [fallback]).map(h => heroForecastPanel(payload, previousPayload, h, heroHorizons.length < 2)).join('')}</div>
+      <p class="forward-board-note"><strong>Δ</strong> is rank movement versus the previous completed run at the same horizon. Bar length is public rank percentile, not a confidence probability or predicted return.</p>
     </article>
   </section>`;
 }
@@ -156,5 +175,5 @@ function recentSessions(items, currentDate) {
 }
 export function homePage(payload, { canonicalPath = '/today/', recentItems = [], previousPayload = null } = {}) {
   const activeSection = String(canonicalPath || '').startsWith('/archive/') ? 'history' : 'latest';
-  return `<style data-home-styles>${HOME_CSS.replaceAll('</style', '<\\/style')}${MULTI_HORIZON_CSS.replaceAll('</style', '<\\/style')}${PRODUCT_HOME_CSS.replaceAll('</style', '<\\/style')}</style><main class="site-shell page-home page-product" data-page="signal">${siteHeader('QUANTITATIVE MARKET RANKING', activeSection)}${hero(payload, previousPayload, canonicalPath)}${rankingPanel(payload, previousPayload, canonicalPath)}${researchEvidencePanel(payload)}${howToRead()}${recentSessions(recentItems, payload.trading_date)}${siteFooter()}</main>`;
+  return `<style data-home-styles>${HOME_CSS.replaceAll('</style', '<\\/style')}${MULTI_HORIZON_CSS.replaceAll('</style', '<\\/style')}${PRODUCT_HOME_CSS.replaceAll('</style', '<\\/style')}${FORWARD_HERO_CSS.replaceAll('</style', '<\\/style')}</style><main class="site-shell page-home page-product" data-page="signal">${siteHeader('QUANTITATIVE MARKET RANKING', activeSection)}${hero(payload, previousPayload, canonicalPath)}${rankingPanel(payload, previousPayload, canonicalPath)}${researchEvidencePanel(payload)}${howToRead()}${recentSessions(recentItems, payload.trading_date)}${siteFooter()}</main>`;
 }
