@@ -3,8 +3,34 @@ import fs from 'node:fs';
 import { validatePublicWire } from '../src/validate.mjs';
 import { asPublicV2Fixture } from './helpers/v2-fixture.mjs';
 
-const v1 = JSON.parse(fs.readFileSync('data/latest.json', 'utf8'));
-assert.equal(validatePublicWire(v1).ok, true, 'current production V1 wire must remain valid during transition');
+const production = JSON.parse(fs.readFileSync('data/latest.json', 'utf8'));
+assert.equal(validatePublicWire(production).ok, true, 'current production public wire must validate');
+
+// Keep V1 compatibility testing independent from whichever schema is currently live.
+const v1 = {
+  schema_version: 'egx_alpha_public_wire_v1',
+  domain: 'EGXResearch',
+  signal_name: 'EGX /Alpha signal',
+  audience: 'public',
+  trading_date: '2026-07-01',
+  published_at: '2026-07-01T13:30:00Z',
+  signal: {
+    stock_symbol: 'EGX:TEST',
+    rank_label: 'Public rank #3',
+    rank_within_horizon: 3,
+    horizon: '5',
+    direction_bucket: 'neutral_model_signal',
+    source_freshness_status: 'live_observation_completed'
+  },
+  context: {},
+  disclaimer: {
+    market_use: 'research_and_information_only',
+    investment_advice: false,
+    execution_instruction: false
+  },
+  integrity: {}
+};
+assert.equal(validatePublicWire(v1).ok, true, 'explicit V1 compatibility fixture must remain valid');
 
 for (const key of [
   'paid_subscriber',
