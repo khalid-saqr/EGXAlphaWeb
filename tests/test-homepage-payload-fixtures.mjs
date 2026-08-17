@@ -10,7 +10,7 @@ assert.deepEqual(july9.signals.reduce((a,r)=>(a[r.direction_bucket]=(a[r.directi
 for(const fixture of [july8,july9]){assert.deepEqual(fixture.signals.map(row=>row.rank_within_horizon),Array.from({length:fixture.universe_count},(_,i)=>i+1));const text=JSON.stringify(fixture);for(const forbidden of ['ranking_score','direction_logit','model_version','prediction_id','feature_builder_version','run_id'])assert.equal(text.includes(forbidden),false);}
 const july8Html=homePage(july8);assert.equal((july8Html.match(/data-model-row/g)||[]).length,91);
 const html=homePage(july9,{previousPayload:july8});assert.equal((html.match(/data-model-row/g)||[]).length,88);
-for(const required of ['Compare the eligible EGX universe.','POSITIVE','NEUTRAL','NEGATIVE','data-model-search','RANK PERCENTILE','Strongest forward model forecasts.','FORWARD OUTLOOK','5D'])assert.ok(html.includes(required),`product fixture should render ${required}`);
+for(const required of ['Compare the eligible EGX universe.','POSITIVE','NEUTRAL','NEGATIVE','data-model-search','RANK PERCENTILE','Deep learning forecast of the EGX stocks ranking.','FORWARD OUTLOOK','5D'])assert.ok(html.includes(required),`product fixture should render ${required}`);
 assert.equal(html.includes('data-hero-chart'),false,'single-horizon compatibility hero should not restore historical chart');
 const comi=html.slice(html.indexOf('EGX:COMI')-400,html.indexOf('EGX:COMI')+700);assert.ok(comi.includes('004'));assert.ok(comi.includes('+7'));assert.ok(comi.includes('96.6')||html.includes('96.6'));
 const bySymbol=datePayload=>new Map(signalsFrom(datePayload).map(row=>[row.stock_symbol,row]));const p8=bySymbol(july8).get('EGX:COMI');const p9=bySymbol(july9).get('EGX:COMI');
