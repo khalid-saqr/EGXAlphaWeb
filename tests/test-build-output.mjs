@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import path from 'node:path';
 
 for (const file of [
   '_site/index.html',
@@ -45,12 +46,25 @@ const visibleHome = mainStart >= 0 && mainEnd >= 0 ? home.slice(mainStart, mainE
 for (const removed of ['Today’s free EGX signal', 'One stock is free', 'Get the full daily ranking']) assert.equal(visibleHome.includes(removed), false);
 
 const archive = fs.readFileSync('_site/archive/index.html', 'utf8');
-assert.ok(archive.includes('1 public row / universe unavailable'), 'legacy V1 sessions without comparison_count must say the universe is unavailable');
 assert.equal(archive.includes('1 public row / 1 universe'), false, 'published-row count must never be substituted for unknown universe size');
 
-const legacyJuly9 = fs.readFileSync('_site/archive/2026-07-09/index.html', 'utf8');
-assert.ok(legacyJuly9.includes('<strong>—</strong><em>universe unavailable</em>'), 'July 9 V1 record must render unknown universe honestly');
-assert.ok(legacyJuly9.includes('PUBLIC ROW / UNIVERSE UNAVAILABLE'), 'legacy ranking header must not infer a one-security universe');
+const productionArchiveDir = path.join('data', 'archive');
+const productionArchives = fs.readdirSync(productionArchiveDir)
+  .filter(name => name.endsWith('.json'))
+  .map(name => ({ name, payload: JSON.parse(fs.readFileSync(path.join(productionArchiveDir, name), 'utf8')) }));
+const legacy = productionArchives.find(record => record.payload.schema_version === 'egx_alpha_public_wire_v1');
+if (legacy) {
+  const date = legacy.payload.trading_date;
+  const legacyPage = fs.readFileSync(`_site/archive/${date}/index.html`, 'utf8');
+  if (!Number.isInteger(legacy.payload?.ranking_context?.comparison_count)) {
+    assert.ok(archive.includes('1 public row / universe unavailable'), 'legacy V1 sessions without comparison_count must say the universe is unavailable');
+    assert.ok(legacyPage.includes('<strong>—</strong><em>universe unavailable</em>'), 'V1 record without comparison_count must render unknown universe honestly');
+    assert.ok(legacyPage.includes('PUBLIC ROW / UNIVERSE UNAVAILABLE'), 'legacy ranking header must not infer a one-security universe');
+  }
+} else {
+  assert.ok(archive.includes('HISTORICAL BACKFILL') || archive.includes('Historical backfill'), 'fully backfilled production archive should expose historical-backfill provenance');
+  assert.equal(archive.includes('Legacy single-row'), false, 'production archive should not require legacy rows after all eligible records are upgraded to V2');
+}
 
 const appJs = fs.readFileSync('_site/assets/app.js', 'utf8');
 assert.ok(appJs.includes('dataModelFilter') || appJs.includes('dataset.modelFilter'));
