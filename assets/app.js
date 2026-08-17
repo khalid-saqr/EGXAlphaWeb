@@ -1,12 +1,19 @@
 (function () {
   const configText = document.getElementById('site-config')?.textContent?.trim();
   const payloadText = document.getElementById('beacon-payload')?.textContent?.trim();
-  let siteConfig = { basePath: '' };
+  let siteConfig = { basePath: '', locale: 'en', strings: {} };
   let pagePayload = {};
   try { if (configText) siteConfig = JSON.parse(configText); } catch (_) {}
   try { if (payloadText) pagePayload = JSON.parse(payloadText); } catch (_) {}
   const basePath = String(siteConfig.basePath ?? '').replace(/\/$/, '');
+  const locale = String(siteConfig.locale || 'en').toLowerCase().startsWith('ar') ? 'ar' : 'en';
+  const ui = siteConfig.strings || {};
 
+  function text(key, fallback, values = {}) {
+    let value = String(ui[key] ?? fallback ?? '');
+    Object.entries(values).forEach(([name, replacement]) => { value = value.replaceAll(`{${name}}`, String(replacement)); });
+    return value;
+  }
   function escapeHtml(value) {
     return String(value ?? '')
       .replaceAll('&', '&amp;')
@@ -22,9 +29,9 @@
   }
   function signalLabel(value) {
     const tone = signalTone(value);
-    if (tone === 'positive') return 'Positive';
-    if (tone === 'negative') return 'Negative';
-    return 'Neutral';
+    if (tone === 'positive') return text('positive', 'Positive');
+    if (tone === 'negative') return text('negative', 'Negative');
+    return text('neutral', 'Neutral');
   }
   function horizonLabel(value) {
     const raw = String(value ?? '').trim().replace(/\.0+$/, '');
@@ -39,6 +46,13 @@
   function formatPercentile(rank, universe) {
     const value = percentile(rank, universe);
     return value == null ? '—' : value.toFixed(1);
+  }
+  function localizedContentPath(rawPath) {
+    let path = String(rawPath || '/');
+    if (!path.startsWith('/')) path = `/${path}`;
+    if (locale !== 'ar' || path === '/ar/' || path.startsWith('/ar/')) return path;
+    if (/^\/(?:today|archive|search|methodology|investor-guide|institutional|symbol)(?:\/|$)/.test(path)) return `/ar${path}`;
+    return path;
   }
   function setTheme(theme) {
     const resolved = theme === 'light' ? 'light' : 'dark';
@@ -85,7 +99,7 @@
       const source = horizonButtons.find(button => button.dataset.horizonSelect === state.horizon);
       if (source?.dataset.universe) {
         document.querySelectorAll('[data-active-universe]').forEach(node => { node.textContent = source.dataset.universe; });
-        document.querySelectorAll('[data-output-count-context]').forEach(node => { node.textContent = `OF ${source.dataset.universe} STOCKS`; });
+        document.querySelectorAll('[data-output-count-context]').forEach(node => { node.textContent = text('outputCount', 'OF {n} STOCKS', { n: source.dataset.universe }); });
       }
       filterButtons.forEach(button => {
         const selected = (button.dataset.modelFilter || 'all') === state.direction;
@@ -95,8 +109,8 @@
       let visible = 0;
       activeRows().forEach(row => {
         const direction = row.dataset.direction || 'neutral';
-        const text = row.dataset.searchText || '';
-        const show = (state.direction === 'all' || direction === state.direction) && (!state.query || text.includes(state.query));
+        const rowText = row.dataset.searchText || '';
+        const show = (state.direction === 'all' || direction === state.direction) && (!state.query || rowText.includes(state.query));
         row.hidden = !show;
         if (show) visible += 1;
       });
@@ -106,8 +120,9 @@
       if (empty) {
         empty.hidden = visible !== 0;
         if (!empty.hidden) {
-          const label = state.direction === 'all' ? 'matching' : signalLabel(state.direction).toLowerCase();
-          empty.innerHTML = `No ${escapeHtml(label)} stocks in the selected ${escapeHtml(horizonLabel(state.horizon))} outlook.${state.direction !== 'all' ? ' <button type="button" data-show-all>Show all</button>' : ''}`;
+          const label = state.direction === 'all' ? text('matching', 'matching') : signalLabel(state.direction);
+          const sentence = text('noMatching', 'No {label} stocks in the selected {horizon} outlook.', { label, horizon: horizonLabel(state.horizon) });
+          empty.innerHTML = `${escapeHtml(sentence)}${state.direction !== 'all' ? ` <button type="button" data-show-all>${escapeHtml(text('showAll', 'Show all'))}</button>` : ''}`;
           empty.querySelector('[data-show-all]')?.addEventListener('click', () => { state.direction = 'all'; render(); });
         }
       }
@@ -125,7 +140,7 @@
   }
   function chartSvg(rows, { compact = false } = {}) {
     const points = rows.map(row => ({ ...row, p: percentile(row.rank_within_horizon ?? row.rank, row.universe_count) })).filter(row => row.p != null);
-    if (points.length < 2) return '<p class="chart-empty">Not enough public history yet.</p>';
+    if (points.length < 2) return `<p class="chart-empty">${escapeHtml(text('chartNotEnough', 'Not enough public history yet.'))}</p>`;
     const width = compact ? 620 : 720;
     const height = compact ? 210 : 260;
     const left = 38, right = 14, top = 16, bottom = 34;
@@ -134,10 +149,10 @@
     const x = i => left + (points.length === 1 ? innerW / 2 : (i / (points.length - 1)) * innerW);
     const y = p => top + ((100 - p) / 100) * innerH;
     const path = points.map((point, i) => `${i ? 'L' : 'M'} ${x(i).toFixed(1)} ${y(point.p).toFixed(1)}`).join(' ');
-    const circles = points.map((point, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(point.p).toFixed(1)}" r="${i === points.length - 1 ? 4.5 : 2.5}"><title>${escapeHtml(point.date)} · ${point.p.toFixed(1)} percentile · rank #${escapeHtml(point.rank_within_horizon ?? point.rank)}</title></circle>`).join('');
+    const circles = points.map((point, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(point.p).toFixed(1)}" r="${i === points.length - 1 ? 4.5 : 2.5}"><title>${escapeHtml(point.date)} · ${point.p.toFixed(1)} ${escapeHtml(text('percentile', 'percentile'))} · ${escapeHtml(text('rank', 'Rank'))} #${escapeHtml(point.rank_within_horizon ?? point.rank)}</title></circle>`).join('');
     const first = points[0]?.date || '';
     const last = points.at(-1)?.date || '';
-    return `<svg class="rank-chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Historical rank percentile chart"><g class="chart-grid"><line x1="${left}" y1="${y(100)}" x2="${width-right}" y2="${y(100)}"/><line x1="${left}" y1="${y(50)}" x2="${width-right}" y2="${y(50)}"/><line x1="${left}" y1="${y(0)}" x2="${width-right}" y2="${y(0)}"/></g><g class="chart-axis"><text x="4" y="${y(100)+4}">100</text><text x="10" y="${y(50)+4}">50</text><text x="16" y="${y(0)+4}">0</text><text x="${left}" y="${height-8}">${escapeHtml(first)}</text><text text-anchor="end" x="${width-right}" y="${height-8}">${escapeHtml(last)}</text></g><path class="chart-line" d="${path}"/>${circles}</svg>`;
+    return `<svg class="rank-chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(text('chartAria', 'Historical rank percentile chart'))}"><g class="chart-grid"><line x1="${left}" y1="${y(100)}" x2="${width-right}" y2="${y(100)}"/><line x1="${left}" y1="${y(50)}" x2="${width-right}" y2="${y(50)}"/><line x1="${left}" y1="${y(0)}" x2="${width-right}" y2="${y(0)}"/></g><g class="chart-axis"><text x="4" y="${y(100)+4}">100</text><text x="10" y="${y(50)+4}">50</text><text x="16" y="${y(0)+4}">0</text><text x="${left}" y="${height-8}">${escapeHtml(first)}</text><text text-anchor="end" x="${width-right}" y="${height-8}">${escapeHtml(last)}</text></g><path class="chart-line" d="${path}"/>${circles}</svg>`;
   }
   async function initHeroChart() {
     const target = document.querySelector('[data-hero-chart]');
@@ -148,7 +163,7 @@
     try {
       const rows = (await publicIndex()).filter(row => (row.display_symbol || String(row.symbol || '').split(':').pop()) === symbol && String(row.horizon) === String(horizon) && (!asOf || row.date <= asOf)).sort((a, b) => a.date.localeCompare(b.date)).slice(-20);
       target.innerHTML = chartSvg(rows);
-    } catch (_) { target.innerHTML = '<p class="chart-empty">Historical chart unavailable.</p>'; }
+    } catch (_) { target.innerHTML = `<p class="chart-empty">${escapeHtml(text('chartUnavailable', 'Historical chart unavailable.'))}</p>`; }
   }
   async function initDossierCharts() {
     const targets = [...document.querySelectorAll('[data-rank-chart]')];
@@ -161,7 +176,7 @@
         const rows = index.filter(row => (row.display_symbol || String(row.symbol || '').split(':').pop()) === symbol && String(row.horizon) === String(horizon)).sort((a, b) => a.date.localeCompare(b.date)).slice(-30);
         target.innerHTML = chartSvg(rows, { compact: true });
       });
-    } catch (_) { targets.forEach(target => { target.innerHTML = '<p class="chart-empty">Historical chart unavailable.</p>'; }); }
+    } catch (_) { targets.forEach(target => { target.innerHTML = `<p class="chart-empty">${escapeHtml(text('chartUnavailable', 'Historical chart unavailable.'))}</p>`; }); }
   }
   async function initSearch() {
     const input = document.querySelector('[data-search-input]');
@@ -170,21 +185,25 @@
     if (!input || !output) return;
     let rows = [];
     try { rows = await publicIndex(); }
-    catch (_) { output.innerHTML = '<p class="small-note">Search index is unavailable.</p>'; if (count) count.textContent = 'UNAVAILABLE'; return; }
+    catch (_) { output.innerHTML = `<p class="small-note">${escapeHtml(text('searchUnavailable', 'Search index is unavailable.'))}</p>`; if (count) count.textContent = text('unavailable', 'UNAVAILABLE'); return; }
     function searchableText(row) { return [...Object.values(row), signalLabel(row.direction_bucket || row.plain_direction), row.horizon ? `${horizonLabel(row.horizon)} outlook` : ''].join(' ').toLowerCase(); }
     function render() {
       const q = input.value.trim().toLowerCase();
-      if (!q) { output.innerHTML = '<p class="small-note">Enter a ticker, analysis date, outlook or signal.</p>'; if (count) count.textContent = 'READY'; return; }
+      if (!q) { output.innerHTML = `<p class="small-note">${escapeHtml(text('searchPrompt', 'Enter a ticker, analysis date, outlook or signal.'))}</p>`; if (count) count.textContent = text('ready', 'READY'); return; }
       const matching = rows.filter(row => searchableText(row).includes(q));
       const filtered = matching.slice(0, 50);
-      if (count) count.textContent = `${matching.length} MATCH${matching.length === 1 ? '' : 'ES'}${matching.length > 50 ? ' · SHOWING 50' : ''}`;
+      if (count) {
+        const plural = locale === 'en' && matching.length !== 1 ? 'ES' : '';
+        count.textContent = `${text('matches', '{n} MATCH{plural}', { n: matching.length, plural })}${matching.length > 50 ? text('showing50', ' · SHOWING 50') : ''}`;
+      }
       output.innerHTML = filtered.length ? filtered.map(row => {
         const direction = row.direction_bucket || row.plain_direction || 'neutral_model_signal';
         const rank = Number(row.rank_within_horizon);
         const universe = Number(row.universe_count);
-        const rankText = Number.isInteger(rank) ? `#${rank}${Number.isInteger(universe) ? ` / ${universe}` : ''}` : 'Rank —';
-        return `<a class="search-result" href="${basePath}${escapeHtml(row.symbol_url || row.url || '/')}"><span class="result-date">${escapeHtml(row.date || '')}</span><strong class="result-symbol">${escapeHtml(row.display_symbol || row.symbol || '')}</strong><em class="result-rank">${escapeHtml(rankText)}</em><span class="result-horizon">${escapeHtml(horizonLabel(row.horizon))}</span><span class="result-percentile">${escapeHtml(formatPercentile(rank, universe))} percentile</span><small class="result-view tone-${signalTone(direction)}">${escapeHtml(signalLabel(direction))}</small></a>`;
-      }).join('') : '<p class="small-note">No matching public model records.</p>';
+        const rankText = Number.isInteger(rank) ? `#${rank}${Number.isInteger(universe) ? ` / ${universe}` : ''}` : `${text('rank', 'Rank')} —`;
+        const href = localizedContentPath(row.symbol_url || row.url || '/');
+        return `<a class="search-result" href="${basePath}${escapeHtml(href)}"><span class="result-date">${escapeHtml(row.date || '')}</span><strong class="result-symbol">${escapeHtml(row.display_symbol || row.symbol || '')}</strong><em class="result-rank">${escapeHtml(rankText)}</em><span class="result-horizon">${escapeHtml(horizonLabel(row.horizon))}</span><span class="result-percentile">${escapeHtml(formatPercentile(rank, universe))} ${escapeHtml(text('percentile', 'percentile'))}</span><small class="result-view tone-${signalTone(direction)}">${escapeHtml(signalLabel(direction))}</small></a>`;
+      }).join('') : `<p class="small-note">${escapeHtml(text('noSearchResults', 'No matching public model records.'))}</p>`;
     }
     input.addEventListener('input', render);
     render();

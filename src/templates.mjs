@@ -1,9 +1,12 @@
 import fs from 'node:fs';
+import { clientStrings, counterpartPath, directionFor, languageSwitchLabel, localePath, localizeHtml, normalizeLocale, stripLocalePath, translateText } from './i18n.mjs';
+import { polishLocalizedHtml, polishLocalizedText } from './i18n-polish.mjs';
 
 const INLINE_CSS = fs.readFileSync(new URL('../assets/app.css', import.meta.url), 'utf8');
 const PRODUCT_CSS = fs.readFileSync(new URL('../assets/product.css', import.meta.url), 'utf8');
 const SHELL_CSS = fs.readFileSync(new URL('../assets/shell.css', import.meta.url), 'utf8');
 const RESEARCH_DEPTH_CSS = fs.readFileSync(new URL('../assets/research-depth.css', import.meta.url), 'utf8');
+const I18N_CSS = fs.readFileSync(new URL('../assets/i18n.css', import.meta.url), 'utf8');
 
 export const SITE = {
   domain: 'EGXResearch',
@@ -48,33 +51,48 @@ export function abs(rootRelative) {
   return `${SITE.siteUrl.replace(/\/$/, '')}${String(rootRelative || '/').startsWith('/') ? rootRelative : `/${rootRelative}`}`;
 }
 
-export function htmlShell({ title, description, canonicalPath, payload, body, pageClass = '' }) {
-  const url = abs(canonicalPath);
+export function htmlShell({ title, description, canonicalPath, payload, body, pageClass = '', locale }) {
+  const lang = normalizeLocale(locale || globalThis.__EGX_RENDER_LOCALE || 'en');
+  const englishPath = stripLocalePath(canonicalPath || '/');
+  const currentPath = localePath(englishPath, lang);
+  const url = abs(currentPath);
+  const englishUrl = abs(englishPath);
+  const arabicUrl = abs(localePath(englishPath, 'ar'));
+  const localizedTitle = polishLocalizedText(translateText(title, lang), lang);
+  const localizedDescription = polishLocalizedText(translateText(description, lang), lang);
   const payloadJson = payload ? JSON.stringify(payload).replaceAll('</script', '<\\/script') : '';
-  const clientConfig = JSON.stringify({ basePath: SITE.basePath }).replaceAll('</script', '<\\/script');
+  const clientConfig = JSON.stringify({ basePath: SITE.basePath, locale: lang, strings: clientStrings(lang) }).replaceAll('</script', '<\\/script');
+  const switchUrl = rel(counterpartPath(englishPath, lang));
+  let localizedBody = localizeHtml(body, lang, { basePath: SITE.basePath })
+    .replaceAll('__LANGUAGE_URL__', escapeHtml(switchUrl))
+    .replaceAll('__LANGUAGE_LABEL__', escapeHtml(languageSwitchLabel(lang)));
+  localizedBody = polishLocalizedHtml(localizedBody, lang);
   return `<!doctype html>
-<html lang="en">
+<html lang="${lang}" dir="${directionFor(lang)}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${escapeHtml(title)}</title>
-  <meta name="description" content="${escapeHtml(description)}">
+  <title>${escapeHtml(localizedTitle)}</title>
+  <meta name="description" content="${escapeHtml(localizedDescription)}">
   <meta name="theme-color" content="#070B14">
   <meta name="color-scheme" content="dark light">
-  <meta property="og:title" content="${escapeHtml(title)}">
+  <meta property="og:title" content="${escapeHtml(localizedTitle)}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="${escapeHtml(url)}">
-  <meta property="og:description" content="${escapeHtml(description)}">
+  <meta property="og:description" content="${escapeHtml(localizedDescription)}">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="${escapeHtml(title)}">
-  <meta name="twitter:description" content="${escapeHtml(description)}">
+  <meta name="twitter:title" content="${escapeHtml(localizedTitle)}">
+  <meta name="twitter:description" content="${escapeHtml(localizedDescription)}">
   <link rel="canonical" href="${escapeHtml(url)}">
-  <style>${INLINE_CSS.replaceAll('</style', '<\\/style')}\n${PRODUCT_CSS.replaceAll('</style', '<\\/style')}\n${SHELL_CSS.replaceAll('</style', '<\\/style')}\n${RESEARCH_DEPTH_CSS.replaceAll('</style', '<\\/style')}</style>
+  <link rel="alternate" hreflang="en" href="${escapeHtml(englishUrl)}">
+  <link rel="alternate" hreflang="ar" href="${escapeHtml(arabicUrl)}">
+  <link rel="alternate" hreflang="x-default" href="${escapeHtml(englishUrl)}">
+  <style>${INLINE_CSS.replaceAll('</style', '<\\/style')}\n${PRODUCT_CSS.replaceAll('</style', '<\\/style')}\n${SHELL_CSS.replaceAll('</style', '<\\/style')}\n${RESEARCH_DEPTH_CSS.replaceAll('</style', '<\\/style')}\n${I18N_CSS.replaceAll('</style', '<\\/style')}</style>
 </head>
-<body class="${escapeHtml(pageClass)}">
+<body class="${escapeHtml(`${pageClass} locale-${lang}`.trim())}">
   <script id="site-config" type="application/json">${clientConfig}</script>
   <script id="beacon-payload" type="application/json">${payloadJson}</script>
-  ${body}
+  ${localizedBody}
   <script src="${rel('/assets/app.js')}" defer></script>
 </body>
 </html>\n`;
@@ -126,6 +144,7 @@ export function siteHeader(sectionLabel = SITE.signalName, activeSection = '') {
     ${primaryNav(activeSection, 'navlinks nav-desktop')}
     <div class="header-actions">
       <a class="search-action${searchActive ? ' active' : ''}" href="${rel('/search/')}"${searchActive ? ' aria-current="page"' : ''} aria-label="Search EGX /Alpha">${searchIcon()}<span>SEARCH</span></a>
+      <a class="language-action" href="__LANGUAGE_URL__" aria-label="Switch language">__LANGUAGE_LABEL__</a>
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false">${themeIcon()}</button>
       <details class="mobile-menu">
         <summary aria-label="Open navigation">${menuIcon()}<span>MENU</span></summary>
@@ -156,6 +175,10 @@ export function siteFooter() {
           <a href="${rel('/investor-guide/')}">Guide</a>
           <a href="${rel('/institutional/')}">Institutional</a>
         </nav>
+      </section>
+      <section class="footer-section footer-language">
+        <span class="footer-label">LANGUAGE</span>
+        <a class="footer-language-link" href="__LANGUAGE_URL__">__LANGUAGE_LABEL__</a>
       </section>
       <section class="footer-section footer-appearance">
         <span class="footer-label">APPEARANCE</span>

@@ -11,11 +11,13 @@ const { forecastWindows, primaryHorizon, topLevelSignals, universeForHorizon } =
 const { renderArchivePage, renderInstitutionalPage, renderMethodologyPage, renderSearchPage, renderSignalPage, renderSymbolDossierPage } = await import('./render.mjs');
 
 const DEFAULT_ROOT = process.cwd();
+const PUBLIC_LOCALES = ['en', 'ar'];
 
 function ensureDir(p) { fs.mkdirSync(p, { recursive: true }); }
 function write(p, c) { ensureDir(path.dirname(p)); fs.writeFileSync(p, c, 'utf8'); }
 function copy(s, d) { ensureDir(path.dirname(d)); fs.copyFileSync(s, d); }
 function rmrf(p) { if (fs.existsSync(p)) fs.rmSync(p, { recursive: true, force: true }); }
+function localeRoot(outDir, locale) { return locale === 'ar' ? path.join(outDir, 'ar') : outDir; }
 
 function displaySymbol(symbol) {
   const text = String(symbol || '').trim();
@@ -138,6 +140,29 @@ export function buildSymbolHistories(items) {
   return histories;
 }
 
+function writeLocalePages({ locale, outDir, latest, records, sessions, histories }) {
+  const root = localeRoot(outDir, locale);
+  globalThis.__EGX_RENDER_LOCALE = locale;
+  for (const { payload } of records) {
+    const date = payload.trading_date;
+    const previousPayload = previousPayloadFor(records, date);
+    write(path.join(root, 'archive', date, 'index.html'), renderSignalPage(payload, `/archive/${date}/`, sessions, previousPayload, locale));
+  }
+
+  const latestPrevious = previousPayloadFor(records, latest.trading_date);
+  write(path.join(root, 'index.html'), renderSignalPage(latest, '/', sessions, latestPrevious, locale));
+  write(path.join(root, 'today', 'index.html'), renderSignalPage(latest, '/today/', sessions, latestPrevious, locale));
+  write(path.join(root, 'archive', 'index.html'), renderArchivePage(sessions, locale));
+  write(path.join(root, 'search', 'index.html'), renderSearchPage(locale));
+  write(path.join(root, 'methodology', 'index.html'), renderMethodologyPage(locale));
+  write(path.join(root, 'investor-guide', 'index.html'), investorGuidePage(locale));
+  write(path.join(root, 'institutional', 'index.html'), renderInstitutionalPage(locale));
+
+  for (const [symbol, history] of histories.entries()) {
+    write(path.join(root, 'symbol', symbol, 'index.html'), renderSymbolDossierPage(symbol, history, locale));
+  }
+}
+
 export function buildSite({ root = DEFAULT_ROOT, outDir = path.join(root, '_site'), dataDir = path.join(root, 'data') } = {}) {
   rmrf(outDir);
   ensureDir(outDir);
@@ -151,35 +176,22 @@ export function buildSite({ root = DEFAULT_ROOT, outDir = path.join(root, '_site
   const searchItems = records
     .flatMap(record => indexItems(record.payload))
     .sort((a, b) => b.date.localeCompare(a.date) || Number(a.horizon) - Number(b.horizon) || a.rank_within_horizon - b.rank_within_horizon);
+  const histories = buildSymbolHistories(searchItems);
+
+  for (const locale of PUBLIC_LOCALES) writeLocalePages({ locale, outDir, latest, records, sessions, histories });
+  delete globalThis.__EGX_RENDER_LOCALE;
 
   for (const { payload } of records) {
     const date = payload.trading_date;
-    const previousPayload = previousPayloadFor(records, date);
-    write(path.join(outDir, 'archive', date, 'index.html'), renderSignalPage(payload, `/archive/${date}/`, sessions, previousPayload));
     write(path.join(outDir, 'data', 'archive', `${date}.json`), JSON.stringify(payload, null, 2) + '\n');
   }
-
-  const latestPrevious = previousPayloadFor(records, latest.trading_date);
-  write(path.join(outDir, 'index.html'), renderSignalPage(latest, '/', sessions, latestPrevious));
-  write(path.join(outDir, 'today', 'index.html'), renderSignalPage(latest, '/today/', sessions, latestPrevious));
-  write(path.join(outDir, 'archive', 'index.html'), renderArchivePage(sessions));
-  write(path.join(outDir, 'search', 'index.html'), renderSearchPage());
-  write(path.join(outDir, 'methodology', 'index.html'), renderMethodologyPage());
-  write(path.join(outDir, 'investor-guide', 'index.html'), investorGuidePage());
-  write(path.join(outDir, 'institutional', 'index.html'), renderInstitutionalPage());
-
-  const histories = buildSymbolHistories(searchItems);
-  for (const [symbol, history] of histories.entries()) {
-    write(path.join(outDir, 'symbol', symbol, 'index.html'), renderSymbolDossierPage(symbol, history));
-  }
-
   write(path.join(outDir, 'data', 'latest.json'), JSON.stringify(latest, null, 2) + '\n');
   write(path.join(outDir, 'data', 'index.json'), JSON.stringify(searchItems, null, 2) + '\n');
   copy(path.join(root, 'assets', 'app.js'), path.join(outDir, 'assets', 'app.js'));
   write(path.join(outDir, 'sw.js'), renderLegacyServiceWorkerCleanup());
   write(path.join(outDir, '.nojekyll'), '');
 
-  console.log(`Built EGXResearch public site with ${sessions.length} archived session(s), ${searchItems.length} searchable model row(s), and ${histories.size} symbol dossier(s) for ${SITE.siteUrl || 'the configured host'}.`);
+  console.log(`Built EGXResearch public site in ${PUBLIC_LOCALES.length} locale(s) with ${sessions.length} archived session(s), ${searchItems.length} searchable model row(s), and ${histories.size} symbol dossier(s) for ${SITE.siteUrl || 'the configured host'}.`);
   return { latest, records, sessions, searchItems, histories };
 }
 
