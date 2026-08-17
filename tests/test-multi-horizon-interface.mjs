@@ -5,85 +5,12 @@ import { homePage } from '../src/home.mjs';
 import { renderSymbolDossierPage } from '../src/render.mjs';
 import { validatePublicWire } from '../src/validate.mjs';
 import { realMultiHorizonExcerpt, realPreviousExcerpt } from './fixtures/multi-horizon-real-excerpt.mjs';
-
-const excerptValidation = validatePublicWire(realMultiHorizonExcerpt);
-assert.equal(excerptValidation.ok, false, 'real UI excerpt is intentionally incomplete and must never validate as a production wire');
-assert.ok(excerptValidation.errors.some(error => error.includes('length (5) must equal universe_count (88)')));
-
-const rawFixture = JSON.stringify(realMultiHorizonExcerpt);
-for (const forbidden of [
-  'ranking_score',
-  'return_forecast',
-  'direction_logit',
-  'model_version',
-  'prediction_id',
-  'feature_builder_version',
-  'run_id',
-  'input_cutoff',
-  'hit_rate'
-]) {
-  assert.equal(rawFixture.includes(forbidden), false, `sanitized multi-horizon fixture must not contain ${forbidden}`);
-}
-
-const html = homePage(realMultiHorizonExcerpt, { previousPayload: realPreviousExcerpt });
-for (const required of [
-  'FORECAST WINDOW',
-  'data-horizon-select="1"',
-  'data-horizon-select="3"',
-  'data-horizon-select="5"',
-  'data-horizon-select="10"',
-  'MODEL EVIDENCE',
-  '435,954',
-  '1,944',
-  '22 / 60',
-  '+0.0280',
-  '+0.18 pp',
-  'Model promotion is not automatic; human review is required.'
-]) {
-  assert.ok(html.includes(required), `multi-horizon interface should render ${required}`);
-}
-
-const oneStart = html.indexOf('class="horizon-panel" data-horizon-panel="1"');
-const threeStart = html.indexOf('class="horizon-panel" data-horizon-panel="3"');
-const fiveStart = html.indexOf('class="horizon-panel" data-horizon-panel="5"');
-const tenStart = html.indexOf('class="horizon-panel" data-horizon-panel="10"');
-assert.ok(oneStart >= 0 && threeStart > oneStart && fiveStart > threeStart && tenStart > fiveStart);
-const onePanel = html.slice(oneStart, threeStart);
-const fivePanel = html.slice(fiveStart, tenStart);
-assert.ok(onePanel.includes('UEGC'));
-assert.ok(onePanel.includes('+2'), 'genuine UEGC 1S movement must derive from 2026-08-13 #3 to 2026-08-16 #1');
-assert.ok(fivePanel.includes('UEGC'));
-assert.equal(fivePanel.includes('+2'), false, '1S rank movement must never leak into the 5S window');
-
-const searchItems = indexItems(realMultiHorizonExcerpt);
-assert.equal(searchItems.length, 20, 'genuine UI excerpt contains five real rows across each of four horizons');
-for (const horizon of ['1', '3', '5', '10']) {
-  assert.equal(searchItems.filter(item => item.horizon === horizon).length, 5);
-}
-assert.deepEqual(
-  searchItems.filter(item => item.horizon === '5').slice(0, 5).map(item => [item.symbol, item.rank_within_horizon]),
-  [['EGX:AFDI', 1], ['EGX:UEGC', 2], ['EGX:MILS', 3], ['EGX:ELSH', 4], ['EGX:CEFM', 5]],
-  '5S excerpt must preserve genuine 16 August ranking order'
-);
-
-const previousItems = indexItems(realPreviousExcerpt);
-const histories = buildSymbolHistories([...previousItems, ...searchItems]);
-const uegc = histories.get('UEGC');
-assert.ok(uegc);
-const uegc1 = uegc.filter(row => row.horizon === '1');
-assert.equal(uegc1[0].date, '2026-08-16');
-assert.equal(uegc1[0].rank, 1);
-assert.equal(uegc1[0].movement, 2);
-assert.equal(uegc.filter(row => row.horizon === '5')[0].movement, null);
-
-const dossier = renderSymbolDossierPage('UEGC', uegc);
-for (const required of ['FORECAST WINDOW', 'data-horizon-select="1"', 'data-horizon-select="10"', 'LATEST RANK #2 / 88', '+2']) {
-  assert.ok(dossier.includes(required), `multi-horizon dossier should render ${required}`);
-}
-
-const client = fs.readFileSync('assets/app.js', 'utf8');
-assert.ok(client.includes('initHorizonSelector'));
-assert.ok(client.includes('data-horizon-panel'));
-assert.ok(client.includes('row.horizon ? `${row.horizon}S forecast`'));
-
+const excerptValidation=validatePublicWire(realMultiHorizonExcerpt);assert.equal(excerptValidation.ok,false);assert.ok(excerptValidation.errors.some(error=>error.includes('length (5) must equal universe_count (88)')));
+const rawFixture=JSON.stringify(realMultiHorizonExcerpt);for(const forbidden of ['ranking_score','return_forecast','direction_logit','model_version','prediction_id','feature_builder_version','run_id','input_cutoff','hit_rate'])assert.equal(rawFixture.includes(forbidden),false);
+const html=homePage(realMultiHorizonExcerpt,{previousPayload:realPreviousExcerpt});for(const required of ['OUTLOOK','>1D<','>3D<','>5D<','>10D<','data-horizon-select="1"','data-horizon-select="10"','RANK PERCENTILE','MODEL EVIDENCE','435,954','1,944','22 / 60','+0.0280','+0.18 pp','Model promotion is not automatic; human review is required.'])assert.ok(html.includes(required),`multi-horizon product interface should render ${required}`);
+const oneStart=html.indexOf('class="horizon-panel" data-horizon-panel="1"');const threeStart=html.indexOf('class="horizon-panel" data-horizon-panel="3"');const fiveStart=html.indexOf('class="horizon-panel" data-horizon-panel="5"');const tenStart=html.indexOf('class="horizon-panel" data-horizon-panel="10"');assert.ok(oneStart>=0&&threeStart>oneStart&&fiveStart>threeStart&&tenStart>fiveStart);const onePanel=html.slice(oneStart,threeStart);const fivePanel=html.slice(fiveStart,tenStart);assert.ok(onePanel.includes('UEGC'));assert.ok(onePanel.includes('+2'));assert.ok(fivePanel.includes('UEGC'));assert.equal(fivePanel.includes('+2'),false);
+const searchItems=indexItems(realMultiHorizonExcerpt);assert.equal(searchItems.length,20);for(const horizon of ['1','3','5','10'])assert.equal(searchItems.filter(item=>item.horizon===horizon).length,5);assert.deepEqual(searchItems.filter(item=>item.horizon==='5').slice(0,5).map(item=>[item.symbol,item.rank_within_horizon]),[['EGX:AFDI',1],['EGX:UEGC',2],['EGX:MILS',3],['EGX:ELSH',4],['EGX:CEFM',5]]);
+const previousItems=indexItems(realPreviousExcerpt);const histories=buildSymbolHistories([...previousItems,...searchItems]);const uegc=histories.get('UEGC');assert.ok(uegc);const uegc1=uegc.filter(row=>row.horizon==='1');assert.equal(uegc1[0].date,'2026-08-16');assert.equal(uegc1[0].rank,1);assert.equal(uegc1[0].movement,2);assert.equal(uegc.filter(row=>row.horizon==='5')[0].movement,null);
+const dossier=renderSymbolDossierPage('UEGC',uegc);for(const required of ['OUTLOOK','>1D<','>10D<','#2 / 88','RANK PERCENTILE','data-rank-chart','+2'])assert.ok(dossier.includes(required),`multi-horizon dossier should render ${required}`);
+const client=fs.readFileSync('assets/app.js','utf8');for(const required of ['initRankingController','data-horizon-panel','state.direction','data-filter-count','horizonLabel(row.horizon)'])assert.ok(client.includes(required));assert.equal(client.includes('initHorizonSelector'),false);
 console.log('test-multi-horizon-interface passed');
