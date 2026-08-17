@@ -11,10 +11,22 @@ function signalParts(payload) {
   return { symbol, display };
 }
 
+function tone(bucket) {
+  if (bucket === 'positive_model_signal') return 'positive';
+  if (bucket === 'negative_model_signal') return 'negative';
+  return 'neutral';
+}
+
 function horizonDisplay(item) {
-  if (item?.multi_horizon) return '1 / 3 / 5 / 10 EGX sessions';
+  if (item?.multi_horizon) return '1S / 3S / 5S / 10S';
   const raw = String(item.horizon || '').trim();
-  return /^\d+(\.0+)?$/.test(raw) ? `${parseInt(raw, 10)} EGX sessions` : (item.horizon_label || raw || 'Primary horizon');
+  return /^\d+(\.0+)?$/.test(raw) ? `${parseInt(raw, 10)}S forecast` : (item.horizon_label || raw || 'Primary horizon');
+}
+
+function archiveState(item) {
+  if (item.schema_version !== 'egx_alpha_public_wire_v2') return { label: 'Legacy single-row', className: 'state-legacy' };
+  if (item.record_origin === 'historical_backfill') return { label: 'Historical backfill', className: 'state-backfill' };
+  return { label: 'Live', className: 'state-live' };
 }
 
 function orderedHorizons(history) {
@@ -45,16 +57,14 @@ export function renderArchivePage(items) {
       : knownUniverse
         ? `${item.published_count || 1} public row / ${item.universe_count} universe`
         : `${item.published_count || 1} public row / universe unavailable`;
-    const state = isV2
-      ? `${item.multi_horizon ? 'Multi-window · ' : ''}${prettyState(item.record_origin)}`
-      : 'Single-row public record';
-    return `<a class="archive-row" href="${rel(item.url)}"><span>${escapeHtml(item.date)}</span><strong>${escapeHtml(publication)}</strong><em>${escapeHtml(horizonDisplay(item))}</em><small>${escapeHtml(state)}</small></a>`;
+    const state = archiveState(item);
+    return `<a class="archive-row" href="${rel(item.url)}"><span>${escapeHtml(item.date)}</span><strong>${escapeHtml(publication)}</strong><em>${escapeHtml(horizonDisplay(item))}</em><small class="archive-state ${state.className}">${escapeHtml(state.label)}</small></a>`;
   }).join('');
   return htmlShell({
     title: 'EGX /Alpha analysis history — EGXResearch',
     description: 'Dated public EGX /Alpha model records.',
     canonicalPath: '/archive/',
-    body: `<main class="site-shell page-archive">${siteHeader('HISTORY')}<section class="page-hero"><p class="eyebrow">ANALYSIS HISTORY</p><h1>Completed model records.</h1><p class="lede">Inspect dated public EGX /Alpha outputs. V2 historical backfills are identified by provenance and reconstruct validated dated model records; they are not represented as having been publicly visible on the original analysis date.</p><div class="meta-row"><span class="badge">${items.length} PUBLIC SESSION${items.length === 1 ? '' : 'S'}</span><a class="badge" href="${rel('/search/')}">SEARCH HISTORY</a></div></section><section class="card archive-list">${rows || '<p class="small-note">No public records yet.</p>'}</section>${megaFooter()}</main>`
+    body: `<main class="site-shell page-archive">${siteHeader('HISTORY', 'history')}<section class="page-hero"><p class="eyebrow">ANALYSIS HISTORY</p><h1>Completed model records.</h1><p class="lede">Inspect dated public EGX /Alpha outputs. V2 historical backfills are identified by provenance and reconstruct validated dated model records; they are not represented as having been publicly visible on the original analysis date.</p><div class="meta-row"><span class="badge">${items.length} PUBLIC SESSION${items.length === 1 ? '' : 'S'}</span><a class="badge" href="${rel('/search/')}">SEARCH HISTORY</a></div></section><section class="card archive-list">${rows || '<p class="small-note">No public records yet.</p>'}</section>${megaFooter()}</main>`
   });
 }
 
@@ -63,7 +73,7 @@ export function renderSearchPage() {
     title: 'Search EGX /Alpha history — EGXResearch',
     description: 'Search public EGX /Alpha model records by date, symbol or forecast horizon.',
     canonicalPath: '/search/',
-    body: `<main class="site-shell page-search">${siteHeader('SEARCH')}<section class="page-hero"><p class="eyebrow">PUBLIC MODEL MEMORY</p><h1>Search the research archive.</h1><p class="lede">Find a published model record by ticker, date, forecast window or public model view.</p></section><section class="card search-panel"><input class="search-input" data-search-input type="search" placeholder="EGX symbol, horizon or YYYY-MM-DD" aria-label="Search model records"><div class="search-results" data-search-results aria-live="polite"></div></section>${megaFooter()}</main>`
+    body: `<main class="site-shell page-search">${siteHeader('SEARCH', 'search')}<section class="page-hero"><p class="eyebrow">PUBLIC MODEL MEMORY</p><h1>Search the research archive.</h1><p class="lede">Find a published model record by ticker, date, forecast window or public model view.</p></section><section class="card search-panel"><input class="search-input" data-search-input type="search" placeholder="Ticker, YYYY-MM-DD, 5S, Constructive…" aria-label="Search model records"><div class="search-meta"><span>PUBLIC ARCHIVE INDEX</span><strong data-search-count>READY</strong></div><div class="search-results" data-search-results aria-live="polite"></div></section>${megaFooter()}</main>`
   });
 }
 
@@ -77,17 +87,21 @@ export function renderInstitutionalPage() {
     title: 'Institutional research — EGX /Alpha',
     description: 'Institutional research and technology enquiries for EGX /Alpha.',
     canonicalPath: '/institutional/',
-    body: `<main class="site-shell page-institutional">${siteHeader('INSTITUTIONAL')}<section class="page-hero"><p class="eyebrow">INSTITUTIONAL RESEARCH & TECHNOLOGY</p><h1>Systematic intelligence built around the Egyptian market.</h1><p class="lede">EGXResearch develops a production deep-learning research engine for cross-sectional analysis of Egyptian listed equities.</p></section><section class="institutional-grid"><article class="card"><p class="section-kicker">CAPABILITIES</p><h2>Designed as research infrastructure.</h2><div class="capability-list"><div><span>01</span><section><strong>Research distribution</strong><p>Structured public model outputs and dated signal history.</p></section></div><div><span>02</span><section><strong>Technology integration</strong><p>A bounded publication architecture designed to keep model internals private.</p></section></div><div><span>03</span><section><strong>Strategic research applications</strong><p>Institutional conversations around Egyptian-equity intelligence and systematic workflows.</p></section></div></div></article><article class="card institutional-contact"><p class="section-kicker">ENQUIRIES</p><h2>Institutional contact.</h2><p class="lede">For research partnerships, technology integration, signal distribution or strategic enquiries:</p><a href="${href}">${escapeHtml(SITE.accessEmail)}</a><p class="small-note" style="margin-top:28px">Research and information only. No execution service is offered by this public website.</p></article></section>${megaFooter()}</main>`
+    body: `<main class="site-shell page-institutional">${siteHeader('INSTITUTIONAL', 'institutional')}<section class="page-hero"><p class="eyebrow">INSTITUTIONAL RESEARCH & TECHNOLOGY</p><h1>Systematic intelligence built around the Egyptian market.</h1><p class="lede">EGXResearch develops a production deep-learning research engine for cross-sectional analysis of Egyptian listed equities.</p></section><section class="institutional-grid"><article class="card"><p class="section-kicker">CAPABILITIES</p><h2>Designed as research infrastructure.</h2><div class="capability-list"><div><span>01</span><section><strong>Research distribution</strong><p>Structured public model outputs and dated signal history.</p></section></div><div><span>02</span><section><strong>Technology integration</strong><p>A bounded publication architecture designed to keep model internals private.</p></section></div><div><span>03</span><section><strong>Strategic research applications</strong><p>Institutional conversations around Egyptian-equity intelligence and systematic workflows.</p></section></div></div></article><article class="card institutional-contact"><p class="section-kicker">ENQUIRIES</p><h2>Institutional contact.</h2><p class="lede">For research partnerships, technology integration, signal distribution or strategic enquiries:</p><a href="${href}">${escapeHtml(SITE.accessEmail)}</a><p class="small-note" style="margin-top:28px">Research and information only. No execution service is offered by this public website.</p></article></section>${megaFooter()}</main>`
   });
 }
 
 function dossierWindow(symbol, rows, horizon, isPrimary) {
   const ordered = [...rows].sort((a, b) => b.date.localeCompare(a.date));
   const latest = ordered[0] || {};
-  const table = ordered.map(row => `<div class="archive-row"><span>${escapeHtml(row.date)}</span><strong>#${escapeHtml(row.rank)}${row.universe_count ? ` / ${escapeHtml(row.universe_count)}` : ''}</strong><em>${escapeHtml(prettyState(row.direction_bucket))}</em><small>${escapeHtml(row.movement == null ? '—' : `${row.movement > 0 ? '+' : ''}${row.movement}`)}</small></div>`).join('');
+  const table = ordered.map(row => {
+    const moveClass = row.movement == null || row.movement === 0 ? 'move-flat' : row.movement > 0 ? 'move-positive' : 'move-negative';
+    const moveLabel = row.movement == null || row.movement === 0 ? '—' : `${row.movement > 0 ? '+' : ''}${row.movement}`;
+    return `<div class="dossier-row"><span class="dossier-date">${escapeHtml(row.date)}</span><strong class="dossier-rank">#${escapeHtml(row.rank)}</strong><em class="dossier-universe">${row.universe_count ? `${escapeHtml(row.universe_count)} universe` : 'universe —'}</em><span class="dossier-view tone-${tone(row.direction_bucket)}">${escapeHtml(prettyState(row.direction_bucket))}</span><small class="dossier-move ${moveClass}">${escapeHtml(moveLabel)}</small></div>`;
+  }).join('');
   return `<section class="symbol-horizon-panel" data-horizon-panel="${escapeHtml(horizon)}"${isPrimary ? '' : ' hidden'}>
-    <div class="meta-row"><span class="badge">LATEST RANK #${escapeHtml(latest.rank ?? '—')}${latest.universe_count ? ` / ${escapeHtml(latest.universe_count)}` : ''}</span><span class="badge">${escapeHtml(prettyState(latest.direction_bucket))}</span></div>
-    <section class="card archive-list">${table || `<p class="small-note">No ${escapeHtml(horizon)}S public history.</p>`}</section>
+    <div class="meta-row"><span class="badge">LATEST RANK #${escapeHtml(latest.rank ?? '—')}${latest.universe_count ? ` / ${escapeHtml(latest.universe_count)}` : ''}</span><span class="badge tone-${tone(latest.direction_bucket)}">${escapeHtml(prettyState(latest.direction_bucket))}</span></div>
+    <section class="card archive-list"><div class="dossier-head"><span>DATE</span><span>RANK</span><span>UNIVERSE</span><span>MODEL VIEW</span><span>Δ RANK</span></div>${table || `<p class="small-note">No ${escapeHtml(horizon)}S public history.</p>`}</section>
   </section>`;
 }
 
@@ -103,6 +117,6 @@ export function renderSymbolDossierPage(symbol, history) {
     title: `${symbol} — EGX /Alpha model history`,
     description: `Public EGX /Alpha model history for ${symbol}.`,
     canonicalPath: `/symbol/${symbol}/`,
-    body: `${localStyle}<main class="site-shell page-symbol">${siteHeader('INSTRUMENT INTELLIGENCE')}<section class="page-hero"><p class="eyebrow">INSTRUMENT INTELLIGENCE</p><h1>${escapeHtml(symbol)}</h1><p class="lede">Longitudinal public /Alpha ranking history for this EGX security. Rank movement is calculated only against the previous completed session at the same forecast horizon.</p>${switcher}</section>${horizons.map(h => dossierWindow(symbol, rows.filter(row => String(row.horizon) === h), h, h === primary)).join('') || '<section class="card"><p class="small-note">No public history.</p></section>'}${megaFooter()}</main>`
+    body: `${localStyle}<main class="site-shell page-symbol">${siteHeader('INSTRUMENT INTELLIGENCE', 'history')}<section class="page-hero"><p class="eyebrow">INSTRUMENT INTELLIGENCE</p><h1>${escapeHtml(symbol)}</h1><p class="lede">Longitudinal public /Alpha ranking history for this EGX security. Rank movement is calculated only against the previous completed session at the same forecast horizon.</p>${switcher}</section>${horizons.map(h => dossierWindow(symbol, rows.filter(row => String(row.horizon) === h), h, h === primary)).join('') || '<section class="card"><p class="small-note">No public history.</p></section>'}${megaFooter()}</main>`
   });
 }

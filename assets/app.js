@@ -4,6 +4,27 @@
   try { if (configText) siteConfig = JSON.parse(configText); } catch (_) {}
   const basePath = String(siteConfig.basePath ?? '').replace(/\/$/, '');
 
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
+  function prettyDirection(value) {
+    if (value === 'positive_model_signal' || value === 'positive') return 'Constructive';
+    if (value === 'negative_model_signal' || value === 'negative') return 'Caution';
+    return 'Neutral';
+  }
+
+  function directionTone(value) {
+    if (value === 'positive_model_signal' || value === 'positive') return 'positive';
+    if (value === 'negative_model_signal' || value === 'negative') return 'negative';
+    return 'neutral';
+  }
+
   function setTheme(theme) {
     const resolved = theme === 'light' ? 'light' : 'dark';
     document.documentElement.dataset.theme = resolved;
@@ -82,7 +103,11 @@
     search?.addEventListener('input', render);
     filters.forEach(button => button.addEventListener('click', () => {
       active = button.dataset.modelFilter || 'all';
-      filters.forEach(item => item.classList.toggle('active', item === button));
+      filters.forEach(item => {
+        const selected = item === button;
+        item.classList.toggle('active', selected);
+        item.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      });
       render();
     }));
     render();
@@ -94,6 +119,7 @@
   async function initSearch() {
     const input = document.querySelector('[data-search-input]');
     const output = document.querySelector('[data-search-results]');
+    const count = document.querySelector('[data-search-count]');
     if (!input || !output) return;
     let rows = [];
     try {
@@ -102,15 +128,39 @@
       rows = await response.json();
     } catch (_) {
       output.innerHTML = '<p class="small-note">Search index is unavailable.</p>';
+      if (count) count.textContent = 'UNAVAILABLE';
       return;
+    }
+
+    function searchableText(row) {
+      return [
+        ...Object.values(row),
+        prettyDirection(row.direction_bucket || row.plain_direction),
+        row.horizon ? `${row.horizon}S forecast` : ''
+      ].join(' ').toLowerCase();
     }
 
     function render() {
       const q = input.value.trim().toLowerCase();
-      const filtered = rows.filter(row => !q || Object.values(row).join(' ').toLowerCase().includes(q)).slice(0, 50);
+      if (!q) {
+        output.innerHTML = '<p class="small-note">Enter a ticker, analysis date, forecast window or public model view.</p>';
+        if (count) count.textContent = 'READY';
+        return;
+      }
+      const matching = rows.filter(row => searchableText(row).includes(q));
+      const filtered = matching.slice(0, 50);
+      if (count) count.textContent = `${matching.length} MATCH${matching.length === 1 ? '' : 'ES'}${matching.length > 50 ? ' · SHOWING 50' : ''}`;
       output.innerHTML = filtered.length
-        ? filtered.map(row => `<a class="archive-row" href="${basePath}${row.url}"><span>${row.date || ''}</span><strong>${row.display_symbol || row.symbol || ''}</strong><em>${row.horizon ? `${row.horizon}S forecast` : (row.company_name || row.sector || '')}</em><small>${String(row.plain_direction || row.direction_bucket || '').replaceAll('_', ' ')}</small></a>`).join('')
-        : '<p class="small-note">No matching records.</p>';
+        ? filtered.map(row => {
+            const direction = row.direction_bucket || row.plain_direction || 'neutral_model_signal';
+            const label = prettyDirection(direction);
+            const tone = directionTone(direction);
+            const rank = Number(row.rank_within_horizon);
+            const rankText = Number.isInteger(rank) ? `RANK #${rank}${row.universe_count ? ` / ${row.universe_count}` : ''}` : 'Rank unavailable';
+            const horizon = row.horizon ? `${row.horizon}S forecast` : (row.horizon_label || 'Primary horizon');
+            return `<a class="search-result" href="${basePath}${escapeHtml(row.url || '/')}"><span class="result-date">${escapeHtml(row.date || '')}</span><strong class="result-symbol">${escapeHtml(row.display_symbol || row.symbol || '')}</strong><em class="result-rank">${escapeHtml(rankText)}</em><span class="result-horizon">${escapeHtml(horizon)}</span><small class="result-view tone-${tone}">${escapeHtml(label)}</small></a>`;
+          }).join('')
+        : '<p class="small-note">No matching public model records.</p>';
     }
     input.addEventListener('input', render);
     render();

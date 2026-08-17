@@ -32,6 +32,12 @@ function tone(bucket) {
   return 'neutral';
 }
 
+function metricTone(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number === 0) return 'neutral';
+  return number > 0 ? 'positive' : 'negative';
+}
+
 export function signalsFrom(payload, selectedHorizon = primaryHorizon(payload)) {
   const windows = forecastWindows(payload);
   return windows[String(selectedHorizon)]?.signals || topLevelSignals(payload);
@@ -81,6 +87,8 @@ function runHeader(payload, canonicalPath) {
   const archived = String(canonicalPath || '').startsWith('/archive/');
   const origin = payload.record_origin || (archived ? 'archive' : 'live');
   const multi = hasMultiHorizon(payload);
+  const publicationStatus = full ? 'COMPLETE' : archived ? 'LEGACY FORMAT' : 'CURRENT';
+  const publicationNote = full ? prettyState(origin) : archived ? 'single-row historical record' : 'single-row public format';
   const deck = multi
     ? `Systematic cross-sectional intelligence for the Egyptian Exchange. The default research view is ${primary} sessions; switch forecast windows to inspect the model across 1, 3, 5 and 10 sessions.`
     : `Systematic cross-sectional intelligence for the Egyptian Exchange. The primary public research horizon is ${primary} trading sessions.`;
@@ -96,7 +104,7 @@ function runHeader(payload, canonicalPath) {
       <div><span>UNIVERSE</span>${multi ? `<strong data-active-universe>${escapeHtml(countLabel)}</strong>` : `<strong>${escapeHtml(countLabel)}</strong>`}<em>${escapeHtml(universeNote)}</em></div>
       <div><span>FORECAST</span>${multi ? `<strong><span data-active-horizon>${escapeHtml(primary)}</span>S</strong>` : `<strong>${escapeHtml(primary)}S</strong>`}<em>${multi ? 'selected window' : 'primary horizon'}</em></div>
       <div><span>SOURCE</span><strong>VALIDATED</strong><em>${escapeHtml(prettyState(rows[0]?.source_freshness_status || 'live_observation_completed'))}</em></div>
-      <div><span>PUBLICATION</span><strong>${full ? 'COMPLETE' : 'CURRENT'}</strong><em>${full ? prettyState(origin) : 'single-row public format'}</em></div>
+      <div><span>PUBLICATION</span><strong>${publicationStatus}</strong><em>${escapeHtml(publicationNote)}</em></div>
     </div>
     ${processRibbon()}
   </section>`;
@@ -139,13 +147,13 @@ function rankingWindow(payload, previousPayload, h, isPrimary) {
   </div>`;
 }
 
-function rankingPanel(payload, previousPayload) {
+function rankingPanel(payload, previousPayload, canonicalPath) {
   const full = isFullUniverse(payload);
   const primary = primaryHorizon(payload);
-  const windows = forecastWindows(payload);
   const horizons = availableHorizons(payload);
   const rows = signalsFrom(payload, primary);
   const count = universeForHorizon(payload, primary);
+  const archived = String(canonicalPath || '').startsWith('/archive/');
   const countContext = full
     ? `OF ${count ?? rows.length} SECURITIES`
     : count
@@ -159,6 +167,9 @@ function rankingPanel(payload, previousPayload) {
   const tableBody = multi
     ? horizons.map(h => rankingWindow(payload, previousPayload, h, h === primary)).join('')
     : `<div class="model-body" data-model-body>${rows.map(row => modelRow(row, previousRanks(previousPayload, primary))).join('') || '<p class="small-note">No published model output.</p>'}</div>`;
+  const compatibilityCopy = archived
+    ? 'This historical session is preserved in the legacy single-row public format that existed for that record. Later V2 sessions publish complete multi-window rankings without rewriting this original record.'
+    : 'The current public feed contains one model observation for this session. Complete-universe publication will appear here when available.';
 
   return `<section class="model-output" aria-labelledby="model-output-title">
     <header class="output-head">
@@ -174,7 +185,7 @@ function rankingPanel(payload, previousPayload) {
         <button type="button" data-model-filter="neutral">NEUTRAL</button>
         <button type="button" data-model-filter="negative">CAUTION</button>
       </div>
-    </div>` : `<div class="compatibility-note" role="note"><strong>PUBLICATION NOTE</strong><p>The current public feed contains one model observation for this session. Complete-universe publication will appear here when available.</p></div>`}
+    </div>` : `<div class="compatibility-note" role="note"><strong>${archived ? 'LEGACY RECORD' : 'PUBLICATION NOTE'}</strong><p>${escapeHtml(compatibilityCopy)}</p></div>`}
     <div class="model-table" role="table" aria-label="EGX Alpha model ranking">
       <div class="model-head" role="row"><span>RANK</span><span>Δ</span><span>SYMBOL</span><span>MODEL VIEW</span></div>
       ${tableBody}
@@ -203,8 +214,8 @@ function evidenceHorizonPanel(payload, h, isPrimary) {
   const liveValidation = payload?.research_evidence?.live_validation;
   if (liveValidation === null) {
     return `<div class="evidence-horizon" data-horizon-panel="${escapeHtml(h)}"${isPrimary ? '' : ' hidden'}>
-      <div class="evidence-stat"><span>HELD-OUT RANKIC</span><strong>${escapeHtml(formatRankIc(historical.heldout_mean_date_rank_ic))}</strong><em>${escapeHtml(h)}S historical validation</em></div>
-      <div class="evidence-stat"><span>TOP–BOTTOM SPREAD</span><strong>${escapeHtml(formatSpread(historical.heldout_top_bottom_spread_return))}</strong><em>held-out test</em></div>
+      <div class="evidence-stat"><span>HELD-OUT RANKIC</span><strong class="tone-${metricTone(historical.heldout_mean_date_rank_ic)}">${escapeHtml(formatRankIc(historical.heldout_mean_date_rank_ic))}</strong><em>${escapeHtml(h)}S historical validation</em></div>
+      <div class="evidence-stat"><span>TOP–BOTTOM SPREAD</span><strong class="tone-${metricTone(historical.heldout_top_bottom_spread_return)}">${escapeHtml(formatSpread(historical.heldout_top_bottom_spread_return))}</strong><em>held-out test</em></div>
       <div class="evidence-stat"><span>LIVE REALISED EVIDENCE</span><strong>NOT RECONSTRUCTED</strong><em>not retroactively inferred for this historical record</em></div>
       <div class="evidence-stat"><span>AS-OF EVIDENCE STATE</span><strong>UNAVAILABLE</strong><em>historical publication provenance</em></div>
     </div>`;
@@ -214,12 +225,12 @@ function evidenceHorizonPanel(payload, h, isPrimary) {
   const threshold = Number(liveValidation?.governance_threshold_days || 60);
   const ready = live.live_metrics_ready === true;
   return `<div class="evidence-horizon" data-horizon-panel="${escapeHtml(h)}"${isPrimary ? '' : ' hidden'}>
-    <div class="evidence-stat"><span>HELD-OUT RANKIC</span><strong>${escapeHtml(formatRankIc(historical.heldout_mean_date_rank_ic))}</strong><em>${escapeHtml(h)}S historical validation</em></div>
-    <div class="evidence-stat"><span>TOP–BOTTOM SPREAD</span><strong>${escapeHtml(formatSpread(historical.heldout_top_bottom_spread_return))}</strong><em>held-out test</em></div>
+    <div class="evidence-stat"><span>HELD-OUT RANKIC</span><strong class="tone-${metricTone(historical.heldout_mean_date_rank_ic)}">${escapeHtml(formatRankIc(historical.heldout_mean_date_rank_ic))}</strong><em>${escapeHtml(h)}S historical validation</em></div>
+    <div class="evidence-stat"><span>TOP–BOTTOM SPREAD</span><strong class="tone-${metricTone(historical.heldout_top_bottom_spread_return)}">${escapeHtml(formatSpread(historical.heldout_top_bottom_spread_return))}</strong><em>held-out test</em></div>
     <div class="evidence-stat"><span>MATURED OUTCOMES</span><strong>${escapeHtml(formatInteger(live.matured_outcomes))}</strong><em>live realised evidence</em></div>
     <div class="evidence-stat"><span>EVIDENCE DAYS</span><strong>${escapeHtml(formatInteger(live.matured_prediction_days))} / ${escapeHtml(formatInteger(threshold))}</strong><em>${ready ? 'live metrics mature' : 'evidence accumulating'}</em></div>
-    ${ready ? `<div class="evidence-stat"><span>LIVE RANKIC</span><strong>${escapeHtml(formatRankIc(live.live_mean_rank_ic))}</strong><em>maturity-gated</em></div>
-    <div class="evidence-stat"><span>LIVE SPREAD</span><strong>${escapeHtml(formatSpread(live.live_top_bottom_spread_return))}</strong><em>maturity-gated</em></div>` : ''}
+    ${ready ? `<div class="evidence-stat"><span>LIVE RANKIC</span><strong class="tone-${metricTone(live.live_mean_rank_ic)}">${escapeHtml(formatRankIc(live.live_mean_rank_ic))}</strong><em>maturity-gated</em></div>
+    <div class="evidence-stat"><span>LIVE SPREAD</span><strong class="tone-${metricTone(live.live_top_bottom_spread_return)}">${escapeHtml(formatSpread(live.live_top_bottom_spread_return))}</strong><em>maturity-gated</em></div>` : ''}
   </div>`;
 }
 
@@ -241,10 +252,11 @@ function researchEvidencePanel(payload) {
   const governanceState = historicalBackfillWithoutLive
     ? 'HISTORICAL BACKFILL'
     : prettyState(live?.status || 'evidence_accumulating');
+  const governanceStateClass = historicalBackfillWithoutLive ? 'state-backfill' : 'state-research';
 
   return `<section class="model-evidence" aria-labelledby="model-evidence-title">
     <header>
-      <div><p class="eyebrow">MODEL EVIDENCE</p><h2 id="model-evidence-title">Research proof, accumulated over time.</h2></div>
+      <div><p class="eyebrow">MODEL EVIDENCE</p><h2 id="model-evidence-title">Model evidence, accumulated over time.</h2></div>
       <p>${escapeHtml(headerCopy)}</p>
     </header>
     <div class="evidence-scale">
@@ -258,7 +270,7 @@ function researchEvidencePanel(payload) {
     <div class="evidence-governance">
       <span>GOVERNANCE</span>
       <p>${governance.outcomes_scored_after_horizon_maturity ? 'Forecasts are scored only after their horizon matures.' : ''} ${governance.automatic_promotion === false && governance.human_review_required === true ? 'Model promotion is not automatic; human review is required.' : ''}</p>
-      <strong>${escapeHtml(governanceState)}</strong>
+      <strong class="${governanceStateClass}">${escapeHtml(governanceState)}</strong>
     </div>
   </section>`;
 }
@@ -277,19 +289,20 @@ function recentSessions(items, currentDate) {
   return `<section class="recent-runs"><header><p class="eyebrow">RECENT RUNS</p><a href="${rel('/archive/')}">VIEW HISTORY →</a></header>${rows.map(item => {
     const full = item.schema_version === 'egx_alpha_public_wire_v2';
     const count = Number(item.universe_count || item.published_count || 0);
-    const publication = full ? `${count} SECURITIES` : `${item.published_count || 1} PUBLIC ROW`;
+    const publication = full ? `${count} SECURITIES` : `${item.published_count || 1} ROW`;
     const horizonLabel = item.multi_horizon ? '1S / 3S / 5S / 10S' : `${item.horizon || 5}S`;
-    const state = full ? `${horizonLabel} · ${prettyState(item.record_origin || 'live')}` : 'Single-row record';
+    const state = full ? `${horizonLabel} · ${prettyState(item.record_origin || 'live')}` : 'Legacy single-row';
     return `<a href="${rel(item.url)}"><time>${escapeHtml(item.date)}</time><strong>${escapeHtml(publication)}</strong><span>${escapeHtml(state)}</span></a>`;
   }).join('')}</section>`;
 }
 
 export function homePage(payload, { canonicalPath = '/today/', recentItems = [], previousPayload = null } = {}) {
+  const activeSection = String(canonicalPath || '').startsWith('/archive/') ? 'history' : 'latest';
   return `<style data-home-styles>${HOME_CSS.replaceAll('</style', '<\\/style')}${MULTI_HORIZON_CSS.replaceAll('</style', '<\\/style')}</style>
   <main class="site-shell page-home" data-page="signal">
-    ${siteHeader('QUANTITATIVE EQUITY INTELLIGENCE')}
+    ${siteHeader('QUANTITATIVE EQUITY INTELLIGENCE', activeSection)}
     ${runHeader(payload, canonicalPath)}
-    ${rankingPanel(payload, previousPayload)}
+    ${rankingPanel(payload, previousPayload, canonicalPath)}
     ${researchEvidencePanel(payload)}
     ${researchStrip()}
     ${recentSessions(recentItems, payload.trading_date)}

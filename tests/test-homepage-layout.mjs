@@ -26,7 +26,9 @@ for (const page of [home, today]) {
     'INFER',
     'RANK',
     'PUBLISH',
-    'INSTITUTIONAL'
+    'SEARCH',
+    'INSTITUTIONAL',
+    'aria-current="page"'
   ]) assert.ok(html.includes(required), `institutional production UI should include ${required}`);
 
   for (const removed of [
@@ -43,7 +45,7 @@ for (const page of [home, today]) {
 
   if (production.schema_version === 'egx_alpha_public_wire_v1') {
     assert.ok(html.includes('PUBLICATION NOTE'), 'V1 compatibility UI should include PUBLICATION NOTE');
-    assert.ok(html.includes('<strong>CURRENT</strong><em>single-row public format</em>'), 'V1 publication state should remain factual but visually quiet');
+    assert.ok(html.includes('<strong>CURRENT</strong><em>single-row public format</em>'), 'current V1 publication state should remain factual but visually quiet');
   } else if (production.schema_version === 'egx_alpha_public_wire_v2') {
     for (const required of [
       'FORECAST WINDOW',
@@ -51,7 +53,8 @@ for (const page of [home, today]) {
       'data-horizon-select="3"',
       'data-horizon-select="5"',
       'data-horizon-select="10"',
-      'MODEL EVIDENCE'
+      'MODEL EVIDENCE',
+      'Model evidence, accumulated over time.'
     ]) assert.ok(html.includes(required), `V2 production UI should include ${required}`);
     assert.equal(html.includes('single-row public format'), false, 'V2 production UI must not retain the V1 single-row compatibility state');
   } else {
@@ -69,10 +72,13 @@ for (const required of [
 ]) assert.ok(homeCss.includes(required), `institutional home CSS should preserve ${required}`);
 
 for (const required of [
-  'grid-template-columns: repeat(4, minmax(0, 1fr)) 36px',
-  'font-size: clamp(.52rem, 2.2vw, .62rem)',
-  'white-space: nowrap'
-]) assert.ok(appCss.includes(required), `mobile navigation CSS should preserve ${required}`);
+  'grid-template-columns: repeat(3, minmax(0, 1fr))',
+  'font-size: .65rem',
+  '.navlinks a.active',
+  '.search-result',
+  '.archive-state',
+  'grid-template-columns: repeat(2, minmax(0,1fr))'
+]) assert.ok(appCss.includes(required), `responsive institutional CSS should include ${required}`);
 
 if (production.schema_version === 'egx_alpha_public_wire_v1') {
   assert.ok(home.includes('PUBLIC ROW / 88 UNIVERSE'), 'V1 may use the genuine comparison count supplied by the live wire');
