@@ -46,6 +46,20 @@ body { letter-spacing: 0; }
 .footer-meta a { color:var(--text); font-family:var(--mono); font-size:.75rem; }
 .footer-meta p { max-width:38ch; margin-left:auto; }
 .mega-footer { display:none!important; }
+.product-switcher { display:flex; align-items:center; justify-content:space-between; gap:18px; padding:14px 24px; border-bottom:1px solid var(--line); background:var(--surface-2); }
+.product-switcher>span { display:flex; align-items:baseline; gap:10px; color:var(--soft); font-family:var(--mono); font-size:.66rem; font-weight:750; letter-spacing:.055em; }
+.product-switcher small { color:var(--muted); font-size:.58rem; font-weight:500; letter-spacing:0; }
+.product-switcher>div { display:flex; gap:7px; }
+.product-switcher button { min-width:62px; min-height:36px; padding:0 12px; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--muted); font-family:var(--mono); font-size:.72rem; font-weight:800; }
+.product-switcher button.active,.product-switcher button[aria-pressed="true"] { border-color:var(--blue); background:color-mix(in srgb,var(--blue) 10%,var(--surface)); color:var(--text); }
+.rank-chart { min-height:210px; display:grid; place-items:center; margin-top:8px; }
+.rank-chart-svg { width:100%; height:auto; overflow:visible; }
+.chart-grid line { stroke:var(--line); stroke-width:1; }
+.chart-axis text { fill:var(--muted); font-family:var(--mono); font-size:10px; }
+.chart-line { fill:none; stroke:var(--blue); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+.rank-chart-svg circle { fill:var(--surface); stroke:var(--blue); stroke-width:2; }
+.rank-chart-svg circle:last-of-type { fill:var(--blue); }
+.chart-empty { margin:0; color:var(--muted); font-size:.8rem; }
 .page-archive .page-hero,.page-search .page-hero,.page-symbol .page-hero,.page-institutional .page-hero { padding-top:54px; }
 .archive-list { border-radius:var(--radius); }
 .archive-row { min-height:68px; }
@@ -82,6 +96,10 @@ body { letter-spacing: 0; }
   .footer-links { display:grid; grid-template-columns:1fr 1fr; justify-content:stretch; gap:8px 16px; }
   .footer-meta { text-align:left; }
   .footer-meta p { margin-left:0; }
+  .product-switcher { align-items:stretch; flex-direction:column; padding:12px 0; background:transparent; border-bottom:0; }
+  .product-switcher>div { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .product-switcher button { min-width:0; }
+  .rank-chart { min-height:170px; }
   .method-summary { grid-template-columns:1fr; }
   .interpretation-grid { grid-template-columns:1fr; }
   .search-result { grid-template-columns:1fr auto; grid-template-areas:"symbol rank" "date horizon" "percentile view"; min-height:92px; }
