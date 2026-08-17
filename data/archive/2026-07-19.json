@@ -1,93 +1,2726 @@
 {
-  "asset": {
-    "company_name": null,
-    "display_symbol": "COMI",
-    "liquidity_tier": "core_liquid",
-    "market": "EGX",
-    "sector": null,
-    "symbol": "EGX:COMI"
-  },
   "audience": "public",
-  "context": {
-    "prediction_status": "live_predictions_written",
-    "source_quality_status": "source_healthy",
-    "trust_state": "warming_up"
-  },
   "disclaimer": {
     "execution_instruction": false,
     "investment_advice": false,
     "market_use": "research_and_information_only"
   },
   "domain": "EGXResearch",
-  "funnel_context": {
-    "full_product_hint": "The complete daily view includes every eligible ranked share, model context, and signal history.",
-    "public_position": "rank #3 from the daily EGX /Alpha model ranking"
+  "forecast_windows": {
+    "1": {
+      "horizon": "1",
+      "signals": [
+        {
+          "direction_bucket": "positive_model_signal",
+          "rank_within_horizon": 1,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ZEOT"
+        },
+        {
+          "direction_bucket": "positive_model_signal",
+          "rank_within_horizon": 2,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MFSC"
+        },
+        {
+          "direction_bucket": "positive_model_signal",
+          "rank_within_horizon": 3,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:HDBK"
+        },
+        {
+          "direction_bucket": "positive_model_signal",
+          "rank_within_horizon": 4,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:OCDI"
+        },
+        {
+          "direction_bucket": "positive_model_signal",
+          "rank_within_horizon": 5,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:POUL"
+        },
+        {
+          "direction_bucket": "positive_model_signal",
+          "rank_within_horizon": 6,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MPRC"
+        },
+        {
+          "direction_bucket": "positive_model_signal",
+          "rank_within_horizon": 7,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ELSH"
+        },
+        {
+          "direction_bucket": "positive_model_signal",
+          "rank_within_horizon": 8,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ETRS"
+        },
+        {
+          "direction_bucket": "positive_model_signal",
+          "rank_within_horizon": 9,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:COMI"
+        },
+        {
+          "direction_bucket": "positive_model_signal",
+          "rank_within_horizon": 10,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AIH"
+        },
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 11,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ORHD"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 12,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:PHAR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 13,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SDTI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 14,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGTS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 15,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CANA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 16,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ASPI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 17,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CIEB"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 18,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AMER"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 19,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:OIH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 20,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ACGC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 21,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:IFAP"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 22,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:COSG"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 23,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SVCE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 24,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SAUD"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 25,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SUGR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 26,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SPIN"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 27,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGCH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 28,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:QNBE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 29,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SWDY"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 30,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGAS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 31,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MICH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 32,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EAST"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 33,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ETEL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 34,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ODIN"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 35,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:PRCL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 36,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ASCM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 37,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EFIC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 38,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EPCO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 39,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:RAYA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 40,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SKPC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 41,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SMFR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 42,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ORWE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 43,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ADIB"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 44,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGAL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 45,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:HELI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 46,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EXPA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 47,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CCRS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 48,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:NEDA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 49,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:TMGH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 50,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:VLMR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 51,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AMOC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 52,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:UNIT"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 53,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CRST"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 54,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MASR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 55,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MBSC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 56,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ELEC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 57,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ABUK"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 58,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MENA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 59,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:PHDC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 60,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MILS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 61,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ALCN"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 62,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CCAP"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 63,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:RAKT"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 64,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:HRHO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 65,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GGCC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 66,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:JUFO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 67,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AFDI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 68,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ECAP"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 69,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:UEFM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 70,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:IRON"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 71,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SCEM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 72,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:APSW"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 73,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CEFM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 74,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EHDR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 75,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:COPR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 76,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GBCO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 77,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:UEGC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 78,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GSSC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 79,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:WCDF"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 80,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EDFM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 81,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGBE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 82,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GMCI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 83,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ELKA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 84,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ENGC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 85,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:DAPH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 86,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:RTVC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 87,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CSAG"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 88,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:KABO"
+        }
+      ],
+      "universe_count": 88
+    },
+    "10": {
+      "horizon": "10",
+      "signals": [
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 1,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MPRC"
+        },
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 2,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:COMI"
+        },
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 3,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:OCDI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 4,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:COSG"
+        },
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 5,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ELSH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 6,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:HDBK"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 7,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EXPA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 8,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ORHD"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 9,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:QNBE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 10,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ALCN"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 11,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AMOC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 12,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:HELI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 13,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:PHAR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 14,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ADIB"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 15,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MASR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 16,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:POUL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 17,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ABUK"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 18,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EAST"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 19,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CIEB"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 20,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MBSC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 21,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ETRS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 22,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGCH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 23,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGBE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 24,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MICH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 25,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ZEOT"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 26,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:RAYA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 27,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ETEL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 28,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:RAKT"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 29,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AIH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 30,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MENA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 31,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EFIC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 32,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CANA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 33,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGTS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 34,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ODIN"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 35,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SUGR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 36,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SAUD"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 37,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:KABO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 38,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:VLMR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 39,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CSAG"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 40,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ORWE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 41,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AFDI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 42,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:JUFO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 43,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MFSC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 44,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:DAPH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 45,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:HRHO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 46,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CRST"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 47,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGAS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 48,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGAL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 49,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SVCE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 50,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:IRON"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 51,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:NEDA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 52,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SWDY"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 53,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ACGC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 54,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:TMGH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 55,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GBCO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 56,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ELEC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 57,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SPIN"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 58,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EDFM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 59,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ENGC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 60,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CCAP"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 61,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SKPC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 62,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EPCO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 63,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CCRS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 64,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:RTVC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 65,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:UNIT"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 66,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ECAP"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 67,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:OIH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 68,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ASPI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 69,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ELKA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 70,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:PRCL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 71,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SCEM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 72,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ASCM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 73,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:UEFM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 74,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EHDR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 75,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GSSC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 76,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:APSW"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 77,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SDTI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 78,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:COPR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 79,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:PHDC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 80,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:IFAP"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 81,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:WCDF"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 82,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:UEGC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 83,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CEFM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 84,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GMCI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 85,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MILS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 86,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SMFR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 87,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GGCC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 88,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AMER"
+        }
+      ],
+      "universe_count": 88
+    },
+    "3": {
+      "horizon": "3",
+      "signals": [
+        {
+          "direction_bucket": "positive_model_signal",
+          "rank_within_horizon": 1,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:OCDI"
+        },
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 2,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:POUL"
+        },
+        {
+          "direction_bucket": "positive_model_signal",
+          "rank_within_horizon": 3,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MPRC"
+        },
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 4,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:COMI"
+        },
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 5,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ZEOT"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 6,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:HDBK"
+        },
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 7,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ELSH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 8,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ETRS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 9,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:OIH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 10,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MFSC"
+        },
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 11,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AIH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 12,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ORHD"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 13,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:COSG"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 14,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SDTI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 15,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SVCE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 16,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:QNBE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 17,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:PHDC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 18,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MASR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 19,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EFIC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 20,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:TMGH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 21,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EXPA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 22,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:RAYA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 23,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGTS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 24,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CRST"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 25,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGCH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 26,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SCEM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 27,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ECAP"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 28,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:VLMR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 29,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:IRON"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 30,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CIEB"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 31,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:JUFO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 32,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MICH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 33,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ABUK"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 34,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:HELI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 35,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AMOC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 36,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SWDY"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 37,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:UNIT"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 38,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGAL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 39,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ORWE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 40,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ETEL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 41,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ADIB"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 42,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SKPC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 43,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ACGC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 44,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CSAG"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 45,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MBSC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 46,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CCAP"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 47,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:NEDA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 48,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AFDI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 49,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SAUD"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 50,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:PRCL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 51,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:HRHO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 52,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MENA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 53,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EAST"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 54,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ASPI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 55,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ALCN"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 56,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CANA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 57,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:WCDF"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 58,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:APSW"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 59,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MILS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 60,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGAS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 61,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:DAPH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 62,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:PHAR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 63,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ENGC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 64,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:RTVC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 65,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:KABO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 66,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:RAKT"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 67,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ODIN"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 68,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GSSC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 69,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ELEC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 70,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CEFM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 71,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EDFM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 72,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SUGR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 73,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EPCO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 74,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGBE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 75,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SPIN"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 76,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ASCM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 77,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GBCO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 78,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:UEGC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 79,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AMER"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 80,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:IFAP"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 81,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ELKA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 82,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CCRS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 83,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SMFR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 84,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:UEFM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 85,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GGCC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 86,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EHDR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 87,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:COPR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 88,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GMCI"
+        }
+      ],
+      "universe_count": 88
+    },
+    "5": {
+      "horizon": "5",
+      "signals": [
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 1,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:OCDI"
+        },
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 2,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MPRC"
+        },
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 3,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:COMI"
+        },
+        {
+          "direction_bucket": "neutral_model_signal",
+          "rank_within_horizon": 4,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ELSH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 5,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:COSG"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 6,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AIH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 7,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:HDBK"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 8,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ZEOT"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 9,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:OIH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 10,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:POUL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 11,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ETRS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 12,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:VLMR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 13,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SDTI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 14,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:QNBE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 15,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MFSC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 16,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ORHD"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 17,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CCAP"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 18,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGTS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 19,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ASPI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 20,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EXPA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 21,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:PRCL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 22,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ALCN"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 23,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AMER"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 24,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:HELI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 25,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CCRS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 26,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SVCE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 27,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MENA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 28,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:RAKT"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 29,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AFDI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 30,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MASR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 31,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:NEDA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 32,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:RAYA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 33,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EPCO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 34,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CANA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 35,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ETEL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 36,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CRST"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 37,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SAUD"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 38,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CIEB"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 39,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ABUK"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 40,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:COPR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 41,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:UEGC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 42,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ADIB"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 43,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SWDY"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 44,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGCH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 45,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:UNIT"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 46,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ODIN"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 47,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GMCI"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 48,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGAL"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 49,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGAS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 50,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:JUFO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 51,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:TMGH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 52,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GGCC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 53,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ASCM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 54,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:IFAP"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 55,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:HRHO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 56,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MBSC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 57,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:PHDC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 58,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ELKA"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 59,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GBCO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 60,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EGBE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 61,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EHDR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 62,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:AMOC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 63,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ENGC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 64,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MICH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 65,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SPIN"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 66,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SMFR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 67,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ORWE"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 68,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CEFM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 69,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EAST"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 70,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:DAPH"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 71,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:MILS"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 72,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SUGR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 73,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ACGC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 74,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EFIC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 75,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:GSSC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 76,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ECAP"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 77,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SKPC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 78,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:ELEC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 79,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:RTVC"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 80,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:PHAR"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 81,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:CSAG"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 82,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:KABO"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 83,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:WCDF"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 84,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:EDFM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 85,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:UEFM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 86,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:SCEM"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 87,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:IRON"
+        },
+        {
+          "direction_bucket": "negative_model_signal",
+          "rank_within_horizon": 88,
+          "source_freshness_status": "live_observation_completed",
+          "stock_symbol": "EGX:APSW"
+        }
+      ],
+      "universe_count": 88
+    }
   },
   "integrity": {
-    "public_content_hash": "sha256:474436b8cacb8e42ac66604cefac914f88c78be00e06d052cd78d2871658a14b",
-    "public_wire_hash": "sha256:b3a0daef3308f5200586fc36b2282864a1289f42269b31acef4b44c5b3945f38",
-    "source_payload_hash": "sha256:78dc74b07c0cf99095bfcf9416a6857f21494cf502d623244ef1628574609dc2"
+    "public_content_hash": "sha256:8db4169710ba23892e099bc870a73cb7b544c7ba1df511c574eaa6c520c19646",
+    "public_wire_hash": "sha256:41af5175d5a568f9995eadfe4df4b3b4a521465f1e00c061e0a5699cb96b91d7"
   },
-  "market_snapshot": {
-    "availability_timestamp": "2026-07-19T15:15:00+03:00",
-    "daily_change_pct": null,
-    "data_timestamp": "2026-07-19T07:00:00+03:00",
-    "latest_close": 134.0,
-    "liquidity_tier": "core_liquid",
-    "traded_value_egp": 190078330.0,
-    "value_traded_status": "above_recent_baseline",
-    "volume": 1418495.0
+  "primary_horizon": "5",
+  "record_origin": "historical_backfill",
+  "research_evidence": {
+    "governance": {
+      "automatic_promotion": false,
+      "automatic_retraining": false,
+      "human_review_required": true,
+      "live_metrics_maturity_gated": true,
+      "outcomes_scored_after_horizon_maturity": true
+    },
+    "historical_validation": {
+      "by_horizon": {
+        "1": {
+          "heldout_mean_date_rank_ic": -0.010488130452780832,
+          "heldout_top_bottom_spread_return": 0.000255488632717139
+        },
+        "10": {
+          "heldout_mean_date_rank_ic": 0.034442932435659816,
+          "heldout_top_bottom_spread_return": 0.004983686574885856
+        },
+        "3": {
+          "heldout_mean_date_rank_ic": 0.03220093354461174,
+          "heldout_top_bottom_spread_return": 0.0006753102460311763
+        },
+        "5": {
+          "heldout_mean_date_rank_ic": 0.02803338819087396,
+          "heldout_top_bottom_spread_return": 0.001826747505944613
+        }
+      },
+      "heldout_test_dates": 906,
+      "status": "historical_validation_passed"
+    },
+    "live_validation": null,
+    "system_scale": {
+      "heldout_test_dates": 906,
+      "historical_model_samples": 435954,
+      "training_dates": 4129,
+      "training_universe_count": 91,
+      "validation_dates": 915
+    }
   },
-  "model_state": {
-    "public_label": "Warming up",
-    "public_note": "The system is accumulating live evidence and should be followed through the public archive over time.",
-    "technical_state": "warming_up"
-  },
-  "public_copy": {
-    "direction_explanation": "The model currently shows no strong directional lean over this horizon.",
-    "headline": "Today’s free EGX /Alpha signal: COMI",
-    "horizon_explanation": "This signal will be evaluated over the next 5 EGX trading sessions. This is not a suggested holding period.",
-    "investor_read": "The model currently shows no strong directional lean over this horizon.",
-    "one_line_summary": "Rank #3 for the 5-session horizon after the latest EGX /Alpha post-close scan.",
-    "rank_direction_note": "Rank and direction are separate model outputs. A high relative rank does not automatically mean the direction signal is positive.",
-    "rank_explanation": "Ranked #3 among 88 eligible domestic EGX shares assessed for this horizon.",
-    "use_guidance": "Use this signal as a starting point for research and monitoring. Read the rank, direction and model horizon together; do not treat the card alone as a buy, sell or hold instruction."
-  },
-  "public_signal": {
-    "direction_bucket": "neutral_model_signal",
-    "horizon": "5",
-    "horizon_label": "5-session horizon",
-    "plain_direction": "Neutral watch signal",
-    "rank_label": "Public rank #3",
-    "rank_within_horizon": 3,
-    "release_mode": "live_v1_2_onnx_ranking",
-    "source_freshness_status": "live_observation_completed",
-    "stock_symbol": "EGX:COMI"
-  },
-  "published_at": "2026-07-19T14:03:37.290252+00:00",
-  "publishing_context": {
-    "next_expected_signal": "next EGX trading day",
-    "published_after": "EGX close",
-    "published_at_utc": "2026-07-19T14:03:37.290252+00:00",
-    "timezone": "Africa/Cairo"
-  },
-  "ranking_context": {
-    "comparison_count": 88,
-    "comparison_scope": "eligible domestic EGX shares assessed for the primary model horizon",
-    "public_rank_rule": "The free public card shows rank #3.",
-    "rank_direction_relationship": "Rank and direction are separate model outputs.",
-    "rank_order": "Rank 1 is the highest relative model rank in the eligible comparison set.",
-    "ranking_basis": "relative model estimate of forward market-excess return"
-  },
-  "schema_version": "egx_alpha_public_wire_v1",
-  "signal": {
-    "direction_bucket": "neutral_model_signal",
-    "horizon": "5",
-    "rank_label": "Public rank #3",
-    "rank_within_horizon": 3,
-    "source_freshness_status": "live_observation_completed",
-    "stock_symbol": "EGX:COMI"
-  },
+  "schema_version": "egx_alpha_public_wire_v2",
   "signal_name": "EGX /Alpha signal",
-  "trading_date": "2026-07-19"
+  "signals": [
+    {
+      "direction_bucket": "neutral_model_signal",
+      "rank_within_horizon": 1,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:OCDI"
+    },
+    {
+      "direction_bucket": "neutral_model_signal",
+      "rank_within_horizon": 2,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:MPRC"
+    },
+    {
+      "direction_bucket": "neutral_model_signal",
+      "rank_within_horizon": 3,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:COMI"
+    },
+    {
+      "direction_bucket": "neutral_model_signal",
+      "rank_within_horizon": 4,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ELSH"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 5,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:COSG"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 6,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:AIH"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 7,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:HDBK"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 8,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ZEOT"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 9,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:OIH"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 10,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:POUL"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 11,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ETRS"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 12,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:VLMR"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 13,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:SDTI"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 14,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:QNBE"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 15,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:MFSC"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 16,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ORHD"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 17,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:CCAP"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 18,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:EGTS"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 19,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ASPI"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 20,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:EXPA"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 21,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:PRCL"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 22,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ALCN"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 23,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:AMER"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 24,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:HELI"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 25,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:CCRS"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 26,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:SVCE"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 27,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:MENA"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 28,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:RAKT"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 29,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:AFDI"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 30,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:MASR"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 31,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:NEDA"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 32,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:RAYA"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 33,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:EPCO"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 34,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:CANA"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 35,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ETEL"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 36,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:CRST"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 37,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:SAUD"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 38,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:CIEB"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 39,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ABUK"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 40,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:COPR"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 41,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:UEGC"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 42,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ADIB"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 43,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:SWDY"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 44,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:EGCH"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 45,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:UNIT"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 46,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ODIN"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 47,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:GMCI"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 48,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:EGAL"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 49,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:EGAS"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 50,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:JUFO"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 51,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:TMGH"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 52,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:GGCC"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 53,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ASCM"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 54,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:IFAP"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 55,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:HRHO"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 56,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:MBSC"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 57,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:PHDC"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 58,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ELKA"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 59,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:GBCO"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 60,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:EGBE"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 61,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:EHDR"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 62,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:AMOC"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 63,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ENGC"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 64,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:MICH"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 65,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:SPIN"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 66,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:SMFR"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 67,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ORWE"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 68,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:CEFM"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 69,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:EAST"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 70,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:DAPH"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 71,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:MILS"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 72,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:SUGR"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 73,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ACGC"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 74,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:EFIC"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 75,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:GSSC"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 76,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ECAP"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 77,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:SKPC"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 78,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:ELEC"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 79,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:RTVC"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 80,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:PHAR"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 81,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:CSAG"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 82,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:KABO"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 83,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:WCDF"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 84,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:EDFM"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 85,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:UEFM"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 86,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:SCEM"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 87,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:IRON"
+    },
+    {
+      "direction_bucket": "negative_model_signal",
+      "rank_within_horizon": 88,
+      "source_freshness_status": "live_observation_completed",
+      "stock_symbol": "EGX:APSW"
+    }
+  ],
+  "trading_date": "2026-07-19",
+  "universe_count": 88
 }
