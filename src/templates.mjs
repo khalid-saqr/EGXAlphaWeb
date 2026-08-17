@@ -26,7 +26,7 @@ export function prettyState(value) {
     negative_model_signal: 'Caution',
     source_healthy: 'Validated',
     live_observation_completed: 'Validated',
-    historical_backfill: 'Backfilled',
+    historical_backfill: 'Historical backfill',
     live: 'Live'
   };
   return map[value] || String(value || 'Unavailable').replaceAll('_', ' ');
@@ -79,7 +79,12 @@ function themeIcon() {
   return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.64 5.64 7.2 7.2M16.8 16.8l1.56 1.56M18.36 5.64 16.8 7.2M7.2 16.8l-1.56 1.56M16.5 12a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
 }
 
-export function siteHeader(sectionLabel = SITE.signalName) {
+function navLink(href, label, key, activeSection) {
+  const active = key === activeSection;
+  return `<a href="${rel(href)}"${active ? ' class="active" aria-current="page"' : ''}>${label}</a>`;
+}
+
+export function siteHeader(sectionLabel = SITE.signalName, activeSection = '') {
   return `<header class="topbar" aria-label="Site header">
     <a class="brand" href="${rel('/')}">
       <span class="brand-word">EGXRESEARCH</span>
@@ -88,12 +93,13 @@ export function siteHeader(sectionLabel = SITE.signalName) {
       <span class="brand-context">${escapeHtml(sectionLabel)}</span>
     </a>
     <nav class="navlinks" aria-label="Primary navigation">
-      <a href="${rel('/today/')}">LATEST</a>
-      <a href="${rel('/archive/')}">HISTORY</a>
-      <a href="${rel('/methodology/')}">RESEARCH</a>
-      <a href="${rel('/institutional/')}">INSTITUTIONAL</a>
-      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false">${themeIcon()}</button>
+      ${navLink('/today/', 'LATEST', 'latest', activeSection)}
+      ${navLink('/archive/', 'HISTORY', 'history', activeSection)}
+      ${navLink('/search/', 'SEARCH', 'search', activeSection)}
+      ${navLink('/methodology/', 'RESEARCH', 'research', activeSection)}
+      ${navLink('/institutional/', 'INSTITUTIONAL', 'institutional', activeSection)}
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false">${themeIcon()}</button>
   </header>`;
 }
 
