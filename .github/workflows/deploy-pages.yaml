@@ -81,6 +81,14 @@ jobs:
       - name: Verify text-only repository
         run: node tests/test-no-binaries.mjs
 
+      - name: Upload pull-request QA artifact
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-site
+          path: _site
+          retention-days: 1
+
       - name: Configure Pages
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
