@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
+const production = JSON.parse(fs.readFileSync('data/latest.json', 'utf8'));
 const home = fs.readFileSync('_site/index.html', 'utf8');
 const today = fs.readFileSync('_site/today/index.html', 'utf8');
 const homeCss = fs.readFileSync('assets/home.css', 'utf8');
@@ -20,14 +21,13 @@ for (const page of [home, today]) {
     'DEEP-LEARNING MARKET RANKING',
     'MODEL OUTPUT',
     'Cross-sectional ranking',
-    'PUBLICATION NOTE',
     'OBSERVE',
     'VALIDATE',
     'INFER',
     'RANK',
     'PUBLISH',
     'INSTITUTIONAL'
-  ]) assert.ok(html.includes(required), `production V1 compatibility UI should include ${required}`);
+  ]) assert.ok(html.includes(required), `institutional production UI should include ${required}`);
 
   for (const removed of [
     'Today’s free EGX signal',
@@ -40,6 +40,23 @@ for (const page of [home, today]) {
     'PUBLICATION COMPATIBILITY STATE',
     'compatibility wire'
   ]) assert.equal(html.includes(removed), false, `retail or engineering-facing copy/component must be removed: ${removed}`);
+
+  if (production.schema_version === 'egx_alpha_public_wire_v1') {
+    assert.ok(html.includes('PUBLICATION NOTE'), 'V1 compatibility UI should include PUBLICATION NOTE');
+    assert.ok(html.includes('<strong>CURRENT</strong><em>single-row public format</em>'), 'V1 publication state should remain factual but visually quiet');
+  } else if (production.schema_version === 'egx_alpha_public_wire_v2') {
+    for (const required of [
+      'FORECAST WINDOW',
+      'data-horizon-select="1"',
+      'data-horizon-select="3"',
+      'data-horizon-select="5"',
+      'data-horizon-select="10"',
+      'MODEL EVIDENCE'
+    ]) assert.ok(html.includes(required), `V2 production UI should include ${required}`);
+    assert.equal(html.includes('single-row public format'), false, 'V2 production UI must not retain the V1 single-row compatibility state');
+  } else {
+    assert.fail(`unexpected production schema: ${production.schema_version}`);
+  }
 }
 
 for (const required of [
@@ -57,6 +74,10 @@ for (const required of [
   'white-space: nowrap'
 ]) assert.ok(appCss.includes(required), `mobile navigation CSS should preserve ${required}`);
 
-assert.ok(home.includes('PUBLIC ROW / 88 UNIVERSE'), 'current V1 may use the genuine comparison count supplied by the live wire');
-assert.ok(home.includes('<strong>CURRENT</strong><em>single-row public format</em>'), 'temporary V1 publication state should be factual but visually quiet');
+if (production.schema_version === 'egx_alpha_public_wire_v1') {
+  assert.ok(home.includes('PUBLIC ROW / 88 UNIVERSE'), 'V1 may use the genuine comparison count supplied by the live wire');
+} else {
+  assert.ok(home.includes('/ 88'), 'V2 production UI should expose the genuine 88-security universe context');
+}
+
 console.log('test-homepage-layout passed');
