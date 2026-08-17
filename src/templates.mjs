@@ -3,6 +3,7 @@ import fs from 'node:fs';
 const INLINE_CSS = fs.readFileSync(new URL('../assets/app.css', import.meta.url), 'utf8');
 const PRODUCT_CSS = fs.readFileSync(new URL('../assets/product.css', import.meta.url), 'utf8');
 const SHELL_CSS = fs.readFileSync(new URL('../assets/shell.css', import.meta.url), 'utf8');
+const RESEARCH_DEPTH_CSS = fs.readFileSync(new URL('../assets/research-depth.css', import.meta.url), 'utf8');
 
 export const SITE = {
   domain: 'EGXResearch',
@@ -68,7 +69,7 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
   <link rel="canonical" href="${escapeHtml(url)}">
-  <style>${INLINE_CSS.replaceAll('</style', '<\\/style')}\n${PRODUCT_CSS.replaceAll('</style', '<\\/style')}\n${SHELL_CSS.replaceAll('</style', '<\\/style')}</style>
+  <style>${INLINE_CSS.replaceAll('</style', '<\\/style')}\n${PRODUCT_CSS.replaceAll('</style', '<\\/style')}\n${SHELL_CSS.replaceAll('</style', '<\\/style')}\n${RESEARCH_DEPTH_CSS.replaceAll('</style', '<\\/style')}</style>
 </head>
 <body class="${escapeHtml(pageClass)}">
   <script id="site-config" type="application/json">${clientConfig}</script>
