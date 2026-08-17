@@ -1,0 +1,66 @@
+.forward-hero{align-items:stretch}
+.forward-hero .hero-copy{align-self:center}
+.forward-hero .hero-copy h1{max-width:10.5ch}
+.forward-board{position:relative;align-self:center;padding:20px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 20px 54px rgba(0,0,0,.16);overflow:hidden}
+:root[data-theme="light"] .forward-board{box-shadow:0 18px 44px rgba(24,39,58,.10)}
+.forward-board-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.forward-board-head div>span{display:block;color:var(--blue);font-family:var(--mono);font-size:.61rem;font-weight:800;letter-spacing:.08em}
+.forward-board-head div>strong{display:block;margin-top:6px;color:var(--text);font-size:1rem;letter-spacing:-.015em}
+.forward-board-head>em{max-width:26ch;color:var(--muted);font-family:var(--mono);font-size:.55rem;font-style:normal;line-height:1.45;text-align:right;letter-spacing:.04em}
+.hero-forecast-radio{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.hero-forecast-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.hero-forecast-tabs label,.hero-forecast-tabs.single span{display:flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);color:var(--muted);font-family:var(--mono);font-size:.76rem;font-weight:850;cursor:pointer;transition:border-color .16s ease,background .16s ease,color .16s ease,transform .16s ease}
+.hero-forecast-tabs label small{font-size:.52rem;font-weight:600;letter-spacing:.04em}
+.hero-forecast-tabs label:hover{border-color:var(--line-strong);color:var(--text);transform:translateY(-1px)}
+#hero-forward-1:checked~.hero-forecast-tabs label[for="hero-forward-1"],#hero-forward-3:checked~.hero-forecast-tabs label[for="hero-forward-3"]{border-color:color-mix(in srgb,var(--blue) 72%,var(--line));background:color-mix(in srgb,var(--blue) 12%,var(--surface));color:var(--text);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--blue) 20%,transparent)}
+.hero-forecast-panel{display:none;gap:7px}
+.hero-forecast-panel.single-panel{display:grid}
+#hero-forward-1:checked~.hero-forecast-tabs~.hero-forecast-panels [data-hero-forecast-panel="1"],#hero-forward-3:checked~.hero-forecast-tabs~.hero-forecast-panels [data-hero-forecast-panel="3"]{display:grid}
+.hero-forecast-row{display:grid;grid-template-columns:86px minmax(150px,1fr) 108px;gap:12px;align-items:center;min-height:61px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:color-mix(in srgb,var(--surface-2) 75%,var(--surface));color:var(--soft);transition:border-color .16s ease,background .16s ease,transform .16s ease}
+.hero-forecast-row:hover{transform:translateX(2px);border-color:var(--line-strong);background:var(--surface-2)}
+.hero-forecast-row.tone-positive{border-left:3px solid var(--positive)}
+.hero-forecast-row.tone-neutral{border-left:3px solid var(--neutral)}
+.hero-forecast-row.tone-negative{border-left:3px solid var(--negative)}
+.forecast-symbol strong{display:block;color:var(--text);font-size:1rem;letter-spacing:-.015em}
+.forecast-symbol span{display:block;margin-top:4px;color:var(--muted);font-family:var(--mono);font-size:.57rem}
+.forecast-rail{position:relative;height:9px;border-radius:999px;background:color-mix(in srgb,var(--line) 78%,transparent);overflow:hidden;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--line-strong) 38%,transparent)}
+.forecast-rail i{display:block;width:var(--forecast-fill);height:100%;border-radius:inherit;background:currentColor;box-shadow:0 0 14px color-mix(in srgb,currentColor 34%,transparent)}
+.hero-forecast-row.tone-positive .forecast-rail{color:var(--positive)}
+.hero-forecast-row.tone-neutral .forecast-rail{color:var(--neutral)}
+.hero-forecast-row.tone-negative .forecast-rail{color:var(--negative)}
+.forecast-scale{display:grid;grid-template-columns:auto 1fr auto;gap:7px;margin-top:5px;color:var(--muted);font-family:var(--mono);font-size:.49rem}
+.forecast-scale span:nth-child(2){color:var(--soft);text-align:center;font-weight:750}
+.forecast-meta{text-align:right}
+.forecast-signal{display:inline-flex;align-items:center;justify-content:center;min-width:78px;min-height:24px;padding:0 7px;border:1px solid currentColor;border-radius:999px;font-size:.58rem;font-weight:850;letter-spacing:.045em;text-transform:uppercase}
+.tone-positive .forecast-signal{color:var(--positive);background:color-mix(in srgb,var(--positive) 10%,transparent)}
+.tone-neutral .forecast-signal{color:var(--neutral);background:color-mix(in srgb,var(--neutral) 8%,transparent)}
+.tone-negative .forecast-signal{color:var(--negative);background:color-mix(in srgb,var(--negative) 10%,transparent)}
+.forecast-meta strong{display:block;margin-top:6px;font-family:var(--mono);font-size:.61rem}
+.forward-board-note{margin:12px 2px 0;color:var(--muted);font-size:.66rem;line-height:1.45}
+.forward-board-note strong{color:var(--soft);font-family:var(--mono)}
+@media(max-width:1000px){
+  .forward-board{max-width:780px;width:100%}
+  .forward-hero .hero-copy h1{max-width:12ch}
+}
+@media(max-width:620px){
+  .forward-board{padding:14px;border-radius:12px}
+  .forward-board-head{display:block}
+  .forward-board-head>em{display:block;margin-top:7px;text-align:left}
+  .hero-forecast-tabs{gap:6px}
+  .hero-forecast-tabs label{display:grid;gap:2px;min-height:48px;text-align:center}
+  .hero-forecast-row{grid-template-columns:72px 1fr;grid-template-areas:"symbol meta" "plot plot";gap:7px 10px;min-height:78px;padding:10px}
+  .forecast-symbol{grid-area:symbol}
+  .forecast-plot{grid-area:plot}
+  .forecast-meta{grid-area:meta}
+  .forecast-signal{min-width:72px}
+  .forecast-scale{font-size:.47rem}
+}
+@media(max-width:420px){
+  .forward-hero .hero-copy h1{font-size:clamp(2.35rem,11.2vw,3.25rem)}
+  .forward-board{padding:12px}
+  .forward-board-head div>strong{font-size:.94rem}
+  .hero-forecast-tabs label small{font-size:.48rem}
+  .hero-forecast-row{padding:9px}
+  .forecast-symbol strong{font-size:.94rem}
+  .forward-board-note{font-size:.62rem}
+}
