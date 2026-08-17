@@ -54,6 +54,9 @@ jobs:
       - name: Verify V2 full-universe build
         run: node tests/test-v2-build.mjs
 
+      - name: Verify quantitative product UI and next-day automation compatibility
+        run: node tests/test-product-ui.mjs
+
       - name: Verify institutional homepage
         run: node tests/test-homepage-layout.mjs
 
@@ -77,6 +80,14 @@ jobs:
 
       - name: Verify text-only repository
         run: node tests/test-no-binaries.mjs
+
+      - name: Upload pull-request QA artifact
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-site
+          path: _site
+          retention-days: 1
 
       - name: Configure Pages
         if: github.event_name != 'pull_request'

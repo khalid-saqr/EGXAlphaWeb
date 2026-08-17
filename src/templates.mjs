@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 
 const INLINE_CSS = fs.readFileSync(new URL('../assets/app.css', import.meta.url), 'utf8');
+const PRODUCT_CSS = fs.readFileSync(new URL('../assets/product.css', import.meta.url), 'utf8');
 
 export const SITE = {
   domain: 'EGXResearch',
@@ -21,13 +22,15 @@ export function escapeHtml(value) {
 
 export function prettyState(value) {
   const map = {
-    positive_model_signal: 'Constructive',
+    positive_model_signal: 'Positive',
     neutral_model_signal: 'Neutral',
-    negative_model_signal: 'Caution',
+    negative_model_signal: 'Negative',
     source_healthy: 'Validated',
     live_observation_completed: 'Validated',
-    historical_backfill: 'Historical backfill',
-    live: 'Live'
+    historical_backfill: 'Historical model record',
+    live: 'Live',
+    evidence_accumulating: 'Evidence accumulating',
+    historical_validation_passed: 'Historical validation passed'
   };
   return map[value] || String(value || 'Unavailable').replaceAll('_', ' ');
 }
@@ -54,7 +57,7 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}">
-  <meta name="theme-color" content="#0b0e13">
+  <meta name="theme-color" content="#0b1016">
   <meta name="color-scheme" content="dark light">
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:type" content="website">
@@ -64,7 +67,7 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
   <link rel="canonical" href="${escapeHtml(url)}">
-  <style>${INLINE_CSS.replaceAll('</style', '<\\/style')}</style>
+  <style>${INLINE_CSS.replaceAll('</style', '<\\/style')}\n${PRODUCT_CSS.replaceAll('</style', '<\\/style')}</style>
 </head>
 <body class="${escapeHtml(pageClass)}">
   <script id="site-config" type="application/json">${clientConfig}</script>
@@ -85,7 +88,7 @@ function navLink(href, label, key, activeSection) {
 }
 
 export function siteHeader(sectionLabel = SITE.signalName, activeSection = '') {
-  return `<header class="topbar" aria-label="Site header">
+  return `<header class="topbar product-topbar" aria-label="Site header">
     <a class="brand" href="${rel('/')}">
       <span class="brand-word">EGXRESEARCH</span>
       <span class="brand-divider">/</span>
@@ -103,24 +106,19 @@ export function siteHeader(sectionLabel = SITE.signalName, activeSection = '') {
   </header>`;
 }
 
-export function megaFooter() {
+export function siteFooter() {
   const institutional = `mailto:${SITE.accessEmail}?subject=${encodeURIComponent('EGX Alpha institutional enquiry')}`;
-  return `<footer class="mega-footer" aria-label="Site footer">
-    <section>
-      <strong>EGXRESEARCH / ALPHA</strong>
-      <p>Systematic deep-learning market intelligence for Egyptian listed equities.</p>
-    </section>
-    <nav aria-label="Footer navigation">
+  return `<footer class="site-footer" aria-label="Site footer">
+    <div class="footer-brand"><strong>EGX /ALPHA</strong><p>Quantitative ranking for the Egyptian Exchange.</p></div>
+    <nav class="footer-links" aria-label="Footer navigation">
       <a href="${rel('/today/')}">Latest</a>
       <a href="${rel('/archive/')}">History</a>
       <a href="${rel('/search/')}">Search</a>
       <a href="${rel('/methodology/')}">Research</a>
       <a href="${rel('/institutional/')}">Institutional</a>
     </nav>
-    <section class="footer-rights">
-      <a href="${institutional}">${escapeHtml(SITE.accessEmail)}</a>
-      <p>Research and information only. No buy, sell or hold instruction.</p>
-      <p>© EGX Research LLP. All rights reserved.</p>
-    </section>
+    <div class="footer-meta"><a href="${institutional}">${escapeHtml(SITE.accessEmail)}</a><p>Research and information only. Not investment advice.</p><p>© EGX Research LLP. All rights reserved.</p></div>
   </footer>`;
 }
+
+export const megaFooter = siteFooter;

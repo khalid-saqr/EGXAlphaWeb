@@ -5,57 +5,8 @@ import path from 'node:path';
 import { buildSite, indexItems, sessionItem } from '../src/build.mjs';
 import { validatePublicWire } from '../src/validate.mjs';
 import { asPublicV2Fixture } from './helpers/v2-fixture.mjs';
-
-const raw8 = JSON.parse(fs.readFileSync('tests/fixtures/universe-2026-07-08.json', 'utf8'));
-const raw9 = JSON.parse(fs.readFileSync('tests/fixtures/universe-2026-07-09.json', 'utf8'));
-const july8 = asPublicV2Fixture(raw8);
-const july9 = asPublicV2Fixture(raw9, { recordOrigin: 'live' });
-
-assert.equal(validatePublicWire(july8).ok, true);
-assert.equal(validatePublicWire(july9).ok, true);
-assert.equal(indexItems(july8).length, 91, 'search indexing must preserve the genuine 91-row session');
-assert.equal(indexItems(july9).length, 88, 'search indexing must preserve the genuine 88-row session');
-assert.equal(sessionItem(july8).universe_count, 91);
-assert.equal(sessionItem(july9).universe_count, 88);
-
-const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'egxalpha-v2-'));
-const dataDir = path.join(tmp, 'data');
-const archiveDir = path.join(dataDir, 'archive');
-const outDir = path.join(tmp, '_site');
-fs.mkdirSync(archiveDir, { recursive: true });
-fs.writeFileSync(path.join(dataDir, 'latest.json'), JSON.stringify(july9, null, 2));
-fs.writeFileSync(path.join(archiveDir, '2026-07-08.json'), JSON.stringify(july8, null, 2));
-fs.writeFileSync(path.join(archiveDir, '2026-07-09.json'), JSON.stringify(july9, null, 2));
-
-try {
-  const result = buildSite({ root: process.cwd(), outDir, dataDir });
-  assert.equal(result.sessions.length, 2, 'archive must remain one session per date');
-  assert.equal(result.searchItems.length, 179, 'search index must flatten ticker × date rows without losing either real universe');
-  assert.equal(result.histories.get('COMI').length, 2, 'COMI dossier must include both genuine sessions');
-  assert.equal(result.histories.get('COMI')[0].rank, 4, 'COMI latest genuine rank must be 4');
-  assert.equal(result.histories.get('COMI')[0].movement, 7, 'COMI movement must derive from genuine #11 → #4 ranks');
-
-  const home = fs.readFileSync(path.join(outDir, 'index.html'), 'utf8');
-  const july8Page = fs.readFileSync(path.join(outDir, 'archive', '2026-07-08', 'index.html'), 'utf8');
-  const archive = fs.readFileSync(path.join(outDir, 'archive', 'index.html'), 'utf8');
-  const dossier = fs.readFileSync(path.join(outDir, 'symbol', 'COMI', 'index.html'), 'utf8');
-  const searchIndex = JSON.parse(fs.readFileSync(path.join(outDir, 'data', 'index.json'), 'utf8'));
-
-  assert.equal((home.match(/data-model-row/g) || []).length, 88, 'latest V2 homepage must render all genuine 9 July rows');
-  assert.equal((july8Page.match(/data-model-row/g) || []).length, 91, 'dated V2 archive must render all genuine 8 July rows');
-  assert.ok(home.includes('+7'), 'latest V2 output must surface genuine previous-session rank movement');
-  assert.equal((archive.match(/class="archive-row"/g) || []).length, 2, 'archive landing must show one row per session, not one row per security');
-  assert.ok(dossier.includes('LATEST RANK #4 / 88'));
-  assert.ok(dossier.includes('2026-07-09'));
-  assert.ok(dossier.includes('2026-07-08'));
-  assert.ok(dossier.includes('+7'));
-  assert.equal(searchIndex.length, 179);
-  assert.equal(searchIndex.filter(row => row.date === '2026-07-08').length, 91);
-  assert.equal(searchIndex.filter(row => row.date === '2026-07-09').length, 88);
-  assert.equal(fs.existsSync(path.join(outDir, 'symbol', 'IRAX', 'index.html')), true);
-  assert.equal(fs.existsSync(path.join(outDir, 'symbol', 'KABO', 'index.html')), true);
-} finally {
-  fs.rmSync(tmp, { recursive: true, force: true });
-}
-
+const raw8=JSON.parse(fs.readFileSync('tests/fixtures/universe-2026-07-08.json','utf8'));const raw9=JSON.parse(fs.readFileSync('tests/fixtures/universe-2026-07-09.json','utf8'));const july8=asPublicV2Fixture(raw8);const july9=asPublicV2Fixture(raw9,{recordOrigin:'live'});
+assert.equal(validatePublicWire(july8).ok,true);assert.equal(validatePublicWire(july9).ok,true);assert.equal(indexItems(july8).length,91);assert.equal(indexItems(july9).length,88);assert.equal(sessionItem(july8).universe_count,91);assert.equal(sessionItem(july9).universe_count,88);
+const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'egxalpha-v2-'));const dataDir=path.join(tmp,'data');const archiveDir=path.join(dataDir,'archive');const outDir=path.join(tmp,'_site');fs.mkdirSync(archiveDir,{recursive:true});fs.writeFileSync(path.join(dataDir,'latest.json'),JSON.stringify(july9,null,2));fs.writeFileSync(path.join(archiveDir,'2026-07-08.json'),JSON.stringify(july8,null,2));fs.writeFileSync(path.join(archiveDir,'2026-07-09.json'),JSON.stringify(july9,null,2));
+try{const result=buildSite({root:process.cwd(),outDir,dataDir});assert.equal(result.sessions.length,2);assert.equal(result.searchItems.length,179);assert.equal(result.histories.get('COMI').length,2);assert.equal(result.histories.get('COMI')[0].rank,4);assert.equal(result.histories.get('COMI')[0].movement,7);const home=fs.readFileSync(path.join(outDir,'index.html'),'utf8');const july8Page=fs.readFileSync(path.join(outDir,'archive','2026-07-08','index.html'),'utf8');const archive=fs.readFileSync(path.join(outDir,'archive','index.html'),'utf8');const dossier=fs.readFileSync(path.join(outDir,'symbol','COMI','index.html'),'utf8');const searchIndex=JSON.parse(fs.readFileSync(path.join(outDir,'data','index.json'),'utf8'));assert.equal((home.match(/data-model-row/g)||[]).length,88);assert.equal((july8Page.match(/data-model-row/g)||[]).length,91);assert.ok(home.includes('+7'));assert.equal((archive.match(/class="archive-row product-archive-row"/g)||[]).length,2);assert.ok(dossier.includes('#4 / 88'));assert.ok(dossier.includes('96.6'));assert.ok(dossier.includes('data-rank-chart'));assert.ok(dossier.includes('2026-07-09'));assert.ok(dossier.includes('2026-07-08'));assert.ok(dossier.includes('+7'));assert.equal(searchIndex.length,179);assert.equal(searchIndex.filter(row=>row.date==='2026-07-08').length,91);assert.equal(searchIndex.filter(row=>row.date==='2026-07-09').length,88);assert.equal(fs.existsSync(path.join(outDir,'symbol','IRAX','index.html')),true);assert.equal(fs.existsSync(path.join(outDir,'symbol','KABO','index.html')),true);}finally{fs.rmSync(tmp,{recursive:true,force:true});}
 console.log('test-v2-build passed');
