@@ -90,7 +90,7 @@ function navLink(href, label, key, activeSection) {
 export function siteHeader(sectionLabel = SITE.signalName, activeSection = '') {
   return `<header class="topbar product-topbar" aria-label="Site header">
     <a class="brand" href="${rel('/')}">
-      <span class="brand-word">EGXRESEARCH</span>
+      <span class="brand-word">EGX Research</span>
       <span class="brand-divider">/</span>
       <span class="brand-alpha">ALPHA</span>
       <span class="brand-context">${escapeHtml(sectionLabel)}</span>
@@ -106,10 +106,27 @@ export function siteHeader(sectionLabel = SITE.signalName, activeSection = '') {
   </header>`;
 }
 
+const FOOTER_CSS = String.raw`
+.ecosystem-footer{display:grid;grid-template-columns:minmax(230px,1fr) minmax(300px,1.25fr) auto;gap:28px;align-items:start;margin-top:60px;padding:30px 0 12px;border-top:1px solid var(--line);color:var(--muted)}
+.ecosystem-footer .footer-brand strong{display:block;color:var(--text);font-family:var(--mono);font-size:.82rem;letter-spacing:.04em}
+.ecosystem-footer .footer-brand p,.ecosystem-footer .footer-attribution p{margin:7px 0 0;max-width:46ch;font-size:.79rem;line-height:1.55}
+.ecosystem-footer .footer-attribution>span{display:block;color:var(--blue);font-family:var(--mono);font-size:.59rem;font-weight:800;letter-spacing:.075em}
+.ecosystem-footer .footer-attribution strong{color:var(--soft);font-weight:750}
+.ecosystem-footer .footer-attribution a{color:var(--text);font-weight:750;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--blue) 48%,transparent);text-underline-offset:3px}
+.ecosystem-footer .footer-attribution a:hover,.ecosystem-footer .footer-links a:hover{color:var(--blue)}
+.ecosystem-footer .footer-links{display:grid;grid-template-columns:1fr 1fr;gap:7px 18px;min-width:190px}
+.ecosystem-footer .footer-links a{color:var(--soft);font-size:.75rem}
+.ecosystem-footer .footer-disclaimer{grid-column:1 / -1;margin:6px 0 0;padding-top:13px;border-top:1px solid var(--line);color:var(--muted);font-size:.56rem;line-height:1.55;letter-spacing:.005em}
+.ecosystem-footer .footer-rights{grid-column:1 / -1;margin-top:-14px;color:var(--muted);font-family:var(--mono);font-size:.54rem;text-align:right}
+@media(max-width:900px){.ecosystem-footer{grid-template-columns:1fr 1fr}.ecosystem-footer .footer-links{grid-column:1 / -1;display:flex;flex-wrap:wrap;min-width:0}.ecosystem-footer .footer-rights{text-align:left;margin-top:-8px}}
+@media(max-width:600px){.ecosystem-footer{grid-template-columns:1fr;gap:18px;margin-top:44px;padding-top:23px}.ecosystem-footer .footer-links{grid-column:auto;display:grid;grid-template-columns:1fr 1fr}.ecosystem-footer .footer-disclaimer,.ecosystem-footer .footer-rights{grid-column:auto}.ecosystem-footer .footer-disclaimer{font-size:.54rem}.ecosystem-footer .footer-rights{margin-top:-8px;text-align:left}}
+`;
+
 export function siteFooter() {
-  const institutional = `mailto:${SITE.accessEmail}?subject=${encodeURIComponent('EGX Alpha institutional enquiry')}`;
-  return `<footer class="site-footer" aria-label="Site footer">
-    <div class="footer-brand"><strong>EGX /ALPHA</strong><p>Quantitative ranking for the Egyptian Exchange.</p></div>
+  const year = new Date().getUTCFullYear();
+  return `<style id="ecosystem-footer-styles">${FOOTER_CSS}</style><footer class="site-footer ecosystem-footer" aria-label="Site footer">
+    <div class="footer-brand"><strong>EGX Research / ALPHA</strong><p>Public quantitative research for the Egyptian Exchange.</p></div>
+    <div class="footer-attribution"><span>RESEARCH ECOSYSTEM</span><p>EGX Research is a project of <strong>EGX Research Community LLP</strong>, in association with <a href="https://knowdyn.com" target="_blank" rel="noopener noreferrer">KNOWDYN</a> and <a href="https://60arabia.com" target="_blank" rel="noopener noreferrer">60Arabia</a>.</p></div>
     <nav class="footer-links" aria-label="Footer navigation">
       <a href="${rel('/today/')}">Latest</a>
       <a href="${rel('/archive/')}">History</a>
@@ -117,7 +134,8 @@ export function siteFooter() {
       <a href="${rel('/methodology/')}">Research</a>
       <a href="${rel('/institutional/')}">Institutional</a>
     </nav>
-    <div class="footer-meta"><a href="${institutional}">${escapeHtml(SITE.accessEmail)}</a><p>Research and information only. Not investment advice.</p><p>© EGX Research LLP. All rights reserved.</p></div>
+    <p class="footer-disclaimer">Research and information only. Not investment advice. Public engine outputs are provided as-is. Nothing on this site is a recommendation, solicitation, target price or execution instruction. EGX Research Community LLP, KNOWDYN, 60Arabia and their affiliates accept no responsibility for trading decisions, losses, damages or other outcomes arising from use of, reliance on or interpretation of the public engine data, to the fullest extent permitted by applicable law.</p>
+    <div class="footer-rights">© ${year} EGX Research Community LLP.</div>
   </footer>`;
 }
 
