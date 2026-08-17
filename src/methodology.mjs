@@ -24,7 +24,7 @@ const METHODOLOGY_CSS = String.raw`
 .page-methodology .boundary-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
 .page-methodology .boundary-grid article{padding:18px;border:1px solid var(--line);border-radius:9px;background:var(--surface)}
 .page-methodology .boundary-grid p{margin:7px 0 0;color:var(--muted);font-size:.84rem}
-@media(max-width:760px){.page-methodology .doc-control{grid-template-columns:1fr 1fr}.page-methodology .paper-section{grid-template-columns:1fr;gap:8px}.page-methodology .boundary-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.page-methodology .research-cover h1{max-width:none;font-size:clamp(2.15rem,9vw,2.65rem);line-height:1.02;letter-spacing:-.045em}.page-methodology .doc-control{grid-template-columns:1fr 1fr}.page-methodology .paper-section{grid-template-columns:1fr;gap:8px}.page-methodology .boundary-grid{grid-template-columns:1fr}}
 @media print{@page{size:A4;margin:15mm}.page-methodology .topbar,.page-methodology .site-footer{display:none!important}.page-methodology .site-shell{width:100%;padding:0}.page-methodology .research-paper{margin:0;border:0}.page-methodology .paper-section,.page-methodology .paper-boundary{break-inside:avoid}}
 `;
 function control(label, value) { return `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`; }
