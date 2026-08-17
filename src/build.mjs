@@ -6,6 +6,7 @@ process.env.EGX_SITE_URL ??= 'https://egxresearch.com';
 
 const { loadAndValidate } = await import('./validate.mjs');
 const { SITE } = await import('./templates.mjs');
+const { investorGuidePage } = await import('./investor-guide.mjs');
 const { forecastWindows, primaryHorizon, topLevelSignals, universeForHorizon } = await import('./research-view.mjs');
 const { renderArchivePage, renderInstitutionalPage, renderMethodologyPage, renderSearchPage, renderSignalPage, renderSymbolDossierPage } = await import('./render.mjs');
 
@@ -164,6 +165,7 @@ export function buildSite({ root = DEFAULT_ROOT, outDir = path.join(root, '_site
   write(path.join(outDir, 'archive', 'index.html'), renderArchivePage(sessions));
   write(path.join(outDir, 'search', 'index.html'), renderSearchPage());
   write(path.join(outDir, 'methodology', 'index.html'), renderMethodologyPage());
+  write(path.join(outDir, 'investor-guide', 'index.html'), investorGuidePage());
   write(path.join(outDir, 'institutional', 'index.html'), renderInstitutionalPage());
 
   const histories = buildSymbolHistories(searchItems);

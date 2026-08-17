@@ -100,6 +100,7 @@ export function siteHeader(sectionLabel = SITE.signalName, activeSection = '') {
       ${navLink('/archive/', 'HISTORY', 'history', activeSection)}
       ${navLink('/search/', 'SEARCH', 'search', activeSection)}
       ${navLink('/methodology/', 'RESEARCH', 'research', activeSection)}
+      ${navLink('/investor-guide/', 'GUIDE', 'guide', activeSection)}
       ${navLink('/institutional/', 'INSTITUTIONAL', 'institutional', activeSection)}
     </nav>
     <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false">${themeIcon()}</button>
@@ -132,6 +133,7 @@ export function siteFooter() {
       <a href="${rel('/archive/')}">History</a>
       <a href="${rel('/search/')}">Search</a>
       <a href="${rel('/methodology/')}">Research</a>
+      <a href="${rel('/investor-guide/')}">Guide</a>
       <a href="${rel('/institutional/')}">Institutional</a>
     </nav>
     <p class="footer-disclaimer">Research and information only. Not investment advice. Public engine outputs are provided as-is. Nothing on this site is a recommendation, solicitation, target price or execution instruction. EGX Research Community LLP, KNOWDYN, 60Arabia and their affiliates accept no responsibility for trading decisions, losses, damages or other outcomes arising from use of, reliance on or interpretation of the public engine data, to the fullest extent permitted by applicable law.</p>
