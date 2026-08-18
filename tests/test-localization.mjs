@@ -33,10 +33,10 @@ assert.ok(arHome.includes('<link rel="alternate" hreflang="ar" href="https://egx
 assert.ok(arHome.includes('<link rel="alternate" hreflang="x-default" href="https://egxresearch.com/">'));
 assert.ok(enHome.includes('<link rel="alternate" hreflang="ar" href="https://egxresearch.com/ar/">'));
 
-for (const required of ['EGX Research', 'ALPHA', 'الترتيب النسبي', 'اتجاه النموذج', 'تغير الترتيب', 'إيجابي', 'محايد', 'سلبي', 'اللغة', 'EN', 'تثبيت EGX /ALPHA', '>التطبيق<']) {
+for (const required of ['EGX Research', 'ALPHA', 'أي أسهم EGX تستحق انتباهك الآن؟', 'بعد كل جلسة في البورصة المصرية، يواجه المستثمرون المشكلة نفسها:', 'أسهم كثيرة، وضوضاء كثيرة، وقدرة محدودة على المتابعة.', 'يحول EGX /Alpha السوق إلى ترتيب يومي للأولوية', 'كلما ظهر السهم في مركز أعلى، كان تفضيل EGX /Alpha النسبي له أقوى.', 'يضيف اتجاه النموذج رؤية منفصلة إيجابية أو محايدة أو سلبية', 'الترتيب النسبي', 'اتجاه النموذج', 'تغير الترتيب', 'إيجابي', 'محايد', 'سلبي', 'اللغة', 'EN', 'تثبيت EGX /ALPHA', '>التطبيق<']) {
   assert.ok(arHome.includes(required), `Arabic homepage should include ${required}`);
 }
-for (const bad of ['السهمS', 'stocks analysed', '>Positive<', '>Neutral<', '>Negative<', '>Today<', '>History<', '>Guide<', '>Institutional<', '>LANGUAGE<', '>APP<']) {
+for (const bad of ['Deep-learning ranking of Egyptian equities.', 'ترتيب أسهم البورصة المصرية باستخدام التعلم العميق.', 'After each completed EGX session, /Alpha ranks the eligible stock universe across multiple forward horizons.', 'بعد كل جلسة مكتملة في البورصة المصرية، يرتب /Alpha الأسهم المؤهلة عبر عدة آفاق مستقبلية.', 'السهمS', 'stocks analysed', '>Positive<', '>Neutral<', '>Negative<', '>Today<', '>History<', '>Guide<', '>Institutional<', '>LANGUAGE<', '>APP<']) {
   assert.equal(arHome.includes(bad), false, `Arabic homepage should not contain ${bad}`);
 }
 assert.ok(arHome.includes('href="/ar/today/"'));

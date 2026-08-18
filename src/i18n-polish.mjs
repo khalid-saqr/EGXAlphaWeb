@@ -53,7 +53,18 @@ export function polishLocalizedText(value, locale = 'en') {
 
 export function polishLocalizedHtml(value, locale = 'en') {
   if (!isArabic(locale)) return String(value ?? '');
-  let output = polishLocalizedText(value, locale);
+  let output = String(value ?? '');
+
+  // Keep the live homepage value proposition atomic so generic localization cannot split its meaning.
+  const liveHero = output.includes('Which EGX stocks deserve your attention now?');
+  if (liveHero) {
+    output = output.replaceAll('Which EGX stocks deserve your attention now?', 'أي أسهم EGX تستحق انتباهك الآن؟');
+    output = output.replace(
+      /<p class="control-deck-lede">[\s\S]*?<\/p>/,
+      '<p class="control-deck-lede">بعد كل جلسة في البورصة المصرية، يواجه المستثمرون المشكلة نفسها: <strong>أسهم كثيرة، وضوضاء كثيرة، وقدرة محدودة على المتابعة.</strong> يحول EGX /Alpha السوق إلى ترتيب يومي للأولوية، موضحاً الأسهم التي يتوقع نموذجه أن تحقق أداءً أفضل نسبياً من بقية السوق في الأيام المقبلة. <strong>كلما ظهر السهم في مركز أعلى، كان تفضيل EGX /Alpha النسبي له أقوى.</strong> يضيف اتجاه النموذج رؤية منفصلة إيجابية أو محايدة أو سلبية، لمساعدتك على تحديد أين تبدأ بحثك.</p>'
+    );
+  }
+  output = polishLocalizedText(output, locale);
 
   // Repair counts before/after legacy uppercase token replacement.
   output = output.replaceAll('السهمS', 'سهماً');
@@ -78,7 +89,7 @@ export function polishLocalizedHtml(value, locale = 'en') {
 
   // Arabic Article structured data must describe the Arabic route, not the English route.
   output = output.replace('"inLanguage":"en"', '"inLanguage":"ar"');
-  output = output.replace(/("(?:mainEntityOfPage|url)":")([^"\n]*?)\/investor-guide\/(")/g, '$1$2/ar/investor-guide/$3');
+  output = output.replace(/("(?:mainEntityOfPage|url)":")([^"\n]*?)\/investor-guide\/(\")/g, '$1$2/ar/investor-guide/$3');
 
   return output;
 }
