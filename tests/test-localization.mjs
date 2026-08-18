@@ -33,10 +33,10 @@ assert.ok(arHome.includes('<link rel="alternate" hreflang="ar" href="https://egx
 assert.ok(arHome.includes('<link rel="alternate" hreflang="x-default" href="https://egxresearch.com/">'));
 assert.ok(enHome.includes('<link rel="alternate" hreflang="ar" href="https://egxresearch.com/ar/">'));
 
-for (const required of ['EGX Research', 'ALPHA', 'الترتيب النسبي', 'اتجاه النموذج', 'تغير الترتيب', 'إيجابي', 'محايد', 'سلبي', 'اللغة', 'EN']) {
+for (const required of ['EGX Research', 'ALPHA', 'الترتيب النسبي', 'اتجاه النموذج', 'تغير الترتيب', 'إيجابي', 'محايد', 'سلبي', 'اللغة', 'EN', 'تثبيت EGX /ALPHA', '>التطبيق<']) {
   assert.ok(arHome.includes(required), `Arabic homepage should include ${required}`);
 }
-for (const bad of ['السهمS', 'stocks analysed', '>Positive<', '>Neutral<', '>Negative<', '>Today<', '>History<', '>Guide<', '>Institutional<', '>LANGUAGE<']) {
+for (const bad of ['السهمS', 'stocks analysed', '>Positive<', '>Neutral<', '>Negative<', '>Today<', '>History<', '>Guide<', '>Institutional<', '>LANGUAGE<', '>APP<']) {
   assert.equal(arHome.includes(bad), false, `Arabic homepage should not contain ${bad}`);
 }
 assert.ok(arHome.includes('href="/ar/today/"'));
@@ -47,6 +47,8 @@ assert.ok(arHome.includes('href="/data/latest.json"'), 'Arabic verification shou
 assert.equal(arHome.includes('href="/ar/data/latest.json"'), false, 'Arabic pages must not duplicate or rewrite public data paths');
 assert.equal(fs.existsSync('_site/ar/data/latest.json'), false, 'Arabic route tree must not duplicate the public data tree');
 assert.deepEqual(JSON.parse(read('_site/data/latest.json')), latest, 'localization must not mutate the production public wire');
+assert.ok(arHome.includes('rel="manifest" href="/manifest.webmanifest"'), 'Arabic pages should use the same root PWA manifest');
+assert.ok(arHome.includes('src="/assets/pwa.js"'), 'Arabic pages should use the same PWA runtime');
 
 const arArchive = read('_site/ar/archive/index.html');
 for (const required of ['السجل العام للنموذج', 'الجلسات العامة', 'السجلات الحية', 'السجلات التاريخية', 'فتح الجلسة']) assert.ok(arArchive.includes(required), `Arabic archive should include ${required}`);
@@ -92,7 +94,9 @@ const rtlCss = fs.readFileSync('assets/i18n.css', 'utf8');
 for (const required of ['html[dir="rtl"]', 'margin-inline-start', 'padding-inline-start', 'direction:ltr', 'unicode-bidi:isolate', '@media(max-width:520px)', '@media(max-width:360px)']) assert.ok(rtlCss.includes(required), `RTL CSS should include ${required}`);
 const client = fs.readFileSync('assets/app.js', 'utf8');
 for (const required of ['siteConfig.locale', 'siteConfig.strings', 'localizedContentPath', '/data/index.json']) assert.ok(client.includes(required), `client localization should include ${required}`);
-assert.equal(client.includes('serviceWorker.register'), false, 'Commit 4 must not enable the PWA early');
-assert.equal(fs.existsSync('_site/manifest.webmanifest'), false, 'PWA manifest remains Commit 5 scope');
+assert.equal(client.includes('serviceWorker.register'), false, 'service-worker registration should remain isolated in the PWA runtime');
+const pwa = fs.readFileSync('assets/pwa.js', 'utf8');
+assert.ok(pwa.includes("locale === 'ar'"), 'PWA runtime should localize dynamic install/offline states');
+assert.ok(fs.existsSync('_site/manifest.webmanifest'), 'Commit 5 should emit the PWA manifest');
 
 console.log('test-localization passed');

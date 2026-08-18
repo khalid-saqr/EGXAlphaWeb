@@ -1,0 +1,159 @@
+(function () {
+  const configText = document.getElementById('site-config')?.textContent?.trim();
+  const payloadText = document.getElementById('beacon-payload')?.textContent?.trim();
+  let siteConfig = { basePath: '', locale: 'en' };
+  let pagePayload = {};
+  try { if (configText) siteConfig = JSON.parse(configText); } catch (_) {}
+  try { if (payloadText) pagePayload = JSON.parse(payloadText); } catch (_) {}
+
+  const basePath = String(siteConfig.basePath || '').replace(/\/$/, '');
+  const locale = String(siteConfig.locale || 'en').toLowerCase().startsWith('ar') ? 'ar' : 'en';
+  const strings = locale === 'ar' ? {
+    install: 'تثبيت EGX /ALPHA',
+    installed: 'EGX /ALPHA مثبت',
+    installReady: 'جاهز للتثبيت على هذا الجهاز.',
+    installGeneric: 'استخدم خيار تثبيت التطبيق من قائمة المتصفح.',
+    installIOS: 'على iPhone أو iPad: اضغط مشاركة ثم «إضافة إلى الشاشة الرئيسية».',
+    installDismissed: 'يمكنك تثبيت التطبيق لاحقاً من هذا الخيار.',
+    online: 'متصل · يتم فحص أحدث سجل عند فتح التطبيق',
+    offline: 'غير متصل · عرض آخر سجل عام محفوظ',
+    checking: 'جارٍ فحص أحدث سجل عام…',
+    current: 'السجل العام المعروض هو الأحدث.',
+    refreshing: 'يتوفر سجل عام أحدث · جارٍ تحديث العرض…'
+  } : {
+    install: 'INSTALL EGX /ALPHA',
+    installed: 'EGX /ALPHA INSTALLED',
+    installReady: 'Ready to install on this device.',
+    installGeneric: 'Use your browser menu and choose Install app.',
+    installIOS: 'On iPhone or iPad: tap Share, then Add to Home Screen.',
+    installDismissed: 'You can install the app later from this control.',
+    online: 'ONLINE · LATEST RECORD CHECKED ON OPEN',
+    offline: 'OFFLINE · SHOWING LAST CACHED PUBLIC RECORD',
+    checking: 'CHECKING LATEST PUBLIC RECORD…',
+    current: 'DISPLAYED PUBLIC RECORD IS CURRENT',
+    refreshing: 'NEWER PUBLIC RECORD AVAILABLE · REFRESHING…'
+  };
+
+  const installButton = document.querySelector('[data-pwa-install]');
+  const installHelp = document.querySelector('[data-pwa-install-help]');
+  const appStatus = document.querySelector('[data-pwa-status]');
+  const offlineNotice = document.querySelector('[data-pwa-offline]');
+  let deferredPrompt = null;
+  let checking = false;
+  let lastCheckAt = 0;
+
+  const isStandalone = () => window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  function setInstallState() {
+    if (!installButton) return;
+    if (isStandalone()) {
+      installButton.textContent = strings.installed;
+      installButton.disabled = true;
+      installButton.dataset.state = 'installed';
+      if (installHelp) installHelp.hidden = true;
+      return;
+    }
+    installButton.disabled = false;
+    installButton.textContent = strings.install;
+    installButton.dataset.state = deferredPrompt ? 'ready' : 'available';
+    if (installHelp) {
+      installHelp.hidden = false;
+      installHelp.textContent = deferredPrompt ? strings.installReady : (isIOS() ? strings.installIOS : strings.installGeneric);
+    }
+  }
+
+  function updateConnectionState() {
+    const offline = navigator.onLine === false;
+    document.documentElement.classList.toggle('is-offline', offline);
+    if (offlineNotice) {
+      offlineNotice.hidden = !offline;
+      offlineNotice.textContent = strings.offline;
+    }
+    if (appStatus && !checking) appStatus.textContent = offline ? strings.offline : strings.online;
+  }
+
+  function currentSurfacePath() {
+    let path = window.location.pathname || '/';
+    if (basePath && path.startsWith(basePath)) path = path.slice(basePath.length) || '/';
+    if (!path.startsWith('/')) path = `/${path}`;
+    return path;
+  }
+
+  function isCurrentSurface() {
+    return new Set(['/', '/today/', '/ar/', '/ar/today/']).has(currentSurfacePath());
+  }
+
+  async function checkLatestPublicRecord() {
+    if (!isCurrentSurface() || navigator.onLine === false || checking) return;
+    const now = Date.now();
+    if (now - lastCheckAt < 5000) return;
+    lastCheckAt = now;
+    checking = true;
+    if (appStatus) appStatus.textContent = strings.checking;
+    try {
+      const response = await fetch(`${basePath}/data/latest.json`, { cache: 'no-store', headers: { 'cache-control': 'no-cache' } });
+      if (!response.ok) throw new Error('latest public record unavailable');
+      const latest = await response.json();
+      const displayedDate = String(pagePayload.trading_date || '');
+      const latestDate = String(latest.trading_date || '');
+      if (displayedDate && latestDate && latestDate > displayedDate) {
+        if (appStatus) appStatus.textContent = strings.refreshing;
+        window.location.reload();
+        return;
+      }
+      if (appStatus) appStatus.textContent = strings.current;
+    } catch (_) {
+      updateConnectionState();
+    } finally {
+      checking = false;
+    }
+  }
+
+  window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    deferredPrompt = event;
+    setInstallState();
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    setInstallState();
+  });
+
+  installButton?.addEventListener('click', async () => {
+    if (isStandalone()) return;
+    if (!deferredPrompt) {
+      if (installHelp) {
+        installHelp.hidden = false;
+        installHelp.textContent = isIOS() ? strings.installIOS : strings.installGeneric;
+      }
+      return;
+    }
+    const prompt = deferredPrompt;
+    deferredPrompt = null;
+    await prompt.prompt();
+    const choice = await prompt.userChoice.catch(() => null);
+    if (choice?.outcome !== 'accepted' && installHelp) installHelp.textContent = strings.installDismissed;
+    setInstallState();
+  });
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', async () => {
+      try {
+        const scope = `${basePath || ''}/`;
+        const registration = await navigator.serviceWorker.register(`${basePath}/sw.js`, { scope });
+        registration.update().catch(() => {});
+      } catch (_) {}
+    });
+  }
+
+  window.addEventListener('online', () => { updateConnectionState(); checkLatestPublicRecord(); });
+  window.addEventListener('offline', updateConnectionState);
+  window.addEventListener('focus', checkLatestPublicRecord);
+  window.addEventListener('pageshow', checkLatestPublicRecord);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkLatestPublicRecord(); });
+
+  setInstallState();
+  updateConnectionState();
+})();

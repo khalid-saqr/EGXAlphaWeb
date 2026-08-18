@@ -21,6 +21,10 @@ const TEXT_PAIRS = [
   ['EGX /Alpha quantitative market ranking for the Egyptian Exchange, analysis date ', 'ترتيب EGX /Alpha الكمي لسوق البورصة المصرية، تاريخ التحليل '],
   ['How retail investors can use EGX /Alpha for Egyptian Stock Market research, deep-learning stock forecasting and EGX stock analysis, including البورصة المصرية.', 'كيف يمكن للمستثمر الفرد استخدام EGX /Alpha في بحث سوق الأسهم المصرية وتوقع الأسهم بالتعلم العميق وتحليل أسهم البورصة المصرية.'],
   ['Switch language', 'تغيير اللغة'],
+  ['Install EGX /Alpha', 'تثبيت EGX /Alpha'],
+  ['INSTALL EGX /ALPHA', 'تثبيت EGX /ALPHA'],
+  ['ONLINE · LATEST RECORD CHECKED ON OPEN', 'متصل · يتم فحص أحدث سجل عند فتح التطبيق'],
+  ['OFFLINE · SHOWING LAST CACHED PUBLIC RECORD', 'غير متصل · عرض آخر سجل عام محفوظ'],
   ['LANGUAGE', 'اللغة'],
   ['Today', 'اليوم'],
   ['History', 'السجل'],
@@ -65,6 +69,7 @@ export function polishLocalizedHtml(value, locale = 'en') {
   output = output.replace(/>Neutral</g, '>محايد<');
   output = output.replace(/>Negative</g, '>سلبي<');
   output = output.replace(/>LANGUAGE</g, '>اللغة<');
+  output = output.replace(/>APP</g, '>التطبيق<');
   output = output.replace(/>Today</g, '>اليوم<');
   output = output.replace(/>History</g, '>السجل<');
   output = output.replace(/>Search</g, '>بحث<');

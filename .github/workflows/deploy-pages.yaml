@@ -75,6 +75,9 @@ jobs:
       - name: Verify English and Arabic localization parity
         run: node tests/test-localization.mjs
 
+      - name: Verify installable PWA and freshness behavior
+        run: node tests/test-pwa.mjs
+
       - name: Verify Pages artifact
         run: npm run verify:pages
 
