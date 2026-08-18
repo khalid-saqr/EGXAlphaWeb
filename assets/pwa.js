@@ -47,6 +47,12 @@
   const isStandalone = () => window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
   const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
+  function syncThemeChrome() {
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    if (!themeMeta) return;
+    themeMeta.setAttribute('content', document.documentElement.dataset.theme === 'light' ? '#FFFFFF' : '#020302');
+  }
+
   function setInstallState() {
     if (!installButton) return;
     if (isStandalone()) {
@@ -167,6 +173,10 @@
       } catch (_) {}
     });
   }
+
+  const themeObserver = new MutationObserver(syncThemeChrome);
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  syncThemeChrome();
 
   window.addEventListener('online', () => { updateConnectionState(); checkLatestPublicRecord(); });
   window.addEventListener('offline', updateConnectionState);
