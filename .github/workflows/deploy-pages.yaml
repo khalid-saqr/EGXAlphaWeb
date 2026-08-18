@@ -72,6 +72,9 @@ jobs:
       - name: Verify methodology white paper
         run: node tests/test-methodology-layout.mjs
 
+      - name: Verify English and Arabic localization parity
+        run: node tests/test-localization.mjs
+
       - name: Verify Pages artifact
         run: npm run verify:pages
 
