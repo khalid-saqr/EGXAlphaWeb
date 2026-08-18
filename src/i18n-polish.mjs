@@ -56,9 +56,9 @@ export function polishLocalizedHtml(value, locale = 'en') {
   let output = String(value ?? '');
 
   // Keep the live homepage value proposition atomic so generic localization cannot split its meaning.
-  const liveHero = output.includes('Which EGX stocks deserve your attention now?');
+  const liveHero = output.includes('Which EGX stocks deserve your attention tomorrow?');
   if (liveHero) {
-    output = output.replaceAll('Which EGX stocks deserve your attention now?', 'أي أسهم EGX تستحق انتباهك الآن؟');
+    output = output.replaceAll('Which EGX stocks deserve your attention tomorrow?', 'أي أسهم EGX تستحق انتباهك غداً؟');
     output = output.replace(
       /<p class="control-deck-lede">[\s\S]*?<\/p>/,
       '<p class="control-deck-lede">بعد كل جلسة في البورصة المصرية، يواجه المستثمرون المشكلة نفسها: <strong>أسهم كثيرة، وضوضاء كثيرة، وقدرة محدودة على المتابعة.</strong> يحول EGX /Alpha السوق إلى ترتيب يومي للأولوية، موضحاً الأسهم التي يتوقع نموذجه أن تحقق أداءً أفضل نسبياً من بقية السوق في الأيام المقبلة. <strong>كلما ظهر السهم في مركز أعلى، كان تفضيل EGX /Alpha النسبي له أقوى.</strong> يضيف اتجاه النموذج رؤية منفصلة إيجابية أو محايدة أو سلبية، لمساعدتك على تحديد أين تبدأ بحثك.</p>'
