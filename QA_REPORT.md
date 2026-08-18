@@ -1,49 +1,90 @@
-# EGXResearch Public PWA QA Report
+# EGXResearch public application — final QA report
 
-Package: `EGXResearch_Public_PWA_v1.zip`
+## Release scope
 
-## Scope checked
+This report describes the completed six-commit public-interface program on `EGXAlphaWeb`:
 
-- Static GitHub Pages PWA shell
-- Public wire payload validation
-- Responsive card UI source
-- Archive/search/static build system
-- No image or binary source files
-- No private EGX/Alpha payload leakage
+- Midnight Lapis / Papyrus application shell
+- unified 1D/3D/5D/10D research terminal with 5D primary
+- Market Pulse and full relative ranking
+- research evidence, Public Model Memory, search and stock dossiers
+- public-record verification
+- complete Arabic/RTL route parity
+- installable offline-capable PWA
+- final publication/deployment hardening
 
-## Test command
+No private model, Beacon, exporter, execution, registration or subscriber system is part of the browser application.
+
+## Automated acceptance
+
+Run:
 
 ```bash
 npm test
 ```
 
-## Result
+The release suite covers:
 
 ```text
-test-public-wire passed
-test-build-output passed
-test-no-leakage passed
-test-no-binaries passed
+public-wire validation
+production payload identity
+V2 complete-universe rendering
+next-session publication compatibility
+homepage/layout fixtures
+multi-horizon evidence
+historical provenance
+methodology
+research-depth surfaces
+English/Arabic localization parity
+PWA install/offline/freshness contract
+final route/link/accessibility/release hardening
+Pages artifact verification
+private-field leakage boundary
+restricted PWA-icon binary allowlist
 ```
 
-## Boundaries
+The release-hardening gate additionally crawls every generated HTML artifact, checks internal route targets, detects duplicate IDs and unnamed buttons, verifies EN/AR counterparts, enforces the 44px interaction override, and performs a synthetic next-EGX-session publication through the finished EN/AR + PWA build.
+
+## Production acceptance
+
+Every `main` deployment captures the built `trading_date`. After GitHub Pages deploys, CI retries the custom domain until:
+
+1. `https://egxresearch.com/data/latest.json` reports that same `trading_date`;
+2. the PWA manifest is reachable; and
+3. `/sw.js` contains the final `egx-alpha-pwa-v2` cache generation.
+
+The workflow fails if production does not converge.
+
+## Publication boundary
+
+Normal private-to-public publication remains restricted to:
+
+```text
+data/latest.json
+data/archive/YYYY-MM-DD.json
+```
+
+The public repository rebuilds the entire application automatically from those bounded records. No daily UI code change is required.
+
+## PWA boundary
 
 Included:
 
-- Public PWA repo shell
-- Sample public signal
-- GitHub Pages deployment workflow
-- Static build scripts
-- Tests
-- Browser installation instructions
-- Private handoff template
+- native install prompt where supported
+- iOS/iPadOS Add to Home Screen guidance
+- network-first current views/data
+- cache-first immutable dated archives
+- explicit offline state
+- freshness checks on open/resume/focus/reconnect
 
-Excluded by design:
+Excluded intentionally:
 
-- Images
-- Binary files
-- Social automation
-- Email automation
-- Tokens or secrets
-- Paid subscriber data
-- Creator/internal data
+- push notifications
+- notification permissions
+- background/periodic sync
+- closed-app scheduling
+- account registration
+
+## Release status
+
+Commit 6 is accepted only when its final squashed PR SHA passes the complete GitHub Actions suite against the current `main` payload and the generated PR artifact is structurally inspected.

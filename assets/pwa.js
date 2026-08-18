@@ -19,6 +19,7 @@
     offline: 'غير متصل · عرض آخر سجل عام محفوظ',
     checking: 'جارٍ فحص أحدث سجل عام…',
     current: 'السجل العام المعروض هو الأحدث.',
+    deploying: 'يتوفر سجل عام أحدث · جارٍ نشر العرض الجديد…',
     refreshing: 'يتوفر سجل عام أحدث · جارٍ تحديث العرض…'
   } : {
     install: 'INSTALL EGX /ALPHA',
@@ -31,6 +32,7 @@
     offline: 'OFFLINE · SHOWING LAST CACHED PUBLIC RECORD',
     checking: 'CHECKING LATEST PUBLIC RECORD…',
     current: 'DISPLAYED PUBLIC RECORD IS CURRENT',
+    deploying: 'DEPLOYING NEW PUBLIC RECORD · CURRENT VIEW RETAINED',
     refreshing: 'NEWER PUBLIC RECORD AVAILABLE · REFRESHING…'
   };
 
@@ -84,6 +86,19 @@
     return new Set(['/', '/today/', '/ar/', '/ar/today/']).has(currentSurfacePath());
   }
 
+  async function currentHtmlHasDate(tradingDate) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('__egx_record', tradingDate);
+    try {
+      const response = await fetch(url.toString(), { cache: 'no-store', headers: { 'cache-control': 'no-cache' } });
+      if (!response.ok) return false;
+      const html = await response.text();
+      return html.includes(`"trading_date":"${tradingDate}"`);
+    } catch (_) {
+      return false;
+    }
+  }
+
   async function checkLatestPublicRecord() {
     if (!isCurrentSurface() || navigator.onLine === false || checking) return;
     const now = Date.now();
@@ -98,6 +113,11 @@
       const displayedDate = String(pagePayload.trading_date || '');
       const latestDate = String(latest.trading_date || '');
       if (displayedDate && latestDate && latestDate > displayedDate) {
+        const releaseReady = await currentHtmlHasDate(latestDate);
+        if (!releaseReady) {
+          if (appStatus) appStatus.textContent = strings.deploying;
+          return;
+        }
         if (appStatus) appStatus.textContent = strings.refreshing;
         window.location.reload();
         return;

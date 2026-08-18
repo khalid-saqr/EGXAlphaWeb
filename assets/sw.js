@@ -1,4 +1,4 @@
-const VERSION = 'egx-alpha-pwa-v1';
+const VERSION = 'egx-alpha-pwa-v2';
 const STATIC_CACHE = `${VERSION}-static`;
 const CURRENT_CACHE = `${VERSION}-current`;
 const ARCHIVE_CACHE = `${VERSION}-archive`;

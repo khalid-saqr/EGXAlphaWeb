@@ -1,33 +1,46 @@
-# EGXResearch — EGX /Alpha signal
+# EGXResearch — EGX /Alpha
 
-A payload-first static GitHub Pages site for publishing the bounded public **EGX /Alpha signal** and its methodology.
+Static GitHub Pages research application for the bounded public **EGX /Alpha** signal.
 
-The repository is the public shell for the private `khalid-saqr/EGXResearch` engine. It receives only the validated public wire, builds static pages, and deploys them to GitHub Pages.
+This repository is the public presentation and distribution boundary for the private `khalid-saqr/EGXResearch` engine. It receives only validated public-wire JSON, renders English and Arabic research surfaces, and deploys the resulting static artifact to GitHub Pages. It does not read private model state directly.
 
-## Public routes
+## Production product
 
-- Latest signal: `/` and `/today/`
-- Dated records: `/archive/YYYY-MM-DD/`
-- Archive index: `/archive/`
-- Symbol/date search: `/search/`
-- Public methodology: `/methodology/`
-- Public JSON: `/data/latest.json` and `/data/archive/YYYY-MM-DD.json`
-- Arabic presentation tree: `/ar/` and localized equivalents of the public research routes
+Production is served from:
 
-## Payload boundary
+```text
+https://egxresearch.com/
+```
 
-The site accepts the bounded public EGX /Alpha wire and rejects private or subscriber fields, including model scores, logits, full predictions, private memory and operational paths.
+The public application includes:
 
-The private repository publishes only:
+- current research terminal: `/` and `/today/`
+- complete dated model memory: `/archive/` and `/archive/YYYY-MM-DD/`
+- ticker/date research search: `/search/`
+- stock dossiers: `/symbol/TICKER/`
+- methodology: `/methodology/`
+- investor guide: `/investor-guide/`
+- institutional research page: `/institutional/`
+- full Arabic/RTL equivalents under `/ar/`
+- installable `EGX /Alpha` PWA
+- public JSON at `/data/latest.json`, `/data/index.json`, and `/data/archive/YYYY-MM-DD.json`
+
+The interface defaults to the canonical 5-session research horizon and also exposes the bounded public 1D, 3D, 5D and 10D windows supplied by V2.
+
+## Publication boundary
+
+The private repository is permitted to publish only:
 
 ```text
 data/latest.json
 data/archive/YYYY-MM-DD.json
 ```
 
-No token or private-repository content belongs in this repository.
+No UI source, service-worker file, model artifact, token, private memory, prediction internals or operational path should cross that boundary.
 
-## Build
+`egx_alpha_public_wire_v2` is the canonical production contract. The public validator independently rejects non-public/private fields before the site builds. V1 remains accepted only as a bounded compatibility input for legacy records and tests; new normal publication is V2.
+
+## Build and release gates
 
 Requirements: Node.js 20 or later.
 
@@ -35,27 +48,72 @@ Requirements: Node.js 20 or later.
 npm test
 ```
 
-`npm test` validates the public payload, builds `_site/`, verifies the production Pages artifact, tests English/Arabic parity and the PWA contract, checks for private-field leakage, and rejects binary files except for the four explicitly allowlisted PWA icons.
+The full suite validates:
 
-## Production deployment
+- V1/V2 public-wire boundaries
+- exact payload identity through the static build
+- complete-universe and multi-horizon rendering
+- automatic next-session publication without UI edits
+- English/Arabic route and metadata parity
+- research evidence and historical provenance
+- installable PWA/offline/freshness behavior
+- final route/link/accessibility/release hardening
+- Pages artifact integrity
+- private-field leakage protection
+- the four-file PWA icon binary allowlist
 
-The production site is served from the custom-domain root:
+Pull requests are validated against the **current `main` public payload**, so UI work cannot silently rely on a stale signal snapshot.
+
+## Daily production deployment
+
+Every push to `main` builds and deploys `_site/` through GitHub Pages. The normal private-to-public daily cycle is therefore:
 
 ```text
-https://egxresearch.com/
+private /Alpha completes
+→ bounded V2 JSON is exported
+→ public data/latest.json + dated archive JSON are committed
+→ EGXAlphaWeb validates and builds
+→ GitHub Pages deploys the complete EN/AR + PWA artifact
+→ production verification confirms live data/latest.json matches the built trading_date
 ```
 
-Production URLs are root-relative. CSS is mostly inlined into generated HTML, with the small PWA stylesheet and client runtimes emitted under `/assets/`.
+The post-deploy verification also confirms the production manifest and final service worker are reachable. A deployment workflow is not considered green if the public custom domain does not converge to the newly built trading date.
 
-The site is installable as **EGX /Alpha** without an account. The service worker uses network-first retrieval for the current homepage, Today view, `/data/latest.json`, and `/data/index.json`; dated archive records are cached more aggressively because their public contents are immutable. When the site or installed app opens or resumes online, the client checks the latest public trading date and refreshes the current view when a newer deployed record exists. Offline mode displays the last cached public record and visibly identifies the offline state.
+## PWA freshness contract
 
-The PWA intentionally does **not** use push notifications, notification permissions, periodic background sync, or a closed-app background scheduler. Freshness is checked when the web app is opened, focused, resumed, or returns online.
+The PWA does not require an account.
 
-The workflow validates pull requests without deploying them. Pushes to `main` build and deploy `_site/` through GitHub Pages.
+Current views and current data are network-first:
+
+```text
+/
+/today/
+/ar/
+/ar/today/
+/data/latest.json
+/data/index.json
+```
+
+Only immutable **dated** archive pages and archive JSON are cache-first. The mutable History index remains network-first.
+
+When the application opens, focuses, resumes or reconnects, it checks `/data/latest.json`. If a newer trading date exists, the client first verifies that the matching HTML release is already available, then refreshes the current view. This avoids a reload race during Pages/CDN propagation. Offline mode clearly identifies that the last cached public record is being shown.
+
+The PWA intentionally has no push notifications, notification permission request, periodic/background sync, or closed-app scheduler.
+
+## Design/release invariants
+
+- dark Midnight Lapis default; light Papyrus theme
+- English and Arabic/RTL parity
+- branded names `EGX Research` and `EGX /Alpha` remain Latin-script
+- minimum 44px interaction floor on core navigation, horizon controls, language/theme and install controls
+- no registration
+- no execution or investment-advice workflow
+- no private repo/Beacon dependency in the browser
+- no synthetic confidence score or fabricated model metric
 
 ## Explicit preview builds
 
-A prefixed preview remains possible only when deliberately configured:
+A prefixed preview is still possible when deliberately configured:
 
 ```bash
 EGX_BASE_PATH=/EGXAlphaWeb \
@@ -63,12 +121,4 @@ EGX_SITE_URL=https://khalid-saqr.github.io/EGXAlphaWeb \
 node src/build.mjs
 ```
 
-The production workflow does not use a repository subpath.
-
-## Early access
-
-The public CTA is static:
-
-```text
-mailto:access@egxresearch.com
-```
+Production itself uses root-relative custom-domain URLs.
