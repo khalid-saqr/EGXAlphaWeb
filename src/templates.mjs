@@ -88,6 +88,45 @@ function pwaShellStrings(locale) {
   };
 }
 
+function footerShellStrings(locale) {
+  if (locale === 'ar') return {
+    close: 'خلاصة البحث',
+    value: 'ترتيب يومي للأولوية في السوق المصري.',
+    next: 'ابدأ بما يضعه النموذج في أعلى الترتيب، ثم ابدأ بحثك.',
+    use: 'استخدم /ALPHA',
+    today: 'ترتيب اليوم',
+    search: 'ابحث عن الأسهم',
+    history: 'سجل الترتيب',
+    understand: 'افهم /ALPHA',
+    guide: 'دليل المستثمر',
+    methodology: 'منهجية البحث',
+    access: 'الوصول',
+    institutional: 'الوصول المؤسسي',
+    verify: 'تحقق من السجل العام',
+    recordMeta: 'JSON · قابل للقراءة آلياً',
+    app: 'التطبيق',
+    provenance: 'المصدر'
+  };
+  return {
+    close: 'RESEARCH CLOSE',
+    value: 'A daily order of priority for the Egyptian market.',
+    next: 'Start with what the model ranks highest. Then do your research.',
+    use: 'USE /ALPHA',
+    today: "Today's Ranking",
+    search: 'Search Stocks',
+    history: 'Ranking History',
+    understand: 'UNDERSTAND /ALPHA',
+    guide: 'Investor Guide',
+    methodology: 'Research Methodology',
+    access: 'ACCESS',
+    institutional: 'Institutional Access',
+    verify: 'VERIFY PUBLIC RECORD',
+    recordMeta: 'JSON · MACHINE-READABLE',
+    app: 'APP',
+    provenance: 'PROVENANCE'
+  };
+}
+
 export function htmlShell({ title, description, canonicalPath, payload, body, pageClass = '', locale }) {
   const lang = normalizeLocale(locale || globalThis.__EGX_RENDER_LOCALE || 'en');
   const englishPath = stripLocalePath(canonicalPath || '/');
@@ -103,6 +142,7 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
   const switchLabel = lang === 'ar' ? 'En' : 'Ar';
   const switchCode = lang === 'ar' ? 'EN' : 'AR';
   const pwa = pwaShellStrings(lang);
+  const footer = footerShellStrings(lang);
   let localizedBody = localizeHtml(body, lang, { basePath: SITE.basePath })
     .replaceAll('__LANGUAGE_URL__', escapeHtml(switchUrl))
     .replaceAll('__LANGUAGE_LABEL__', escapeHtml(switchLabel))
@@ -111,7 +151,23 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
     .replaceAll('__X2__', escapeHtml(pwa.install))
     .replaceAll('__X3__', escapeHtml(pwa.installAria))
     .replaceAll('__X4__', escapeHtml(pwa.online))
-    .replaceAll('__X5__', escapeHtml(pwa.offline));
+    .replaceAll('__X5__', escapeHtml(pwa.offline))
+    .replaceAll('__F1__', escapeHtml(footer.close))
+    .replaceAll('__F2__', escapeHtml(footer.value))
+    .replaceAll('__F3__', escapeHtml(footer.next))
+    .replaceAll('__F4__', escapeHtml(footer.use))
+    .replaceAll('__F5__', escapeHtml(footer.today))
+    .replaceAll('__F6__', escapeHtml(footer.search))
+    .replaceAll('__F7__', escapeHtml(footer.history))
+    .replaceAll('__F8__', escapeHtml(footer.understand))
+    .replaceAll('__F9__', escapeHtml(footer.guide))
+    .replaceAll('__F10__', escapeHtml(footer.methodology))
+    .replaceAll('__F11__', escapeHtml(footer.access))
+    .replaceAll('__F12__', escapeHtml(footer.institutional))
+    .replaceAll('__F13__', escapeHtml(footer.verify))
+    .replaceAll('__F14__', escapeHtml(footer.recordMeta))
+    .replaceAll('__F15__', escapeHtml(footer.app))
+    .replaceAll('__F16__', escapeHtml(footer.provenance));
   localizedBody = polishLocalizedHtml(localizedBody, lang);
   const page = `<!doctype html>
 <html lang="${lang}" dir="${directionFor(lang)}">
@@ -216,39 +272,55 @@ export function siteHeader(sectionLabel = SITE.signalName, activeSection = '') {
 export function siteFooter() {
   const year = new Date().getUTCFullYear();
   return `<footer class="site-footer research-footer" aria-label="Site footer">
-    <div class="footer-grid">
-      <section class="footer-identity">
+    <section class="footer-close">
+      <div class="footer-close-brand">
         <a class="footer-brand-lockup" href="${rel('/')}">${alphaMark()}<span><strong>EGX Research</strong><em>/ ALPHA</em></span></a>
-        <p>Public quantitative research for the Egyptian Exchange.</p>
-        <div class="footer-research-line"><span>POST-CLOSE · CAIRO</span><span>1D · 3D · 5D · 10D</span></div>
-      </section>
-      <section class="footer-section footer-directory">
-        <span class="footer-label">RESEARCH</span>
+      </div>
+      <div class="footer-close-copy">
+        <span class="footer-label">__F1__</span>
+        <h2>__F2__</h2>
+        <p>__F3__</p>
+      </div>
+      <div class="footer-close-meta"><span>POST-CLOSE · CAIRO</span><span>1D · 3D · 5D · 10D</span></div>
+    </section>
+    <div class="footer-grid">
+      <section class="footer-section footer-use">
+        <span class="footer-label">__F4__</span>
         <nav class="footer-links" aria-label="Footer navigation">
-          <a href="${rel('/today/')}">Today</a>
-          <a href="${rel('/archive/')}">History</a>
-          <a href="${rel('/search/')}">Search</a>
-          <a href="${rel('/methodology/')}">Research</a>
-          <a href="${rel('/investor-guide/')}">Guide</a>
-          <a href="${rel('/institutional/')}">Institutional</a>
+          <a href="${rel('/today/')}">__F5__</a>
+          <a href="${rel('/search/')}">__F6__</a>
+          <a href="${rel('/archive/')}">__F7__</a>
+        </nav>
+      </section>
+      <section class="footer-section footer-understand">
+        <span class="footer-label">__F8__</span>
+        <nav class="footer-links" aria-label="Research guidance">
+          <a href="${rel('/investor-guide/')}">__F9__</a>
+          <a href="${rel('/methodology/')}">__F10__</a>
         </nav>
       </section>
       <section class="footer-section footer-app">
-        <span class="footer-label">__X1__</span>
-        <button class="pwa-install-button" type="button" data-pwa-install aria-label="__X3__">__X2__</button>
-        <p class="pwa-status" data-pwa-status aria-live="polite">__X4__</p>
-        <p class="pwa-install-help" data-pwa-install-help hidden></p>
+        <span class="footer-label">__F11__</span>
+        <div class="footer-access-links">
+          <a class="footer-access-link" href="${rel('/institutional/')}">__F12__</a>
+          <a class="footer-record-link" href="${rel('/data/latest.json')}"><strong>__F13__</strong><span class="footer-record-meta">__F14__</span></a>
+        </div>
+        <div class="footer-install">
+          <span class="footer-app-kicker">__F15__</span>
+          <button class="pwa-install-button" type="button" data-pwa-install aria-label="__X3__">__X2__</button>
+          <p class="pwa-status" data-pwa-status aria-live="polite">__X4__</p>
+          <p class="pwa-install-help" data-pwa-install-help hidden></p>
+        </div>
       </section>
     </div>
-    <section class="footer-ecosystem">
-      <div class="footer-ecosystem-copy">
-        <span class="footer-label">RESEARCH ECOSYSTEM</span>
+    <section class="footer-provenance">
+      <div class="footer-provenance-line">
+        <span class="footer-label">__F16__</span>
         <p>EGX Research is a project of <strong>EGX Research Community LLP</strong>, in association with <a href="https://knowdyn.com" target="_blank" rel="noopener noreferrer">KNOWDYN</a> and <a href="https://60arabia.com" target="_blank" rel="noopener noreferrer">60Arabia</a>.</p>
       </div>
-      <a class="footer-record-link" href="${rel('/data/latest.json')}">data/latest.json</a>
+      <p class="footer-disclaimer">Research and information only. Not investment advice. Public engine outputs are provided as-is. Nothing on this site is a recommendation, solicitation, target price or execution instruction. EGX Research Community LLP, KNOWDYN, 60Arabia and their affiliates accept no responsibility for trading decisions, losses, damages or other outcomes arising from use of, reliance on or interpretation of the public engine data, to the fullest extent permitted by applicable law.</p>
+      <div class="footer-rights">© ${year} EGX Research Community LLP.</div>
     </section>
-    <p class="footer-disclaimer">Research and information only. Not investment advice. Public engine outputs are provided as-is. Nothing on this site is a recommendation, solicitation, target price or execution instruction. EGX Research Community LLP, KNOWDYN, 60Arabia and their affiliates accept no responsibility for trading decisions, losses, damages or other outcomes arising from use of, reliance on or interpretation of the public engine data, to the fullest extent permitted by applicable law.</p>
-    <div class="footer-rights">© ${year} EGX Research Community LLP.</div>
     <div class="offline-notice" data-pwa-offline role="status" aria-live="polite" hidden>__X5__</div>
   </footer>`;
 }
