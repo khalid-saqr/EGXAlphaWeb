@@ -63,7 +63,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{b
 .header-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px}
 .search-action,.theme-toggle,.mobile-menu>summary{min-height:38px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--muted)}
 .search-action{display:inline-flex;align-items:center;gap:7px;padding:0 10px;font-family:var(--mono);font-size:.62rem;font-weight:800;letter-spacing:.055em}
-.search-action svg,.theme-toggle svg,.mobile-menu summary svg,.mobile-search-link svg,.footer-theme-toggle svg{width:16px;height:16px;flex:0 0 auto}
+.search-action svg,.theme-toggle svg,.mobile-menu summary svg,.mobile-search-link svg{width:16px;height:16px;flex:0 0 auto}
 .search-action:hover,.search-action.active,.theme-toggle:hover,.mobile-menu>summary:hover{border-color:var(--line-strong);color:var(--text)}
 .search-action.active{border-color:color-mix(in srgb,var(--brand) 48%,var(--line));background:color-mix(in srgb,var(--brand) 8%,var(--surface))}
 .theme-toggle{width:38px;height:38px;display:grid;place-items:center;padding:0;margin:0}
@@ -78,24 +78,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{b
 .mobile-menu-links a:hover,.mobile-menu-links a.active,.mobile-search-link:hover,.mobile-search-link.active{background:var(--surface-2);color:var(--text)}
 .mobile-menu-links a.active,.mobile-search-link.active{border-color:color-mix(in srgb,var(--brand) 42%,var(--line))}
 .mobile-search-link{gap:8px;margin-top:4px;border-top-color:var(--line)}
-.research-footer.site-footer{display:block;margin-top:clamp(46px,7vw,76px);padding:30px 0 12px;border-top:1px solid var(--line);color:var(--muted);font-size:.78rem}
-.footer-grid{display:grid;grid-template-columns:minmax(220px,1.15fr) minmax(160px,.65fr) minmax(150px,.55fr) minmax(260px,1.25fr);gap:clamp(22px,3vw,42px);align-items:start}
-.footer-identity p,.footer-ecosystem p{margin:9px 0 0;max-width:48ch;line-height:1.6}
-.footer-brand-lockup{display:inline-flex;align-items:center;gap:10px}
-.footer-brand-lockup .alpha-mark{width:30px;height:30px;border-radius:8px}
-.footer-brand-lockup>span{display:grid;gap:1px}
-.footer-brand-lockup strong{color:var(--text);font-family:inherit;font-size:.8rem;letter-spacing:.025em}
-.footer-brand-lockup em{color:var(--brand);font-family:var(--mono);font-size:.65rem;font-style:normal;font-weight:800;letter-spacing:.045em}
-.footer-label{display:block;margin-bottom:11px;color:var(--brand);font-family:var(--mono);font-size:.56rem;font-weight:850;letter-spacing:.09em}
-.footer-links{display:grid;grid-template-columns:1fr 1fr;gap:7px 16px}
-.footer-links a{color:var(--soft);font-size:.75rem}
-.footer-links a:hover,.footer-ecosystem a:hover{color:var(--brand)}
-.footer-theme-toggle{min-height:38px;display:inline-flex;align-items:center;gap:8px;padding:0 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--soft);font-family:var(--mono);font-size:.59rem;font-weight:800;letter-spacing:.05em}
-.footer-theme-toggle:hover{border-color:var(--line-strong);color:var(--text)}
-.footer-ecosystem strong{color:var(--soft);font-family:inherit;letter-spacing:0}
-.footer-ecosystem a{color:var(--text);font-weight:760;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--brand) 44%,transparent);text-underline-offset:3px}
-.footer-disclaimer{margin:24px 0 0;padding-top:15px;border-top:1px solid var(--line);color:var(--muted);font-size:.56rem;line-height:1.6}
-.footer-rights{margin-top:10px;color:var(--muted);font-family:var(--mono);font-size:.54rem;text-align:end}
 @media (max-width:1120px){
   .research-topbar{grid-template-columns:minmax(220px,1fr) auto auto;gap:12px}
   .brand-context{display:none}
@@ -106,7 +88,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{b
   .nav-desktop{display:none!important}
   .mobile-menu{display:block}
   .header-actions{grid-column:2}
-  .footer-grid{grid-template-columns:1fr 1fr}
 }
 @media (max-width:620px){
   .site-shell{width:min(100% - 24px,var(--max))}
@@ -118,9 +99,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{b
   .brand-alpha{font-size:.7rem}
   .search-action{width:38px;padding:0;justify-content:center}
   .search-action span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-  .footer-grid{grid-template-columns:1fr;gap:24px}
-  .footer-links{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .footer-rights{text-align:start}
 }
 @media (max-width:380px){
   .brand-copy{display:grid;gap:0}

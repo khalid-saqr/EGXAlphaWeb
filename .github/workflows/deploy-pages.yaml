@@ -81,6 +81,9 @@ jobs:
       - name: Verify English and Arabic localization parity
         run: node tests/test-localization.mjs
 
+      - name: Verify responsive research close footer
+        run: node tests/test-footer.mjs
+
       - name: Verify installable PWA and freshness behavior
         run: node tests/test-pwa.mjs
 

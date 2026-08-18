@@ -1,7 +1,7 @@
 html[dir="rtl"] body{font-family:"Noto Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;text-align:start}
 html[dir="rtl"] .brand-lockup,html[dir="rtl"] .footer-brand-lockup,html[dir="rtl"] .alpha-mark,html[dir="rtl"] .brand-copy{direction:ltr;unicode-bidi:isolate}
 html[dir="rtl"] .brand-context{direction:rtl}
-html[dir="rtl"] .language-action,html[dir="rtl"] .footer-language-link{font-family:var(--mono)}
+html[dir="rtl"] .language-action{font-family:var(--mono)}
 html[dir="rtl"] .deck-stock strong,html[dir="rtl"] .symbol-cell strong,html[dir="rtl"] .result-symbol,html[dir="rtl"] .page-dossier .dossier-hero h1,html[dir="rtl"] .dossier-card-rank,html[dir="rtl"] .dossier-rank,html[dir="rtl"] .dossier-percentile,html[dir="rtl"] .dossier-date,html[dir="rtl"] .dossier-horizon-label strong,html[dir="rtl"] .result-rank,html[dir="rtl"] .result-horizon,html[dir="rtl"] time,html[dir="rtl"] code,html[dir="rtl"] .control-runline,html[dir="rtl"] .evidence-stat strong,html[dir="rtl"] .evidence-scale strong,html[dir="rtl"] .paper-meta strong,html[dir="rtl"] .formula{direction:ltr;unicode-bidi:isolate;text-align:start}
 html[dir="rtl"] .terminal-model-head,html[dir="rtl"] .terminal-model-row,html[dir="rtl"] .deck-rank-row,html[dir="rtl"] .research-dossier-head,html[dir="rtl"] .research-dossier-row{direction:rtl}
 html[dir="rtl"] .model-search input,html[dir="rtl"] .search-input{direction:rtl;text-align:start}
@@ -14,13 +14,11 @@ html[dir="rtl"] .page-methodology .evidence-loop>i{transform:scaleX(-1)}
 html[dir="rtl"] .verification-actions a,html[dir="rtl"] .primary-action,html[dir="rtl"] .recent-runs header>a,html[dir="rtl"] .terminal-memory header>a{direction:rtl}
 html[dir="rtl"] .memory-session b{margin-inline-start:auto}
 html[dir="rtl"] .dossier-card-direction i,html[dir="rtl"] .dossier-view i,html[dir="rtl"] .view-cell i{margin-inline:0}
+html[dir="rtl"] .footer-close-meta,html[dir="rtl"] .footer-record-meta{direction:ltr;unicode-bidi:isolate;text-align:start}
 .language-action{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 10px;border:1px solid var(--line);border-radius:8px;color:var(--soft);font-family:var(--mono);font-size:.64rem;font-weight:800;letter-spacing:.04em}
 .language-action:hover{border-color:var(--brand);color:var(--brand)}
-.footer-language-link{display:inline-flex;align-items:center;min-height:38px;margin-top:8px;padding:0 11px;border:1px solid var(--line);border-radius:8px;color:var(--text);font-size:.68rem;font-weight:800}
-.research-footer .footer-grid{grid-template-columns:1.05fr .78fr .62fr .62fr 1.18fr}
 html[dir="rtl"] .search-result{direction:rtl}
 html[dir="rtl"] .rank-chart-svg text{font-family:var(--mono)}
-@media(max-width:980px){.research-footer .footer-grid{grid-template-columns:1fr 1fr 1fr}}
-@media(max-width:700px){html[dir="rtl"] .page-methodology .section-copy{margin-inline-start:0}.research-footer .footer-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:520px){.research-footer .footer-grid{grid-template-columns:1fr}.language-action{min-width:44px;padding:0 8px}.header-actions{gap:6px}}
+@media(max-width:700px){html[dir="rtl"] .page-methodology .section-copy{margin-inline-start:0}}
+@media(max-width:520px){.language-action{min-width:44px;padding:0 8px}.header-actions{gap:6px}}
 @media(max-width:360px){.language-action{font-size:.58rem}.brand-context{display:none}}
