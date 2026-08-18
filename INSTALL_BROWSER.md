@@ -1,23 +1,23 @@
-# Browser-only deployment checks
+# Production deployment and browser acceptance
 
-`EGXAlphaWeb` deploys automatically through GitHub Actions. The production destination is:
+`EGXAlphaWeb` deploys automatically through GitHub Actions to:
 
 ```text
 https://egxresearch.com/
 ```
 
-## GitHub Pages settings
+## GitHub Pages configuration
 
-1. Open **Settings → Pages** in `khalid-saqr/EGXAlphaWeb`.
-2. Under **Build and deployment**, select **GitHub Actions**.
-3. Confirm the custom domain is `egxresearch.com` and HTTPS enforcement is enabled when available.
-4. Open the **Actions** tab and inspect **Deploy EGXResearch Public Site**.
+1. In **Settings → Pages**, use **GitHub Actions** as the build/deployment source.
+2. Keep the custom domain set to `egxresearch.com`.
+3. Keep HTTPS enforcement enabled.
+4. Use **Deploy EGXResearch Public Site** as the release signal.
 
-Pull requests run validation only. A merge or direct push to `main` creates and deploys `_site/`.
+Pull requests validate only. A push or merged pull request on `main` builds and deploys `_site/`.
 
 ## Production acceptance routes
 
-Check these paths after deployment:
+After a release, verify:
 
 ```text
 /
@@ -25,38 +25,65 @@ Check these paths after deployment:
 /archive/
 /search/
 /methodology/
+/investor-guide/
+/institutional/
+/ar/
+/ar/today/
+/ar/archive/
+/ar/search/
+/manifest.webmanifest
+/sw.js
 /data/latest.json
 /data/index.json
 ```
 
-Also open the dated route matching `trading_date` in `/data/latest.json`:
+For the current `trading_date` in `/data/latest.json`, also verify:
 
 ```text
 /archive/YYYY-MM-DD/
+/ar/archive/YYYY-MM-DD/
 /data/archive/YYYY-MM-DD.json
 ```
 
-Verify navigation, search by symbol and date, copy/share controls, theme switching, methodology printing, mobile layout and the early-access mail link.
+Open at least one `/symbol/TICKER/` and `/ar/symbol/TICKER/` route from the current ranking.
 
-## Legacy PWA cleanup
+## PWA acceptance
 
-PWA installation is disabled. The generated `/sw.js` exists only to unregister old service workers and delete caches left by earlier deployments.
+The mega-footer exposes **INSTALL EGX /ALPHA** / **تثبيت EGX /ALPHA**.
 
-When a browser still shows a stale or unstyled version:
+- Chromium browsers use the native install prompt when available.
+- iPhone/iPad users receive Add to Home Screen guidance.
+- Standalone mode respects safe-area insets.
+- Current views/data are network-first.
+- Dated immutable archive records are cache-first.
+- Offline mode visibly states that the last cached public record is being shown.
+- Reopening, focusing, resuming or reconnecting checks for a newer public trading date.
+- No push notifications, periodic sync or closed-app background scheduler are expected.
 
-1. Hard refresh `https://egxresearch.com/`.
-2. Remove any previously installed EGXResearch shortcut.
-3. Clear site data for `egxresearch.com`.
-4. Unregister any remaining service worker in browser site/developer settings.
-5. Reopen the production URL.
+The final release uses service-worker cache generation `egx-alpha-pwa-v2`. Activation removes prior `egx-alpha-*` and legacy `egxresearch-public-pwa-*` cache generations.
 
-## Private-repository handoff
+## Daily publication acceptance
 
-The private `EGXResearch` workflow pushes only:
+The private publisher must change only:
 
 ```text
 data/latest.json
 data/archive/YYYY-MM-DD.json
 ```
 
-See `PRIVATE_HANDOFF_TEMPLATE.md` for the current boundary and secret name.
+No manual UI edit is required for a normal session.
+
+The public workflow validates the new wire, rebuilds all English/Arabic pages and dossiers, updates `/data/index.json`, deploys Pages, then verifies that production `/data/latest.json` reports the same trading date that was built. It also checks that the manifest and final service worker are reachable.
+
+If the post-deploy production verification fails, treat the workflow as a release failure even if the Pages deployment action itself completed.
+
+## Browser recovery
+
+If a browser is visibly stale:
+
+1. Confirm the latest GitHub Pages workflow is green, including **Verify production publication after Pages deploy**.
+2. Reopen the site online so the PWA freshness check can run.
+3. Hard-refresh once if needed.
+4. If a pre-release installation remains corrupted, remove the installed app/site data and reinstall from the production domain.
+
+Routine daily publication should not require manual cache clearing.

@@ -21,6 +21,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 12
+    outputs:
+      trading_date: ${{ steps.release-meta.outputs.trading_date }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,8 +36,7 @@ jobs:
           node - <<'NODE'
           const fs = require('node:fs');
           const payload = JSON.parse(fs.readFileSync('data/latest.json', 'utf8'));
-          const symbol = payload.asset?.symbol || payload.public_signal?.stock_symbol || payload.signal?.stock_symbol;
-          console.log(`Validating PR code with current main payload: ${payload.trading_date} ${symbol}`);
+          console.log(`Validating PR code with current main payload: ${payload.trading_date}`);
           NODE
 
       - name: Set up Node
@@ -47,6 +49,10 @@ jobs:
 
       - name: Build production artifact
         run: npm run build
+
+      - name: Capture release metadata
+        id: release-meta
+        run: node -e 'const fs=require("fs"); const p=require("./data/latest.json"); fs.appendFileSync(process.env.GITHUB_OUTPUT, "trading_date="+p.trading_date+"\n")'
 
       - name: Verify production output and payload identity
         run: node tests/test-build-output.mjs
@@ -78,13 +84,16 @@ jobs:
       - name: Verify installable PWA and freshness behavior
         run: node tests/test-pwa.mjs
 
+      - name: Verify final release and publication rollover
+        run: node tests/test-release-hardening.mjs
+
       - name: Verify Pages artifact
         run: npm run verify:pages
 
       - name: Verify public boundary
         run: node tests/test-no-leakage.mjs
 
-      - name: Verify text-only repository
+      - name: Verify restricted binary allowlist
         run: node tests/test-no-binaries.mjs
 
       - name: Upload pull-request QA artifact
@@ -111,8 +120,33 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Verify production publication after Pages deploy
+        env:
+          EXPECTED_TRADING_DATE: ${{ needs.build.outputs.trading_date }}
+        run: |
+          set -euo pipefail
+          live_date=""
+          for attempt in {1..12}; do
+            body="$(curl -fsS --max-time 15 -H 'Cache-Control: no-cache' "https://egxresearch.com/data/latest.json?release=${GITHUB_SHA}" || true)"
+            if [ -n "$body" ]; then
+              live_date="$(printf '%s' "$body" | python3 -c 'import json,sys; data=json.load(sys.stdin); print(data.get("trading_date",""))' 2>/dev/null || true)"
+              if [ "$live_date" = "$EXPECTED_TRADING_DATE" ]; then
+                if curl -fsS --max-time 15 "https://egxresearch.com/manifest.webmanifest?release=${GITHUB_SHA}" >/dev/null \
+                  && curl -fsS --max-time 15 "https://egxresearch.com/sw.js?release=${GITHUB_SHA}" | grep -q "egx-alpha-pwa-v2"; then
+                  echo "Production release verified for trading date ${EXPECTED_TRADING_DATE}."
+                  exit 0
+                fi
+              fi
+            fi
+            echo "Production not converged yet (attempt ${attempt}/12; live=${live_date:-unavailable}; expected=${EXPECTED_TRADING_DATE})."
+            sleep 5
+          done
+          echo "Production publication verification failed: live=${live_date:-unavailable}, expected=${EXPECTED_TRADING_DATE}."
+          exit 1
