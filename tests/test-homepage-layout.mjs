@@ -7,6 +7,7 @@ const today = fs.readFileSync('_site/today/index.html', 'utf8');
 const productHomeCss = fs.readFileSync('assets/product-home.css', 'utf8');
 const productCss = fs.readFileSync('assets/product.css', 'utf8');
 const shellCss = fs.readFileSync('assets/shell.css', 'utf8');
+const fineTuneCss = fs.readFileSync('assets/fine-tune.css', 'utf8');
 const terminalCss = fs.readFileSync('assets/research-terminal.css', 'utf8');
 function visibleMain(html) { const start=html.indexOf('<main'); const end=html.lastIndexOf('</main>'); return start>=0&&end>=0?html.slice(start,end+7):html; }
 for (const page of [home,today]) {
@@ -17,10 +18,25 @@ for (const page of [home,today]) {
   else if (production.schema_version==='egx_alpha_public_wire_v2') for(const required of ['FORECAST HORIZON','>1D<','>3D<','>5D<','>10D<','D = trading days','data-horizon-select="1"','data-horizon-select="10"','PRIMARY RESEARCH VIEW','data-horizon-panel="1"','data-horizon-panel="3"','data-horizon-panel="5"','data-horizon-panel="10"']) assert.ok(html.includes(required),`V2 product UI should include ${required}`);
   else assert.fail(`unexpected production schema: ${production.schema_version}`);
 }
-assert.ok(home.includes('<meta name="theme-color" content="#070B14">'),'dark Midnight Lapis should remain the shell theme color');
+assert.ok(home.includes('<meta name="theme-color" content="#010201">'),'ultra-black should be the shell/PWA theme color');
+assert.ok(home.includes('href="/assets/fine-tune.css"'),'fine-tune identity stylesheet should be loaded last');
+const searchAction = home.match(/<a class="search-action[^"]*"[^>]*>([\s\S]*?)<\/a>/);
+assert.ok(searchAction,'desktop search control should exist');
+assert.ok(searchAction[0].includes('aria-label="Search EGX /Alpha"'),'desktop search should retain its accessible label');
+assert.ok(searchAction[1].includes('<svg'),'desktop search should retain its icon');
+assert.equal(searchAction[1].includes('SEARCH'),false,'desktop search control must not show the Search word');
+assert.ok(/class="language-action"[^>]*data-language-code="AR"[^>]*>Ar<\/a>/.test(home),'English header should show Ar');
+const footerMarkup = home.match(/<footer class="site-footer research-footer"[\s\S]*?<\/footer>/)?.[0] || '';
+assert.ok(footerMarkup,'mega-footer markup should exist');
+assert.equal(footerMarkup.includes('footer-language'),false,'mega-footer must not duplicate the language switch');
+assert.equal(footerMarkup.includes('footer-theme-toggle'),false,'mega-footer must not duplicate the theme switch');
+assert.ok(footerMarkup.includes('footer-research-line'),'redesigned research colophon should be present');
+assert.ok(footerMarkup.includes('footer-record-link'),'mega-footer should expose the current public record directly');
 for(const required of ['.product-ranking','.product-filter-set','@media(max-width:760px)']) assert.ok(productHomeCss.includes(required),`legacy product CSS dependency should remain available for ${required}`);
 for(const required of ['.site-footer','grid-template-columns:1fr 1fr','--neutral: #aab4c0','.result-percentile']) assert.ok(productCss.includes(required),`product shell CSS should include ${required}`);
-for(const required of ['--bg: #070B14','--surface: #0D1420','--brand: #5F7CFF','--bg: #F6F1E6','--surface: #FFFDF8','--brand: #3555D9','--positive: #39D98A','--neutral: #F2C14E','--negative: #FF6B6B','.alpha-mark','.brand-lockup','.nav-desktop','.mobile-menu','.research-footer.site-footer','.footer-theme-toggle','@media (max-width:900px)','@media (max-width:620px)','@media (prefers-reduced-motion:reduce)']) assert.ok(shellCss.includes(required),`research shell CSS should include ${required}`);
+for(const required of ['.alpha-mark','.brand-lockup','.nav-desktop','.mobile-menu','.research-footer.site-footer','@media (max-width:900px)','@media (max-width:620px)','@media (prefers-reduced-motion:reduce)']) assert.ok(shellCss.includes(required),`research shell CSS should include ${required}`);
+for(const required of ['--bg:#010201','--text:#FFFFFF','--brand:#00D084','--bg:#FFFFFF','--text:#050706','--brand:#007A4B','--blue:var(--brand)','.search-action','.language-action','.footer-grid','.footer-ecosystem','.footer-language,.footer-appearance','.footer-record-link','@media(max-width:620px)']) assert.ok(fineTuneCss.includes(required),`fine-tune identity CSS should include ${required}`);
+for(const forbidden of ['#5F7CFF','#7890FF','#3555D9','#2847C4','#5688ff','#5688FF']) assert.equal(fineTuneCss.includes(forbidden),false,`fine-tune identity must not reintroduce blue ${forbidden}`);
 for(const required of ['.alpha-control-deck','.alpha-horizon-control','.deck-rank-row','.alpha-market-pulse','.breadth-bar','.mover-columns','.terminal-ranking-control','.terminal-model-head,.terminal-model-row','grid-template-columns:136px 128px minmax(190px,1fr) 150px','@media(max-width:680px)','@media(max-width:430px)','@media(max-width:340px)']) assert.ok(terminalCss.includes(required),`research terminal CSS should include ${required}`);
 assert.equal(shellCss.includes('grid-template-columns:repeat(5'),false,'new shell must not reproduce the obsolete five-column navigation grid');
 if(production.schema_version==='egx_alpha_public_wire_v2'){assert.ok(Number.isInteger(Number(production.universe_count))&&Number(production.universe_count)>0,'V2 production payload should provide universe_count');assert.ok(home.includes(`/ ${production.universe_count}`),'homepage should render the current public universe count rather than a hardcoded count');}

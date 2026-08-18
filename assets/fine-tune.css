@@ -1,0 +1,128 @@
+:root{
+  --bg:#010201;
+  --surface:#050806;
+  --surface-2:#0A100C;
+  --line:#18231D;
+  --line-strong:#2A3B31;
+  --text:#FFFFFF;
+  --muted:#8B9990;
+  --soft:#D4DDD7;
+  --brand:#00D084;
+  --brand-hover:#35E7A6;
+  --blue:var(--brand);
+  --positive:#39DFA0;
+  --neutral:#E4B94F;
+  --negative:#FF6C75;
+  --warning:var(--neutral);
+  --focus-ring:color-mix(in srgb,var(--brand) 44%,transparent);
+  --shell-shadow:0 24px 64px rgba(0,0,0,.48);
+}
+:root[data-theme="light"]{
+  --bg:#FFFFFF;
+  --surface:#FAFCFA;
+  --surface-2:#F1F6F2;
+  --line:#D6E1D9;
+  --line-strong:#A8B9AD;
+  --text:#050706;
+  --muted:#5C6A61;
+  --soft:#273129;
+  --brand:#007A4B;
+  --brand-hover:#005F3A;
+  --blue:var(--brand);
+  --positive:#007A4B;
+  --neutral:#805D00;
+  --negative:#A52A38;
+  --warning:var(--neutral);
+  --focus-ring:color-mix(in srgb,var(--brand) 28%,transparent);
+  --shell-shadow:0 22px 54px rgba(5,7,6,.08);
+}
+
+html,body{background:var(--bg);color:var(--text)}
+::selection{background:color-mix(in srgb,var(--brand) 32%,transparent);color:var(--text)}
+.card,.control-deck-board,.pulse-card,.search-panel,.search-results,.dossier-horizon-card,.archive-list{background:var(--surface);border-color:var(--line)}
+.eyebrow,.section-kicker,.footer-label,.brand-alpha{color:var(--brand)}
+
+/* Header: stripped-back utility controls and a single emerald signature line. */
+.research-topbar{background:var(--bg);border-bottom-color:var(--line)}
+.research-topbar::after{content:"";position:absolute;inset-inline-start:0;bottom:-1px;width:clamp(72px,8vw,128px);height:2px;background:var(--brand)}
+.alpha-mark{border-color:color-mix(in srgb,var(--brand) 76%,var(--line));background:color-mix(in srgb,var(--brand) 7%,var(--surface));color:var(--brand);box-shadow:none}
+.search-action{width:44px!important;min-width:44px!important;height:44px!important;padding:0!important;display:inline-grid!important;place-items:center!important;gap:0!important}
+.search-action svg{width:17px;height:17px}
+.language-action{min-width:44px!important;height:44px;display:inline-grid;place-items:center;padding:0 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--soft);font-family:var(--mono);font-size:.64rem;font-weight:900;letter-spacing:.045em;text-transform:none}
+.language-action:hover,.language-action:focus-visible{border-color:var(--brand);color:var(--brand)}
+.theme-toggle{border-color:var(--line);background:var(--surface)}
+.nav-desktop a.active,.search-action.active,.mobile-menu[open]>summary{border-color:color-mix(in srgb,var(--brand) 58%,var(--line));background:color-mix(in srgb,var(--brand) 7%,var(--surface))}
+.mobile-menu-panel{border-color:var(--line-strong);background:var(--surface)}
+
+/* Mega-footer: editorial research colophon, not a settings panel. */
+.research-footer.site-footer{position:relative;display:block;margin-top:clamp(54px,8vw,92px);padding:0 0 12px;border-top:0;color:var(--muted);font-size:.78rem}
+.research-footer.site-footer::before{content:"";display:block;height:1px;background:var(--line)}
+.research-footer.site-footer::after{content:"";position:absolute;inset-inline-start:0;top:0;width:clamp(92px,12vw,180px);height:3px;background:var(--brand)}
+.footer-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(190px,.68fr) minmax(260px,.9fr);gap:0;align-items:stretch;border-bottom:1px solid var(--line)}
+.footer-grid>section{min-width:0;padding:clamp(24px,3vw,36px)}
+.footer-grid>section+section{border-inline-start:1px solid var(--line)}
+.footer-identity{display:flex;flex-direction:column;justify-content:space-between;min-height:220px}
+.footer-brand-lockup{display:inline-flex;align-items:center;gap:12px;width:max-content}
+.footer-brand-lockup .alpha-mark{width:38px;height:38px;border-radius:10px}
+.footer-brand-lockup>span{display:grid;gap:2px}
+.footer-brand-lockup strong{color:var(--text);font-size:.86rem;letter-spacing:.03em}
+.footer-brand-lockup em{color:var(--brand);font-family:var(--mono);font-size:.65rem;font-style:normal;font-weight:900;letter-spacing:.06em}
+.footer-identity>p{max-width:42ch;margin:28px 0 0;color:var(--text);font-size:clamp(.96rem,1.3vw,1.14rem);line-height:1.55;letter-spacing:-.012em}
+.footer-research-line{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:28px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-family:var(--mono);font-size:.56rem;letter-spacing:.065em}
+.footer-research-line span:last-child{color:var(--brand)}
+.footer-label{display:block;margin:0 0 15px;font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.105em}
+.footer-links{display:grid;grid-template-columns:1fr;gap:4px}
+.footer-links a{min-height:36px;display:flex;align-items:center;border-bottom:1px solid color-mix(in srgb,var(--line) 76%,transparent);color:var(--soft);font-size:.75rem}
+.footer-links a::after{content:"↗";margin-inline-start:auto;color:var(--line-strong);font-family:var(--mono);font-size:.62rem}
+.footer-links a:hover{color:var(--brand)}
+.footer-links a:hover::after{color:var(--brand)}
+.footer-app{background:color-mix(in srgb,var(--brand) 3%,var(--surface))}
+.footer-app .pwa-install-button{width:100%;min-height:48px;justify-content:space-between;border-color:color-mix(in srgb,var(--brand) 58%,var(--line));background:var(--bg);color:var(--text)}
+.footer-app .pwa-install-button::after{content:"↓";color:var(--brand);font-size:.9rem}
+.footer-app .pwa-install-button:hover:not(:disabled){border-color:var(--brand);background:color-mix(in srgb,var(--brand) 5%,var(--bg));color:var(--brand)}
+.footer-app .pwa-status,.footer-app .pwa-install-help{max-width:36ch;margin-top:10px;color:var(--muted);font-size:.58rem;line-height:1.55}
+.footer-ecosystem{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line)}
+.footer-ecosystem-copy{min-width:0}
+.footer-ecosystem .footer-label{display:inline-block;margin:0 16px 0 0}
+.footer-ecosystem p{display:inline;margin:0;color:var(--muted);font-size:.66rem;line-height:1.6}
+.footer-ecosystem strong{color:var(--soft);font-family:inherit;letter-spacing:0}
+.footer-ecosystem a{color:var(--text);font-weight:760;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--brand) 52%,transparent);text-underline-offset:3px}
+.footer-ecosystem a:hover{color:var(--brand)}
+.footer-record-link{min-height:40px;display:inline-flex;align-items:center;padding:0 11px;border:1px solid var(--line);border-radius:8px;color:var(--soft);font-family:var(--mono);font-size:.57rem;letter-spacing:.035em}
+.footer-record-link:hover{border-color:var(--brand);color:var(--brand)}
+.footer-disclaimer{margin:0;padding:16px 0 0;border-top:0;color:var(--muted);font-size:.55rem;line-height:1.65}
+.footer-rights{margin-top:10px;color:var(--muted);font-family:var(--mono);font-size:.54rem;text-align:end}
+
+/* Remove obsolete footer settings affordances even if legacy CSS remains cached. */
+.footer-language,.footer-appearance,.footer-language-link,.footer-theme-toggle{display:none!important}
+
+/* Keep semantic market colors independent from brand emerald. */
+.tone-positive,.state-live{color:var(--positive)!important}
+.tone-neutral{color:var(--neutral)!important}
+.tone-negative{color:var(--negative)!important}
+
+@media(max-width:980px){
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .footer-identity{grid-column:1/-1;min-height:0;border-bottom:1px solid var(--line)}
+  .footer-grid>section:nth-child(2){border-inline-start:0}
+  .footer-ecosystem{grid-template-columns:1fr}
+  .footer-record-link{width:max-content}
+}
+@media(max-width:620px){
+  .footer-grid{grid-template-columns:1fr}
+  .footer-grid>section{padding:24px 0}
+  .footer-grid>section+section{border-inline-start:0;border-top:1px solid var(--line)}
+  .footer-identity{border-bottom:0}
+  .footer-research-line{justify-content:space-between}
+  .footer-links{grid-template-columns:1fr 1fr;gap:0 18px}
+  .footer-ecosystem{padding-block:18px}
+  .footer-rights{text-align:start}
+}
+@media(max-width:380px){
+  .language-action,.search-action,.theme-toggle,.mobile-menu>summary{width:44px!important;min-width:44px!important;height:44px!important}
+  .language-action{padding:0!important}
+  .footer-links{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .research-topbar::after,.research-footer.site-footer::after{transition:none!important}
+}

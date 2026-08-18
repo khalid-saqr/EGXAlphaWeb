@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 
 for (const file of [
-  '_site/manifest.webmanifest', '_site/sw.js', '_site/assets/pwa.js', '_site/assets/pwa.css',
+  '_site/manifest.webmanifest', '_site/sw.js', '_site/assets/pwa.js', '_site/assets/pwa.css', '_site/assets/fine-tune.css',
   '_site/assets/icons/icon-192.png', '_site/assets/icons/icon-512.png',
   '_site/assets/icons/icon-maskable-512.png', '_site/assets/icons/apple-touch-icon.png'
 ]) assert.equal(fs.existsSync(file), true, `${file} should exist in the Pages artifact`);
@@ -14,11 +14,12 @@ assert.equal(manifest.short_name, 'EGX /Alpha');
 assert.equal(manifest.start_url, '/');
 assert.equal(manifest.scope, '/');
 assert.equal(manifest.display, 'standalone');
-assert.equal(manifest.background_color, '#070B14');
-assert.equal(manifest.theme_color, '#070B14');
+assert.equal(manifest.background_color, '#010201');
+assert.equal(manifest.theme_color, '#010201');
 assert.ok(manifest.icons.some(icon => icon.src === '/assets/icons/icon-192.png' && icon.sizes === '192x192'));
 assert.ok(manifest.icons.some(icon => icon.src === '/assets/icons/icon-512.png' && icon.sizes === '512x512'));
 assert.ok(manifest.icons.some(icon => icon.src === '/assets/icons/icon-maskable-512.png' && icon.purpose === 'maskable'));
+assert.equal(manifest.shortcuts.find(item => item.url === '/ar/')?.short_name, 'Ar');
 
 function validatePng(file, expectedSize) {
   const data = fs.readFileSync(file);
@@ -59,9 +60,11 @@ for (const html of [en, ar]) {
   assert.ok(html.includes('rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png"'));
   assert.ok(html.includes('src="/assets/pwa.js"'));
   assert.ok(html.includes('href="/assets/pwa.css"'));
+  assert.ok(html.includes('href="/assets/fine-tune.css"'));
   assert.ok(html.includes('data-pwa-install'));
   assert.ok(html.includes('data-pwa-status'));
   assert.ok(html.includes('data-pwa-offline'));
+  assert.ok(html.includes('<meta name="theme-color" content="#010201">'));
 }
 assert.ok(en.includes('INSTALL EGX /ALPHA'));
 assert.ok(ar.includes('تثبيت EGX /ALPHA'));
@@ -92,5 +95,7 @@ for (const forbidden of ["addEventListener('push'", "addEventListener('sync'", '
 
 const pwaCss = fs.readFileSync('_site/assets/pwa.css', 'utf8');
 for (const required of ['@media(display-mode:standalone)', 'env(safe-area-inset-top)', '.offline-notice', '@media(max-width:620px)']) assert.ok(pwaCss.includes(required));
+const fineTuneCss = fs.readFileSync('_site/assets/fine-tune.css', 'utf8');
+for (const required of ['--bg:#010201','--brand:#00D084','--bg:#FFFFFF','--brand:#007A4B','.footer-app .pwa-install-button']) assert.ok(fineTuneCss.includes(required));
 
 console.log('test-pwa passed');
