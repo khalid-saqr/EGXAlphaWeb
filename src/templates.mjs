@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { clientStrings, counterpartPath, directionFor, languageSwitchLabel, localePath, localizeHtml, normalizeLocale, stripLocalePath, translateText } from './i18n.mjs';
+import { clientStrings, counterpartPath, directionFor, localePath, localizeHtml, normalizeLocale, stripLocalePath, translateText } from './i18n.mjs';
 import { polishLocalizedHtml, polishLocalizedText } from './i18n-polish.mjs';
 
 const INLINE_CSS = fs.readFileSync(new URL('../assets/app.css', import.meta.url), 'utf8');
@@ -7,6 +7,26 @@ const PRODUCT_CSS = fs.readFileSync(new URL('../assets/product.css', import.meta
 const SHELL_CSS = fs.readFileSync(new URL('../assets/shell.css', import.meta.url), 'utf8');
 const RESEARCH_DEPTH_CSS = fs.readFileSync(new URL('../assets/research-depth.css', import.meta.url), 'utf8');
 const I18N_CSS = fs.readFileSync(new URL('../assets/i18n.css', import.meta.url), 'utf8');
+
+const LEGACY_VISUAL_PALETTE = [
+  ['#070B14', '#010201'], ['#0D1420', '#050806'], ['#121C2A', '#0A100C'], ['#243247', '#18231D'], ['#33455F', '#2A3B31'],
+  ['#F3F6FA', '#FFFFFF'], ['#A9B5C5', '#8B9990'], ['#CED6E1', '#D4DDD7'], ['#5F7CFF', '#00D084'], ['#7890FF', '#35E7A6'],
+  ['#F6F1E6', '#FFFFFF'], ['#FFFDF8', '#FAFCFA'], ['#F0EADC', '#F1F6F2'], ['#D4C9B7', '#D6E1D9'], ['#B7AA94', '#A8B9AD'],
+  ['#17202B', '#050706'], ['#5D6876', '#5C6A61'], ['#3F4A57', '#273129'], ['#3555D9', '#007A4B'], ['#2847C4', '#005F3A'],
+  ['#0b0e13', '#010201'], ['#10151c', '#050806'], ['#151b24', '#0A100C'], ['#242d38', '#18231D'], ['#344152', '#2A3B31'],
+  ['#f1f4f6', '#FFFFFF'], ['#96a1af', '#8B9990'], ['#c9d0d8', '#D4DDD7'], ['#5688ff', '#00D084'],
+  ['#f4f6f8', '#FFFFFF'], ['#eef2f6', '#F1F6F2'], ['#d9e0e8', '#D6E1D9'], ['#bcc7d4', '#A8B9AD'],
+  ['#111820', '#050706'], ['#5c6875', '#5C6A61'], ['#34404d', '#273129'],
+  ['#0b1016', '#010201'], ['#111821', '#050806'], ['#17202b', '#0A100C'], ['#253242', '#18231D'], ['#36485d', '#2A3B31'],
+  ['#f5f7fa', '#FFFFFF'], ['#98a4b3', '#8B9990'], ['#cbd3dd', '#D4DDD7'], ['#557cff', '#00D084'],
+  ['#eef2f7', '#F1F6F2'], ['#d8e0e9', '#D6E1D9'], ['#b9c5d3', '#A8B9AD'], ['#101720', '#050706'], ['#647181', '#5C6A61'], ['#354251', '#273129']
+];
+
+function applyFineTunePalette(value) {
+  let output = String(value ?? '');
+  for (const [legacy, current] of LEGACY_VISUAL_PALETTE) output = output.replace(new RegExp(legacy, 'gi'), current);
+  return output;
+}
 
 export const SITE = {
   domain: 'EGXResearch',
@@ -80,24 +100,27 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
   const payloadJson = payload ? JSON.stringify(payload).replaceAll('</script', '<\\/script') : '';
   const clientConfig = JSON.stringify({ basePath: SITE.basePath, locale: lang, strings: clientStrings(lang) }).replaceAll('</script', '<\\/script');
   const switchUrl = rel(counterpartPath(englishPath, lang));
+  const switchLabel = lang === 'ar' ? 'En' : 'Ar';
+  const switchCode = lang === 'ar' ? 'EN' : 'AR';
   const pwa = pwaShellStrings(lang);
   let localizedBody = localizeHtml(body, lang, { basePath: SITE.basePath })
     .replaceAll('__LANGUAGE_URL__', escapeHtml(switchUrl))
-    .replaceAll('__LANGUAGE_LABEL__', escapeHtml(languageSwitchLabel(lang)))
+    .replaceAll('__LANGUAGE_LABEL__', escapeHtml(switchLabel))
+    .replaceAll('__LANGUAGE_CODE__', escapeHtml(switchCode))
     .replaceAll('__X1__', escapeHtml(pwa.app))
     .replaceAll('__X2__', escapeHtml(pwa.install))
     .replaceAll('__X3__', escapeHtml(pwa.installAria))
     .replaceAll('__X4__', escapeHtml(pwa.online))
     .replaceAll('__X5__', escapeHtml(pwa.offline));
   localizedBody = polishLocalizedHtml(localizedBody, lang);
-  return `<!doctype html>
+  const page = `<!doctype html>
 <html lang="${lang}" dir="${directionFor(lang)}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>${escapeHtml(localizedTitle)}</title>
   <meta name="description" content="${escapeHtml(localizedDescription)}">
-  <meta name="theme-color" content="#070B14">
+  <meta name="theme-color" content="#010201">
   <meta name="color-scheme" content="dark light">
   <meta name="application-name" content="EGX /Alpha">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -118,6 +141,7 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
   <link rel="apple-touch-icon" href="${rel('/assets/icons/apple-touch-icon.png')}">
   <link rel="stylesheet" href="${rel('/assets/pwa.css')}">
   <style>${INLINE_CSS.replaceAll('</style', '<\\/style')}\n${PRODUCT_CSS.replaceAll('</style', '<\\/style')}\n${SHELL_CSS.replaceAll('</style', '<\\/style')}\n${RESEARCH_DEPTH_CSS.replaceAll('</style', '<\\/style')}\n${I18N_CSS.replaceAll('</style', '<\\/style')}</style>
+  <link rel="stylesheet" href="${rel('/assets/fine-tune.css')}">
 </head>
 <body class="${escapeHtml(`${pageClass} locale-${lang}`.trim())}">
   <script id="site-config" type="application/json">${clientConfig}</script>
@@ -127,6 +151,7 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
   <script src="${rel('/assets/pwa.js')}" defer></script>
 </body>
 </html>\n`;
+  return applyFineTunePalette(page);
 }
 
 function themeIcon() {
@@ -174,8 +199,8 @@ export function siteHeader(sectionLabel = SITE.signalName, activeSection = '') {
     </a>
     ${primaryNav(activeSection, 'navlinks nav-desktop')}
     <div class="header-actions">
-      <a class="search-action${searchActive ? ' active' : ''}" href="${rel('/search/')}"${searchActive ? ' aria-current="page"' : ''} aria-label="Search EGX /Alpha">${searchIcon()}<span>SEARCH</span></a>
-      <a class="language-action" href="__LANGUAGE_URL__" aria-label="Switch language">__LANGUAGE_LABEL__</a>
+      <a class="search-action${searchActive ? ' active' : ''}" href="${rel('/search/')}"${searchActive ? ' aria-current="page"' : ''} aria-label="Search EGX /Alpha">${searchIcon()}</a>
+      <a class="language-action" href="__LANGUAGE_URL__" aria-label="Switch language" data-language-code="__LANGUAGE_CODE__">__LANGUAGE_LABEL__</a>
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false">${themeIcon()}</button>
       <details class="mobile-menu">
         <summary aria-label="Open navigation">${menuIcon()}<span>MENU</span></summary>
@@ -195,8 +220,9 @@ export function siteFooter() {
       <section class="footer-identity">
         <a class="footer-brand-lockup" href="${rel('/')}">${alphaMark()}<span><strong>EGX Research</strong><em>/ ALPHA</em></span></a>
         <p>Public quantitative research for the Egyptian Exchange.</p>
+        <div class="footer-research-line"><span>POST-CLOSE · CAIRO</span><span>1D · 3D · 5D · 10D</span></div>
       </section>
-      <section class="footer-section">
+      <section class="footer-section footer-directory">
         <span class="footer-label">RESEARCH</span>
         <nav class="footer-links" aria-label="Footer navigation">
           <a href="${rel('/today/')}">Today</a>
@@ -207,25 +233,20 @@ export function siteFooter() {
           <a href="${rel('/institutional/')}">Institutional</a>
         </nav>
       </section>
-      <section class="footer-section footer-language">
-        <span class="footer-label">LANGUAGE</span>
-        <a class="footer-language-link" href="__LANGUAGE_URL__">__LANGUAGE_LABEL__</a>
-      </section>
-      <section class="footer-section footer-appearance">
-        <span class="footer-label">APPEARANCE</span>
-        <button class="footer-theme-toggle" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false">${themeIcon()}<span>DARK / LIGHT</span></button>
-      </section>
       <section class="footer-section footer-app">
         <span class="footer-label">__X1__</span>
         <button class="pwa-install-button" type="button" data-pwa-install aria-label="__X3__">__X2__</button>
         <p class="pwa-status" data-pwa-status aria-live="polite">__X4__</p>
         <p class="pwa-install-help" data-pwa-install-help hidden></p>
       </section>
-      <section class="footer-section footer-ecosystem">
+    </div>
+    <section class="footer-ecosystem">
+      <div class="footer-ecosystem-copy">
         <span class="footer-label">RESEARCH ECOSYSTEM</span>
         <p>EGX Research is a project of <strong>EGX Research Community LLP</strong>, in association with <a href="https://knowdyn.com" target="_blank" rel="noopener noreferrer">KNOWDYN</a> and <a href="https://60arabia.com" target="_blank" rel="noopener noreferrer">60Arabia</a>.</p>
-      </section>
-    </div>
+      </div>
+      <a class="footer-record-link" href="${rel('/data/latest.json')}">data/latest.json</a>
+    </section>
     <p class="footer-disclaimer">Research and information only. Not investment advice. Public engine outputs are provided as-is. Nothing on this site is a recommendation, solicitation, target price or execution instruction. EGX Research Community LLP, KNOWDYN, 60Arabia and their affiliates accept no responsibility for trading decisions, losses, damages or other outcomes arising from use of, reliance on or interpretation of the public engine data, to the fullest extent permitted by applicable law.</p>
     <div class="footer-rights">© ${year} EGX Research Community LLP.</div>
     <div class="offline-notice" data-pwa-offline role="status" aria-live="polite" hidden>__X5__</div>

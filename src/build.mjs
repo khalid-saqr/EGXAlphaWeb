@@ -187,6 +187,7 @@ export function buildSite({ root = DEFAULT_ROOT, outDir = path.join(root, '_site
   copy(path.join(root, 'assets', 'app.js'), path.join(outDir, 'assets', 'app.js'));
   copy(path.join(root, 'assets', 'pwa.js'), path.join(outDir, 'assets', 'pwa.js'));
   copy(path.join(root, 'assets', 'pwa.css'), path.join(outDir, 'assets', 'pwa.css'));
+  copy(path.join(root, 'assets', 'fine-tune.css'), path.join(outDir, 'assets', 'fine-tune.css'));
   copy(path.join(root, 'assets', 'sw.js'), path.join(outDir, 'sw.js'));
   copy(path.join(root, 'manifest.webmanifest'), path.join(outDir, 'manifest.webmanifest'));
   for (const icon of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png']) {

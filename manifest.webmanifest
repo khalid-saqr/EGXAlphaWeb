@@ -6,8 +6,8 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#070B14",
-  "theme_color": "#070B14",
+  "background_color": "#010201",
+  "theme_color": "#010201",
   "lang": "en",
   "dir": "ltr",
   "categories": ["finance", "business"],
@@ -44,7 +44,7 @@
     },
     {
       "name": "Arabic /Alpha",
-      "short_name": "العربية",
+      "short_name": "Ar",
       "url": "/ar/"
     }
   ]
