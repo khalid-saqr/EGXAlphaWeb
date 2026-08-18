@@ -1,0 +1,53 @@
+export const METHODOLOGY_CSS = String.raw`
+.page-methodology .methodology-story{width:min(100%,1120px);margin:34px auto 0}
+.page-methodology .methodology-hero{padding:clamp(34px,6vw,76px) 0 clamp(34px,5vw,58px);border-bottom:1px solid var(--line)}
+.page-methodology .methodology-hero h1{max-width:16ch;margin:12px 0 22px;font-size:clamp(2.55rem,6vw,5.35rem);line-height:.98;letter-spacing:-.052em}
+.page-methodology .methodology-hero .lede{max-width:76ch;margin:0;color:var(--soft);font-size:clamp(1.02rem,1.45vw,1.2rem);line-height:1.78}
+.page-methodology .methodology-question{display:grid;grid-template-columns:minmax(170px,.55fr) minmax(0,1.45fr);gap:24px;margin-top:34px;padding:22px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.page-methodology .methodology-question span{color:var(--brand);font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.09em}
+.page-methodology .methodology-question strong{max-width:42ch;color:var(--text);font-size:clamp(1.12rem,2vw,1.55rem);line-height:1.38}
+.page-methodology .methodology-section{display:grid;grid-template-columns:92px minmax(0,1fr);gap:28px;padding:clamp(42px,6vw,72px) 0;border-bottom:1px solid var(--line)}
+.page-methodology .methodology-section:last-of-type{border-bottom:0}
+.page-methodology .methodology-index{padding-top:6px;color:var(--brand);font-family:var(--mono);font-size:.66rem;font-weight:900;letter-spacing:.1em}
+.page-methodology .methodology-copy{max-width:82ch}
+.page-methodology .methodology-copy h2{max-width:21ch;margin:0 0 22px;font-size:clamp(1.7rem,3vw,2.7rem);line-height:1.08}
+.page-methodology .methodology-copy p{margin:0 0 18px;color:var(--soft);font-size:.98rem;line-height:1.82}
+.page-methodology .methodology-copy p:last-child{margin-bottom:0}
+.page-methodology .methodology-copy a{color:var(--text);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--brand) 58%,transparent);text-underline-offset:3px}
+.page-methodology .methodology-copy a:hover{color:var(--brand)}
+.page-methodology .priority-grid,.page-methodology .capability-grid,.page-methodology .agenda-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:28px}
+.page-methodology .priority-card,.page-methodology .capability-card,.page-methodology .agenda-card{min-width:0;padding:20px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.page-methodology .priority-card span,.page-methodology .capability-card span,.page-methodology .agenda-card span{display:block;color:var(--brand);font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.08em}
+.page-methodology .priority-card strong,.page-methodology .capability-card strong,.page-methodology .agenda-card strong{display:block;margin-top:10px;color:var(--text);font-size:.9rem;line-height:1.35}
+.page-methodology .priority-card p,.page-methodology .capability-card p,.page-methodology .agenda-card p{margin:8px 0 0;color:var(--muted);font-size:.76rem;line-height:1.6}
+.page-methodology .horizon-line{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.page-methodology .horizon-line span{min-width:62px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;color:var(--brand);font-family:var(--mono);font-size:.7rem;font-weight:900;text-align:center}
+.page-methodology .learning-loop{display:flex;gap:6px;margin-top:28px;align-items:stretch}
+.page-methodology .learning-step{display:grid;place-items:center;flex:1 1 92px;min-height:82px;padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--soft);font-family:var(--mono);font-size:.58rem;font-weight:850;letter-spacing:.045em;text-align:center}
+.page-methodology .learning-arrow{display:grid;place-items:center;color:var(--brand);font-family:var(--mono);font-size:.9rem}
+.page-methodology .methodology-note{margin-top:24px;padding:17px 18px;border-inline-start:3px solid var(--brand);background:var(--surface);color:var(--muted);font-size:.82rem;line-height:1.7}
+.page-methodology .public-private{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px}
+.page-methodology .public-private article{padding:22px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.page-methodology .public-private span{display:block;color:var(--brand);font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.08em}
+.page-methodology .public-private h3{margin:10px 0 10px;font-size:1rem}
+.page-methodology .public-private p{margin:0;color:var(--muted);font-size:.78rem;line-height:1.65}
+.page-methodology .methodology-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.page-methodology .methodology-actions a{display:inline-flex;align-items:center;min-height:42px;padding:0 14px;border:1px solid var(--line);border-radius:8px;color:var(--soft);font-family:var(--mono);font-size:.62rem;font-weight:850;letter-spacing:.045em;text-decoration:none}
+.page-methodology .methodology-actions a:hover{border-color:var(--brand);color:var(--brand)}
+.page-methodology .reference-block{padding:clamp(36px,5vw,56px) 0;border-top:1px solid var(--line)}
+.page-methodology .reference-block h2{margin:0 0 10px;font-size:clamp(1.45rem,2.4vw,2.1rem)}
+.page-methodology .reference-block>p{max-width:78ch;margin:0;color:var(--muted);font-size:.82rem;line-height:1.7}
+.page-methodology .reference-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:24px}
+.page-methodology .reference-card{display:block;padding:17px 18px;border:1px solid var(--line);border-radius:9px;background:var(--surface);text-decoration:none}
+.page-methodology .reference-card span{display:block;color:var(--brand);font-family:var(--mono);font-size:.54rem;font-weight:900;letter-spacing:.08em}
+.page-methodology .reference-card strong{display:block;margin-top:7px;color:var(--text);font-size:.83rem;line-height:1.45}
+.page-methodology .reference-card small{display:block;margin-top:6px;color:var(--muted);font-size:.7rem;line-height:1.5}
+.page-methodology .reference-card:hover{border-color:var(--brand)}
+.page-methodology .methodology-closing{margin:0 0 12px;padding:clamp(28px,4vw,42px);border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--brand) 3%,var(--surface))}
+.page-methodology .methodology-closing strong{display:block;max-width:30ch;color:var(--text);font-size:clamp(1.35rem,2.8vw,2.25rem);line-height:1.18}
+.page-methodology .methodology-closing p{max-width:72ch;margin:14px 0 0;color:var(--soft);font-size:.9rem;line-height:1.72}
+@media(max-width:900px){.page-methodology .priority-grid,.page-methodology .capability-grid,.page-methodology .agenda-grid{grid-template-columns:1fr 1fr}.page-methodology .learning-loop{flex-wrap:wrap}.page-methodology .learning-arrow{min-width:18px}}
+@media(max-width:700px){.page-methodology .methodology-question,.page-methodology .methodology-section{grid-template-columns:1fr;gap:12px}.page-methodology .methodology-index{padding-top:0}.page-methodology .public-private,.page-methodology .reference-grid{grid-template-columns:1fr}.page-methodology .methodology-hero h1{max-width:none}}
+@media(max-width:520px){.page-methodology .priority-grid,.page-methodology .capability-grid,.page-methodology .agenda-grid{grid-template-columns:1fr}.page-methodology .learning-loop{flex-direction:column}.page-methodology .learning-step{flex-basis:auto;min-height:58px}.page-methodology .learning-arrow{min-height:20px;transform:rotate(90deg)}.page-methodology .methodology-actions{display:grid}.page-methodology .methodology-actions a{width:100%;justify-content:center}}
+@media print{@page{size:A4;margin:14mm}.page-methodology .topbar,.page-methodology .site-footer{display:none!important}.page-methodology .site-shell{width:100%;padding:0}.page-methodology .methodology-story{width:100%;margin:0}.page-methodology .methodology-section,.page-methodology .priority-grid,.page-methodology .public-private,.page-methodology .reference-block{break-inside:avoid}}
+`;
