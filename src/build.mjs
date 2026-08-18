@@ -24,10 +24,6 @@ function displaySymbol(symbol) {
   return text.includes(':') ? text.split(':').pop() : text;
 }
 
-function renderLegacyServiceWorkerCleanup() {
-  return `const LEGACY_CACHE_PREFIX = 'egxresearch-public-pwa-';\nself.addEventListener('install',()=>self.skipWaiting());\nself.addEventListener('activate',event=>{event.waitUntil(Promise.all([caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith(LEGACY_CACHE_PREFIX)).map(key=>caches.delete(key)))),self.registration.unregister()]).then(()=>self.clients.claim()));});\n`;
-}
-
 function archiveJsonFiles(dataDir) {
   const dir = path.join(dataDir, 'archive');
   if (!fs.existsSync(dir)) return [];
@@ -187,8 +183,15 @@ export function buildSite({ root = DEFAULT_ROOT, outDir = path.join(root, '_site
   }
   write(path.join(outDir, 'data', 'latest.json'), JSON.stringify(latest, null, 2) + '\n');
   write(path.join(outDir, 'data', 'index.json'), JSON.stringify(searchItems, null, 2) + '\n');
+
   copy(path.join(root, 'assets', 'app.js'), path.join(outDir, 'assets', 'app.js'));
-  write(path.join(outDir, 'sw.js'), renderLegacyServiceWorkerCleanup());
+  copy(path.join(root, 'assets', 'pwa.js'), path.join(outDir, 'assets', 'pwa.js'));
+  copy(path.join(root, 'assets', 'pwa.css'), path.join(outDir, 'assets', 'pwa.css'));
+  copy(path.join(root, 'assets', 'sw.js'), path.join(outDir, 'sw.js'));
+  copy(path.join(root, 'manifest.webmanifest'), path.join(outDir, 'manifest.webmanifest'));
+  for (const icon of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png']) {
+    copy(path.join(root, 'assets', 'icons', icon), path.join(outDir, 'assets', 'icons', icon));
+  }
   write(path.join(outDir, '.nojekyll'), '');
 
   console.log(`Built EGXResearch public site in ${PUBLIC_LOCALES.length} locale(s) with ${sessions.length} archived session(s), ${searchItems.length} searchable model row(s), and ${histories.size} symbol dossier(s) for ${SITE.siteUrl || 'the configured host'}.`);

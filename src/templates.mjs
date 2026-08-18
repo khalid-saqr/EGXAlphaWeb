@@ -51,6 +51,23 @@ export function abs(rootRelative) {
   return `${SITE.siteUrl.replace(/\/$/, '')}${String(rootRelative || '/').startsWith('/') ? rootRelative : `/${rootRelative}`}`;
 }
 
+function pwaShellStrings(locale) {
+  if (locale === 'ar') return {
+    app: 'التطبيق',
+    install: 'تثبيت EGX /ALPHA',
+    installAria: 'تثبيت EGX /Alpha',
+    online: 'متصل · يتم فحص أحدث سجل عند فتح التطبيق',
+    offline: 'غير متصل · عرض آخر سجل عام محفوظ'
+  };
+  return {
+    app: 'APP',
+    install: 'INSTALL EGX /ALPHA',
+    installAria: 'Install EGX /Alpha',
+    online: 'ONLINE · LATEST RECORD CHECKED ON OPEN',
+    offline: 'OFFLINE · SHOWING LAST CACHED PUBLIC RECORD'
+  };
+}
+
 export function htmlShell({ title, description, canonicalPath, payload, body, pageClass = '', locale }) {
   const lang = normalizeLocale(locale || globalThis.__EGX_RENDER_LOCALE || 'en');
   const englishPath = stripLocalePath(canonicalPath || '/');
@@ -63,19 +80,29 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
   const payloadJson = payload ? JSON.stringify(payload).replaceAll('</script', '<\\/script') : '';
   const clientConfig = JSON.stringify({ basePath: SITE.basePath, locale: lang, strings: clientStrings(lang) }).replaceAll('</script', '<\\/script');
   const switchUrl = rel(counterpartPath(englishPath, lang));
+  const pwa = pwaShellStrings(lang);
   let localizedBody = localizeHtml(body, lang, { basePath: SITE.basePath })
     .replaceAll('__LANGUAGE_URL__', escapeHtml(switchUrl))
-    .replaceAll('__LANGUAGE_LABEL__', escapeHtml(languageSwitchLabel(lang)));
+    .replaceAll('__LANGUAGE_LABEL__', escapeHtml(languageSwitchLabel(lang)))
+    .replaceAll('__X1__', escapeHtml(pwa.app))
+    .replaceAll('__X2__', escapeHtml(pwa.install))
+    .replaceAll('__X3__', escapeHtml(pwa.installAria))
+    .replaceAll('__X4__', escapeHtml(pwa.online))
+    .replaceAll('__X5__', escapeHtml(pwa.offline));
   localizedBody = polishLocalizedHtml(localizedBody, lang);
   return `<!doctype html>
 <html lang="${lang}" dir="${directionFor(lang)}">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>${escapeHtml(localizedTitle)}</title>
   <meta name="description" content="${escapeHtml(localizedDescription)}">
   <meta name="theme-color" content="#070B14">
   <meta name="color-scheme" content="dark light">
+  <meta name="application-name" content="EGX /Alpha">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EGX /Alpha">
   <meta property="og:title" content="${escapeHtml(localizedTitle)}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="${escapeHtml(url)}">
@@ -87,6 +114,9 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
   <link rel="alternate" hreflang="en" href="${escapeHtml(englishUrl)}">
   <link rel="alternate" hreflang="ar" href="${escapeHtml(arabicUrl)}">
   <link rel="alternate" hreflang="x-default" href="${escapeHtml(englishUrl)}">
+  <link rel="manifest" href="${rel('/manifest.webmanifest')}">
+  <link rel="apple-touch-icon" href="${rel('/assets/icons/apple-touch-icon.png')}">
+  <link rel="stylesheet" href="${rel('/assets/pwa.css')}">
   <style>${INLINE_CSS.replaceAll('</style', '<\\/style')}\n${PRODUCT_CSS.replaceAll('</style', '<\\/style')}\n${SHELL_CSS.replaceAll('</style', '<\\/style')}\n${RESEARCH_DEPTH_CSS.replaceAll('</style', '<\\/style')}\n${I18N_CSS.replaceAll('</style', '<\\/style')}</style>
 </head>
 <body class="${escapeHtml(`${pageClass} locale-${lang}`.trim())}">
@@ -94,6 +124,7 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
   <script id="beacon-payload" type="application/json">${payloadJson}</script>
   ${localizedBody}
   <script src="${rel('/assets/app.js')}" defer></script>
+  <script src="${rel('/assets/pwa.js')}" defer></script>
 </body>
 </html>\n`;
 }
@@ -184,6 +215,12 @@ export function siteFooter() {
         <span class="footer-label">APPEARANCE</span>
         <button class="footer-theme-toggle" type="button" data-theme-toggle aria-label="Toggle light and dark theme" aria-pressed="false">${themeIcon()}<span>DARK / LIGHT</span></button>
       </section>
+      <section class="footer-section footer-app">
+        <span class="footer-label">__X1__</span>
+        <button class="pwa-install-button" type="button" data-pwa-install aria-label="__X3__">__X2__</button>
+        <p class="pwa-status" data-pwa-status aria-live="polite">__X4__</p>
+        <p class="pwa-install-help" data-pwa-install-help hidden></p>
+      </section>
       <section class="footer-section footer-ecosystem">
         <span class="footer-label">RESEARCH ECOSYSTEM</span>
         <p>EGX Research is a project of <strong>EGX Research Community LLP</strong>, in association with <a href="https://knowdyn.com" target="_blank" rel="noopener noreferrer">KNOWDYN</a> and <a href="https://60arabia.com" target="_blank" rel="noopener noreferrer">60Arabia</a>.</p>
@@ -191,6 +228,7 @@ export function siteFooter() {
     </div>
     <p class="footer-disclaimer">Research and information only. Not investment advice. Public engine outputs are provided as-is. Nothing on this site is a recommendation, solicitation, target price or execution instruction. EGX Research Community LLP, KNOWDYN, 60Arabia and their affiliates accept no responsibility for trading decisions, losses, damages or other outcomes arising from use of, reliance on or interpretation of the public engine data, to the fullest extent permitted by applicable law.</p>
     <div class="footer-rights">© ${year} EGX Research Community LLP.</div>
+    <div class="offline-notice" data-pwa-offline role="status" aria-live="polite" hidden>__X5__</div>
   </footer>`;
 }
 
