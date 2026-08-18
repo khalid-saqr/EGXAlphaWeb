@@ -65,9 +65,13 @@ assert.equal(arMethodology.includes('HERO FOCUS'), false, 'methodology must rema
 assert.equal(arMethodology.includes('default hero lens'), false);
 assert.ok(arMethodology.includes('href="/methodology/"') || arMethodology.includes('href="/"'), 'Arabic methodology should expose an English counterpart link');
 
+const enGuide = read('_site/investor-guide/index.html');
+for (const required of ['What EGX /Alpha Answers — and How to Read the Daily Ranking', 'The question the engine is built to answer', 'How to read the daily ranking', 'market-relative forward return']) assert.ok(enGuide.includes(required), `English investor guide should include ${required}`);
+
 const arGuide = read('_site/ar/investor-guide/index.html');
-for (const required of ['دليل المستثمر الفرد', 'كيف يستخدم المستثمر الفرد EGX /Alpha في دعم قراره', 'البورصة المصرية', 'التنبؤ بالأسهم', 'دليل المستثمر']) assert.ok(arGuide.includes(required), `Arabic investor guide should include ${required}`);
+for (const required of ['دليل المستثمر الفرد', 'ما السؤال الذي يجيب عنه EGX /Alpha؟ وكيف تقرأ ترتيب كل يوم؟', 'البورصة المصرية', 'اتجاه النموذج', 'تغير الترتيب']) assert.ok(arGuide.includes(required), `Arabic investor guide should include ${required}`);
 assert.equal(arGuide.includes('INVESTOR الدليل'), false, 'investor-guide context should be fully localized');
+assert.equal(arGuide.includes('كيف يستخدم المستثمر الفرد EGX /Alpha في دعم قراره'), false, 'investor-guide localization test should not require the retired guide heading');
 const schemaMatch = arGuide.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
 assert.ok(schemaMatch, 'Arabic investor guide should retain Article structured data');
 const schema = JSON.parse(schemaMatch[1]);
