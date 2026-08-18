@@ -1,17 +1,87 @@
-.footer-grid{grid-template-columns:minmax(220px,1.15fr) minmax(150px,.62fr) minmax(120px,.45fr) minmax(145px,.52fr) minmax(210px,.82fr)}
-.footer-app{min-width:0}
-.footer-ecosystem{grid-column:1/-1;padding-top:4px;border-top:1px solid color-mix(in srgb,var(--line) 72%,transparent)}
-.pwa-install-button{min-height:44px;display:inline-flex;align-items:center;gap:9px;padding:0 12px;border:1px solid color-mix(in srgb,var(--brand) 52%,var(--line));border-radius:8px;background:color-mix(in srgb,var(--brand) 8%,var(--surface));color:var(--text);font-family:var(--mono);font-size:.59rem;font-weight:850;letter-spacing:.045em;cursor:pointer}
-.pwa-install-button:hover:not(:disabled){border-color:var(--brand);color:var(--brand)}
+:root{
+  --bg:#020302!important;
+  --surface:#060806!important;
+  --surface-2:#0B100D!important;
+  --line:#1C2821!important;
+  --line-strong:#314339!important;
+  --text:#FFFFFF!important;
+  --muted:#9EAAA2!important;
+  --soft:#D7E0DA!important;
+  --brand:#00D47E!important;
+  --brand-hover:#43F2A4!important;
+  --blue:var(--brand)!important;
+  --positive:#00D47E!important;
+  --neutral:#D8B45E!important;
+  --negative:#FF6A72!important;
+  --warning:var(--neutral)!important;
+  --focus-ring:color-mix(in srgb,var(--brand) 46%,transparent)!important;
+  --shell-shadow:0 22px 60px rgba(0,0,0,.42)!important;
+}
+:root[data-theme="light"]{
+  --bg:#FFFFFF!important;
+  --surface:#FFFFFF!important;
+  --surface-2:#F1F5F2!important;
+  --line:#D4DDD6!important;
+  --line-strong:#A9B7AD!important;
+  --text:#050605!important;
+  --muted:#616B64!important;
+  --soft:#29322C!important;
+  --brand:#007A4A!important;
+  --brand-hover:#005C38!important;
+  --blue:var(--brand)!important;
+  --positive:#007A4A!important;
+  --neutral:#866617!important;
+  --negative:#B63745!important;
+  --warning:var(--neutral)!important;
+  --focus-ring:color-mix(in srgb,var(--brand) 32%,transparent)!important;
+  --shell-shadow:0 20px 54px rgba(5,6,5,.10)!important;
+}
+
+/* Header refinement: preserve accessible names while reducing the controls to symbols. */
+.search-action span{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;clip-path:inset(50%)!important;white-space:nowrap!important}
+.language-action{font-size:0!important;text-transform:none!important;letter-spacing:.02em!important}
+.locale-en .language-action::after{content:"Ar";font-family:var(--mono);font-size:.68rem;font-weight:850;line-height:1}
+.locale-ar .language-action::after{content:"En";font-family:var(--mono);font-size:.68rem;font-weight:850;line-height:1;direction:ltr;unicode-bidi:isolate}
+
+/* Footer utility duplication is intentionally removed from the visible and accessibility trees. */
+.footer-language,.footer-appearance{display:none!important}
+
+/* Research colophon: a quiet editorial footer rather than a fintech utility grid. */
+.research-footer.site-footer{position:relative;display:block!important;margin-top:clamp(64px,8vw,110px)!important;padding:0 0 18px!important;border-top:0!important;color:var(--muted)!important;background:transparent!important}
+.research-footer.site-footer::before{content:"";display:block;width:clamp(74px,9vw,132px);height:4px;margin-bottom:24px;background:var(--brand)}
+.research-footer .footer-grid{display:grid!important;grid-template-columns:minmax(270px,1.22fr) minmax(220px,.72fr) minmax(230px,.78fr)!important;grid-template-areas:"identity research app" "ecosystem ecosystem ecosystem";gap:0!important;align-items:stretch!important;border-block:1px solid var(--line);background:transparent!important}
+.research-footer .footer-identity{grid-area:identity;padding:30px 32px 30px 0!important;min-width:0}
+.research-footer .footer-grid>.footer-section:not(.footer-language):not(.footer-appearance):not(.footer-ecosystem){padding:30px 28px!important;border-inline-start:1px solid var(--line)}
+.research-footer .footer-app{grid-area:app;min-width:0}
+.research-footer .footer-ecosystem{grid-area:ecosystem!important;display:grid!important;grid-template-columns:minmax(150px,.35fr) minmax(0,1fr);gap:24px;align-items:start;padding:20px 0!important;border-top:1px solid var(--line)!important;background:transparent!important}
+.research-footer .footer-identity p{max-width:36ch!important;margin-top:12px!important;color:var(--muted)!important;font-size:.76rem!important;line-height:1.65!important}
+.research-footer .footer-brand-lockup{gap:12px!important}
+.research-footer .footer-brand-lockup .alpha-mark{width:38px!important;height:38px!important;border-radius:2px!important;border-color:var(--brand)!important;background:transparent!important;box-shadow:none!important}
+.research-footer .footer-brand-lockup strong{font-size:.88rem!important;letter-spacing:.02em!important}
+.research-footer .footer-brand-lockup em{margin-top:2px;color:var(--brand)!important;font-size:.62rem!important;letter-spacing:.08em!important}
+.research-footer .footer-label{margin-bottom:14px!important;color:var(--brand)!important;font-size:.54rem!important;letter-spacing:.13em!important}
+.research-footer .footer-links{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px 18px!important}
+.research-footer .footer-links a{position:relative;padding-block:3px;color:var(--soft)!important;font-size:.74rem!important}
+.research-footer .footer-links a::after{content:"";position:absolute;inset-inline-start:0;bottom:0;width:0;height:1px;background:var(--brand);transition:width .16s ease}
+.research-footer .footer-links a:hover{color:var(--text)!important}
+.research-footer .footer-links a:hover::after{width:100%}
+.research-footer .footer-ecosystem .footer-label{margin:2px 0 0!important}
+.research-footer .footer-ecosystem p{max-width:none!important;margin:0!important;color:var(--muted)!important;font-size:.72rem!important;line-height:1.65!important}
+.research-footer .footer-ecosystem strong{color:var(--soft)!important}
+.research-footer .footer-ecosystem a{color:var(--text)!important;text-decoration-color:var(--brand)!important;text-underline-offset:4px!important}
+.research-footer .footer-disclaimer{margin:0!important;padding:18px 0 0!important;border-top:0!important;color:var(--muted)!important;font-size:.54rem!important;line-height:1.68!important}
+.research-footer .footer-rights{margin-top:12px!important;color:var(--muted)!important;font-size:.52rem!important;letter-spacing:.04em!important}
+
+.pwa-install-button{min-height:44px;display:inline-flex;align-items:center;gap:9px;padding:0 13px;border:1px solid var(--brand);border-radius:2px;background:transparent;color:var(--text);font-family:var(--mono);font-size:.59rem;font-weight:850;letter-spacing:.055em;cursor:pointer}
+.pwa-install-button:hover:not(:disabled){background:var(--brand);color:var(--bg)}
 .pwa-install-button:disabled{cursor:default;opacity:.68}
-.pwa-install-button .install-glyph{display:inline-grid;place-items:center;width:24px;height:24px;border:1px solid color-mix(in srgb,var(--brand) 62%,var(--line));border-radius:6px;color:var(--brand);font-size:.56rem;letter-spacing:-.04em}
-.pwa-install-help,.pwa-status{margin:8px 0 0;max-width:31ch;color:var(--muted);font-size:.58rem;line-height:1.5}
+.pwa-install-button .install-glyph{display:inline-grid;place-items:center;width:24px;height:24px;border:1px solid var(--brand);border-radius:2px;color:var(--brand);font-size:.56rem;letter-spacing:-.04em}
+.pwa-install-help,.pwa-status{margin:9px 0 0;max-width:31ch;color:var(--muted);font-size:.58rem;line-height:1.55}
 .pwa-status{font-family:var(--mono);letter-spacing:.025em}
-.offline-notice{position:fixed;z-index:90;inset-inline-end:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));max-width:min(360px,calc(100vw - 28px));padding:10px 12px;border:1px solid color-mix(in srgb,var(--neutral) 58%,var(--line));border-radius:9px;background:var(--surface);box-shadow:var(--shell-shadow);color:var(--text);font-family:var(--mono);font-size:.62rem;font-weight:760;letter-spacing:.025em}
+.offline-notice{position:fixed;z-index:90;inset-inline-end:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));max-width:min(360px,calc(100vw - 28px));padding:10px 12px;border:1px solid color-mix(in srgb,var(--neutral) 58%,var(--line));border-radius:2px;background:var(--surface);box-shadow:var(--shell-shadow);color:var(--text);font-family:var(--mono);font-size:.62rem;font-weight:760;letter-spacing:.025em}
 .offline-notice[hidden]{display:none!important}
 
-/* Final release touch-target floor. This stylesheet is external and uses !important so
-   the 44px interaction contract also wins over earlier inlined responsive rules. */
+/* Final release touch-target floor. */
 .nav-desktop a,
 .search-action,
 .theme-toggle,
@@ -19,8 +89,6 @@
 .mobile-menu-links a,
 .mobile-search-link,
 .language-action,
-.footer-language-link,
-.footer-theme-toggle,
 .pwa-install-button,
 .product-switcher button,
 .horizon-buttons button,
@@ -29,10 +97,22 @@
 .terminal-ranking-control .horizon-buttons button,
 .mover-list a{min-height:44px!important}
 .search-action,.theme-toggle,.mobile-menu>summary{width:44px!important;height:44px!important}
-.language-action{min-width:44px!important}
+.search-action{padding:0!important;justify-content:center!important}
+.language-action{min-width:44px!important;padding-inline:9px!important}
 
 @media(display-mode:standalone){body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}.research-topbar{padding-inline-start:env(safe-area-inset-left);padding-inline-end:env(safe-area-inset-right)}}
-@media(max-width:1120px){.footer-grid{grid-template-columns:1fr 1fr 1fr}.footer-identity{grid-column:span 2}.footer-ecosystem{grid-column:1/-1}}
-@media(max-width:900px){.footer-grid{grid-template-columns:1fr 1fr}.footer-identity{grid-column:auto}.footer-ecosystem{grid-column:1/-1}}
-@media(max-width:620px){.footer-grid{grid-template-columns:1fr}.footer-ecosystem{grid-column:auto}.pwa-install-help,.pwa-status{max-width:44ch}}
-@media(prefers-reduced-motion:reduce){.pwa-install-button{transition:none!important}}
+@media(max-width:920px){
+  .research-footer .footer-grid{grid-template-columns:1fr 1fr!important;grid-template-areas:"identity research" "app app" "ecosystem ecosystem"}
+  .research-footer .footer-app{border-top:1px solid var(--line);border-inline-start:0!important}
+  .research-footer .footer-identity{padding-inline-end:24px!important}
+}
+@media(max-width:620px){
+  .research-footer.site-footer{margin-top:58px!important}
+  .research-footer .footer-grid{grid-template-columns:1fr!important;grid-template-areas:"identity" "research" "app" "ecosystem"}
+  .research-footer .footer-identity{padding:24px 0!important}
+  .research-footer .footer-grid>.footer-section:not(.footer-language):not(.footer-appearance):not(.footer-ecosystem){padding:24px 0!important;border-inline-start:0!important;border-top:1px solid var(--line)}
+  .research-footer .footer-ecosystem{grid-template-columns:1fr;gap:8px;padding:18px 0!important}
+  .research-footer .footer-links{grid-template-columns:1fr 1fr!important}
+  .pwa-install-help,.pwa-status{max-width:44ch}
+}
+@media(prefers-reduced-motion:reduce){.pwa-install-button{transition:none!important}.research-footer .footer-links a::after{transition:none!important}}
