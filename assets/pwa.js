@@ -10,7 +10,9 @@
   const locale = String(siteConfig.locale || 'en').toLowerCase().startsWith('ar') ? 'ar' : 'en';
   const strings = locale === 'ar' ? {
     install: 'تثبيت EGX /ALPHA',
+    installCta: 'تثبيت EGX /Alpha',
     installed: 'EGX /ALPHA مثبت',
+    installedCta: 'EGX /Alpha مثبت',
     installReady: 'جاهز للتثبيت على هذا الجهاز.',
     installGeneric: 'استخدم خيار تثبيت التطبيق من قائمة المتصفح.',
     installIOS: 'على iPhone أو iPad: اضغط مشاركة ثم «إضافة إلى الشاشة الرئيسية».',
@@ -23,7 +25,9 @@
     refreshing: 'يتوفر سجل عام أحدث · جارٍ تحديث العرض…'
   } : {
     install: 'INSTALL EGX /ALPHA',
+    installCta: 'Install EGX /Alpha',
     installed: 'EGX /ALPHA INSTALLED',
+    installedCta: 'EGX /Alpha installed',
     installReady: 'Ready to install on this device.',
     installGeneric: 'Use your browser menu and choose Install app.',
     installIOS: 'On iPhone or iPad: tap Share, then Add to Home Screen.',
@@ -36,8 +40,27 @@
     refreshing: 'NEWER PUBLIC RECORD AVAILABLE · REFRESHING…'
   };
 
-  const installButton = document.querySelector('[data-pwa-install]');
-  const installHelp = document.querySelector('[data-pwa-install-help]');
+  const exploreAction = document.querySelector('.alpha-control-deck .primary-action');
+  if (exploreAction && !document.querySelector('[data-pwa-install-variant="hero"]')) {
+    const heroInstallButton = document.createElement('button');
+    heroInstallButton.className = 'primary-action pwa-hero-install';
+    heroInstallButton.type = 'button';
+    heroInstallButton.dataset.pwaInstall = '';
+    heroInstallButton.dataset.pwaInstallVariant = 'hero';
+    heroInstallButton.setAttribute('aria-label', strings.installCta);
+    heroInstallButton.textContent = strings.installCta;
+    exploreAction.insertAdjacentElement('afterend', heroInstallButton);
+
+    const heroInstallHelp = document.createElement('p');
+    heroInstallHelp.className = 'pwa-install-help pwa-hero-install-help';
+    heroInstallHelp.dataset.pwaInstallHelp = '';
+    heroInstallHelp.hidden = true;
+    heroInstallButton.insertAdjacentElement('afterend', heroInstallHelp);
+  }
+
+  const installButtons = [...document.querySelectorAll('[data-pwa-install]')];
+  const installHelps = [...document.querySelectorAll('[data-pwa-install-help]')];
+  const footerInstallHelp = document.querySelector('.footer-install [data-pwa-install-help]');
   const appStatus = document.querySelector('[data-pwa-status]');
   const offlineNotice = document.querySelector('[data-pwa-offline]');
   let deferredPrompt = null;
@@ -46,22 +69,29 @@
 
   const isStandalone = () => window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
   const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const installLabel = button => button.dataset.pwaInstallVariant === 'hero' ? strings.installCta : strings.install;
+  const installedLabel = button => button.dataset.pwaInstallVariant === 'hero' ? strings.installedCta : strings.installed;
+  const helpForButton = button => button.parentElement?.querySelector('[data-pwa-install-help]') || footerInstallHelp;
 
   function setInstallState() {
-    if (!installButton) return;
+    if (!installButtons.length) return;
     if (isStandalone()) {
-      installButton.textContent = strings.installed;
-      installButton.disabled = true;
-      installButton.dataset.state = 'installed';
-      if (installHelp) installHelp.hidden = true;
+      for (const button of installButtons) {
+        button.textContent = installedLabel(button);
+        button.disabled = true;
+        button.dataset.state = 'installed';
+      }
+      for (const help of installHelps) help.hidden = true;
       return;
     }
-    installButton.disabled = false;
-    installButton.textContent = strings.install;
-    installButton.dataset.state = deferredPrompt ? 'ready' : 'available';
-    if (installHelp) {
-      installHelp.hidden = false;
-      installHelp.textContent = deferredPrompt ? strings.installReady : (isIOS() ? strings.installIOS : strings.installGeneric);
+    for (const button of installButtons) {
+      button.disabled = false;
+      button.textContent = installLabel(button);
+      button.dataset.state = deferredPrompt ? 'ready' : 'available';
+    }
+    if (footerInstallHelp) {
+      footerInstallHelp.hidden = false;
+      footerInstallHelp.textContent = deferredPrompt ? strings.installReady : (isIOS() ? strings.installIOS : strings.installGeneric);
     }
   }
 
@@ -141,22 +171,28 @@
     setInstallState();
   });
 
-  installButton?.addEventListener('click', async () => {
-    if (isStandalone()) return;
-    if (!deferredPrompt) {
-      if (installHelp) {
-        installHelp.hidden = false;
-        installHelp.textContent = isIOS() ? strings.installIOS : strings.installGeneric;
+  for (const installButton of installButtons) {
+    installButton.addEventListener('click', async () => {
+      if (isStandalone()) return;
+      const installHelp = helpForButton(installButton);
+      if (!deferredPrompt) {
+        if (installHelp) {
+          installHelp.hidden = false;
+          installHelp.textContent = isIOS() ? strings.installIOS : strings.installGeneric;
+        }
+        return;
       }
-      return;
-    }
-    const prompt = deferredPrompt;
-    deferredPrompt = null;
-    await prompt.prompt();
-    const choice = await prompt.userChoice.catch(() => null);
-    if (choice?.outcome !== 'accepted' && installHelp) installHelp.textContent = strings.installDismissed;
-    setInstallState();
-  });
+      const prompt = deferredPrompt;
+      deferredPrompt = null;
+      await prompt.prompt();
+      const choice = await prompt.userChoice.catch(() => null);
+      setInstallState();
+      if (choice?.outcome !== 'accepted' && installHelp) {
+        installHelp.hidden = false;
+        installHelp.textContent = strings.installDismissed;
+      }
+    });
+  }
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
