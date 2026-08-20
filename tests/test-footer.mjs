@@ -16,7 +16,7 @@ const render = locale => htmlShell({
 const en = render('en');
 const ar = render('ar');
 
-for (const token of ['__F1__','__F2__','__F3__','__F4__','__F5__','__F6__','__F7__','__F8__','__F9__','__F10__','__F11__','__F12__','__F13__','__F14__','__F15__','__F16__']) {
+for (const token of ['__F1__','__F2__','__F3__','__F4__','__F5__','__F6__','__F7__','__F8__','__F9__','__F10__','__F11__','__F12__','__F13__','__F14__','__F15__','__F16__','__F17__']) {
   assert.equal(en.includes(token), false, `English footer should resolve ${token}`);
   assert.equal(ar.includes(token), false, `Arabic footer should resolve ${token}`);
 }
@@ -32,12 +32,14 @@ for (const required of [
   'UNDERSTAND /ALPHA',
   'Investor Guide',
   'Research Methodology',
+  'Frequently Asked Questions',
   'ACCESS',
   'Institutional Access',
   'VERIFY PUBLIC RECORD',
   'PROVENANCE'
 ]) assert.ok(en.includes(required), `English research close should include ${required}`);
 
+assert.ok(en.includes('<a href="/methodology/">Research Methodology</a>\n          <a href="/faq/">Frequently Asked Questions</a>'), 'FAQ link must sit directly below Research Methodology under Understand /Alpha');
 assert.ok(en.includes('<a class="footer-record-link" href="/data/latest.json"><strong>VERIFY PUBLIC RECORD</strong><span class="footer-record-meta">JSON · MACHINE-READABLE</span></a>'), 'verification action must preserve the exact public JSON target while hiding the implementation filename from the visible label');
 assert.equal(en.includes('Public quantitative research for the Egyptian Exchange.'), false, 'generic footer identity copy should be retired');
 assert.equal(en.includes('<span class="footer-label">RESEARCH</span>'), false, 'duplicated generic RESEARCH directory should be retired');
@@ -54,12 +56,14 @@ for (const required of [
   'افهم /ALPHA',
   'دليل المستثمر',
   'منهجية البحث',
+  'الاسئلة الشائعة',
   'الوصول',
   'الوصول المؤسسي',
   'تحقق من السجل العام',
   '>التطبيق<',
   'المصدر'
 ]) assert.ok(ar.includes(required), `Arabic research close should include ${required}`);
+assert.ok(ar.includes('href="/ar/faq/"'), 'Arabic footer must link to the localized FAQ route');
 assert.ok(ar.includes('href="/data/latest.json"'), 'Arabic footer must verify the shared root public JSON');
 assert.equal(ar.includes('href="/ar/data/latest.json"'), false, 'Arabic footer must not invent a localized data path');
 

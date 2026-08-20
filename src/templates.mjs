@@ -100,6 +100,7 @@ function footerShellStrings(locale) {
     understand: 'افهم /ALPHA',
     guide: 'دليل المستثمر',
     methodology: 'منهجية البحث',
+    faq: 'الاسئلة الشائعة',
     access: 'الوصول',
     institutional: 'الوصول المؤسسي',
     verify: 'تحقق من السجل العام',
@@ -118,6 +119,7 @@ function footerShellStrings(locale) {
     understand: 'UNDERSTAND /ALPHA',
     guide: 'Investor Guide',
     methodology: 'Research Methodology',
+    faq: 'Frequently Asked Questions',
     access: 'ACCESS',
     institutional: 'Institutional Access',
     verify: 'VERIFY PUBLIC RECORD',
@@ -167,7 +169,9 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
     .replaceAll('__F13__', escapeHtml(footer.verify))
     .replaceAll('__F14__', escapeHtml(footer.recordMeta))
     .replaceAll('__F15__', escapeHtml(footer.app))
-    .replaceAll('__F16__', escapeHtml(footer.provenance));
+    .replaceAll('__F16__', escapeHtml(footer.provenance))
+    .replaceAll('__F17__', escapeHtml(footer.faq))
+    .replaceAll('__FAQ_URL__', escapeHtml(rel(localePath('/faq/', lang))));
   localizedBody = polishLocalizedHtml(localizedBody, lang);
   const page = `<!doctype html>
 <html lang="${lang}" dir="${directionFor(lang)}">
@@ -297,6 +301,7 @@ export function siteFooter() {
         <nav class="footer-links" aria-label="Research guidance">
           <a href="${rel('/investor-guide/')}">__F9__</a>
           <a href="${rel('/methodology/')}">__F10__</a>
+          <a href="__FAQ_URL__">__F17__</a>
         </nav>
       </section>
       <section class="footer-section footer-app">
