@@ -7,6 +7,11 @@
 .pwa-install-button .install-glyph{display:inline-grid;place-items:center;width:24px;height:24px;border:1px solid color-mix(in srgb,var(--brand) 62%,var(--line));border-radius:6px;color:var(--brand);font-size:.56rem;letter-spacing:-.04em}
 .pwa-install-help,.pwa-status{margin:8px 0 0;max-width:31ch;color:var(--muted);font-size:.58rem;line-height:1.5}
 .pwa-status{font-family:var(--mono);letter-spacing:.025em}
+.alpha-control-deck .primary-action{color:#000}
+.pwa-hero-install{margin-inline-start:10px;font-family:inherit;cursor:pointer}
+.pwa-hero-install:disabled{cursor:default;opacity:.68}
+.pwa-hero-install-help{display:block;max-width:42ch;margin:9px 0 0;color:var(--muted);font-size:.66rem;line-height:1.5}
+.pwa-hero-install-help[hidden]{display:none!important}
 .offline-notice{position:fixed;z-index:90;inset-inline-end:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));max-width:min(360px,calc(100vw - 28px));padding:10px 12px;border:1px solid color-mix(in srgb,var(--neutral) 58%,var(--line));border-radius:9px;background:var(--surface);box-shadow:var(--shell-shadow);color:var(--text);font-family:var(--mono);font-size:.62rem;font-weight:760;letter-spacing:.025em}
 .offline-notice[hidden]{display:none!important}
 
@@ -22,6 +27,7 @@
 .footer-language-link,
 .footer-theme-toggle,
 .pwa-install-button,
+.pwa-hero-install,
 .product-switcher button,
 .horizon-buttons button,
 .single-horizon,
@@ -34,5 +40,5 @@
 @media(display-mode:standalone){body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}.research-topbar{padding-inline-start:env(safe-area-inset-left);padding-inline-end:env(safe-area-inset-right)}}
 @media(max-width:1120px){.footer-grid{grid-template-columns:1fr 1fr 1fr}.footer-identity{grid-column:span 2}.footer-ecosystem{grid-column:1/-1}}
 @media(max-width:900px){.footer-grid{grid-template-columns:1fr 1fr}.footer-identity{grid-column:auto}.footer-ecosystem{grid-column:1/-1}}
-@media(max-width:620px){.footer-grid{grid-template-columns:1fr}.footer-ecosystem{grid-column:auto}.pwa-install-help,.pwa-status{max-width:44ch}}
-@media(prefers-reduced-motion:reduce){.pwa-install-button{transition:none!important}}
+@media(max-width:620px){.footer-grid{grid-template-columns:1fr}.footer-ecosystem{grid-column:auto}.pwa-install-help,.pwa-status{max-width:44ch}.pwa-hero-install{margin-inline-start:7px}}
+@media(prefers-reduced-motion:reduce){.pwa-install-button,.pwa-hero-install{transition:none!important}}

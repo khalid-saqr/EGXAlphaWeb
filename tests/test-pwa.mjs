@@ -78,7 +78,8 @@ const pwa = fs.readFileSync('_site/assets/pwa.js', 'utf8');
 for (const required of [
   'beforeinstallprompt', 'appinstalled', 'serviceWorker.register', '/data/latest.json', "cache: 'no-store'",
   'visibilitychange', 'pageshow', "addEventListener('focus'", 'trading_date', 'window.location.reload()',
-  "new Set(['/', '/today/', '/ar/', '/ar/today/'])", 'navigator.onLine', 'Add to Home Screen'
+  "new Set(['/', '/today/', '/ar/', '/ar/today/'])", 'navigator.onLine', 'Add to Home Screen',
+  'Install EGX /Alpha', "querySelectorAll('[data-pwa-install]')", 'dataset.pwaInstallVariant', 'helpForButton'
 ]) assert.ok(pwa.includes(required), `PWA client should include ${required}`);
 for (const forbidden of ['PushManager', 'Notification.requestPermission', 'periodicSync', '.sync.register']) assert.equal(pwa.includes(forbidden), false, `PWA client must not include ${forbidden}`);
 
@@ -94,7 +95,7 @@ assert.equal(sw.includes("relative.startsWith('/ar/archive/')"), false, 'mutable
 for (const forbidden of ["addEventListener('push'", "addEventListener('sync'", 'periodicSync', 'showNotification']) assert.equal(sw.includes(forbidden), false, `service worker must not include ${forbidden}`);
 
 const pwaCss = fs.readFileSync('_site/assets/pwa.css', 'utf8');
-for (const required of ['@media(display-mode:standalone)', 'env(safe-area-inset-top)', '.offline-notice', '@media(max-width:620px)']) assert.ok(pwaCss.includes(required));
+for (const required of ['@media(display-mode:standalone)', 'env(safe-area-inset-top)', '.offline-notice', '@media(max-width:620px)', '.alpha-control-deck .primary-action{color:#000}', '.pwa-hero-install']) assert.ok(pwaCss.includes(required));
 const fineTuneCss = fs.readFileSync('_site/assets/fine-tune.css', 'utf8');
 for (const required of ['--bg:#010201','--brand:#00D084','--bg:#FFFFFF','--brand:#007A4B','.footer-app .pwa-install-button']) assert.ok(fineTuneCss.includes(required));
 

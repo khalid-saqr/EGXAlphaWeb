@@ -6,6 +6,7 @@ process.env.EGX_SITE_URL ??= 'https://egxresearch.com';
 
 const { loadAndValidate } = await import('./validate.mjs');
 const { SITE } = await import('./templates.mjs');
+const { faqPage } = await import('./faq.mjs');
 const { investorGuidePage } = await import('./investor-guide.mjs');
 const { forecastWindows, primaryHorizon, topLevelSignals, universeForHorizon } = await import('./research-view.mjs');
 const { renderArchivePage, renderInstitutionalPage, renderMethodologyPage, renderSearchPage, renderSignalPage, renderSymbolDossierPage } = await import('./render.mjs');
@@ -152,6 +153,7 @@ function writeLocalePages({ locale, outDir, latest, records, sessions, histories
   write(path.join(root, 'search', 'index.html'), renderSearchPage(locale));
   write(path.join(root, 'methodology', 'index.html'), renderMethodologyPage(locale));
   write(path.join(root, 'investor-guide', 'index.html'), investorGuidePage(locale));
+  write(path.join(root, 'faq', 'index.html'), faqPage(locale));
   write(path.join(root, 'institutional', 'index.html'), renderInstitutionalPage(locale));
 
   for (const [symbol, history] of histories.entries()) {
