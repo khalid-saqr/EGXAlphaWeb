@@ -66,11 +66,11 @@ function shellLock(locked) {
 function bilingualLegalCopy() {
   return `<section class="egx-gate-legal" aria-labelledby="egx-gate-territorial-title">
     <div class="egx-gate-section-head">
-      <span class="egx-gate-kicker" id="egx-gate-territorial-title">TERRITORIAL ACCESS NOTICE · إشعار نطاق الوصول الجغرافي</span>
+      <span class="egx-gate-kicker" id="egx-gate-territorial-title">TERRITORIAL ACCESS &amp; REGULATORY STATUS · نطاق الوصول والصفة التنظيمية</span>
     </div>
     <div class="egx-gate-bilingual">
-      <p lang="en" dir="ltr"><strong>EGX Research</strong> is an independent research and educational website operated outside the Arab Republic of Egypt. It aims to strengthen the international visibility and understanding of the Egyptian Exchange by making independent, advanced quantitative market research accessible to audiences outside Egypt. The service is not licensed by the Egyptian Financial Regulatory Authority and is not offered or directed to persons accessing it from within Egypt.</p>
-      <p lang="ar" dir="rtl"><strong>EGX Research</strong> موقع مستقل للبحث والتعليم يُدار من خارج جمهورية مصر العربية. ويهدف إلى تعزيز الحضور الدولي للبورصة المصرية وتوسيع فهمها لدى الجمهور خارج مصر من خلال إتاحة بحث كمي مستقل ومتقدم عن السوق. الخدمة غير مرخصة من الهيئة العامة للرقابة المالية المصرية، ولا تُعرض أو تُوجَّه إلى الأشخاص الذين يدخلون إليها من داخل مصر.</p>
+      <p lang="en" dir="ltr"><strong>EGX Research</strong> is an independent research publication and educational website produced and operated outside the Arab Republic of Egypt by entities that maintain no establishment or branch in Egypt for the conduct of this activity. EGX /Alpha uses purpose-built deep-learning models to publish general, non-personalised quantitative research on the Egyptian Exchange. The website does not execute transactions, hold client funds, manage portfolios or provide personalised investment advice.<br><br>The service does not hold or claim a licence or approval from the Egyptian Financial Regulatory Authority and is not offered or directed to persons located in Egypt. Its technical accessibility over the public internet is not intended to constitute an offering of the service into Egypt.</p>
+      <p lang="ar" dir="rtl"><strong>EGX Research</strong> منشور بحثي وموقع تعليمي مستقل يُنتج ويُدار من خارج جمهورية مصر العربية بواسطة جهات لا تملك منشأة أو فرعًا في مصر لمزاولة هذا النشاط. يستخدم EGX /Alpha نماذج تعلم عميق متخصصة لنشر بحث كمي عام وغير شخصي عن البورصة المصرية. ولا ينفذ الموقع معاملات، أو يحتفظ بأموال العملاء، أو يدير محافظ، أو يقدم استشارات استثمارية شخصية.<br><br>الخدمة لا تحمل ولا تدّعي الحصول على ترخيص أو اعتماد من الهيئة العامة للرقابة المالية المصرية، ولا تُعرض أو تُوجَّه إلى أشخاص موجودين داخل مصر. ولا يُقصد من مجرد إتاحتها التقنية عبر شبكة الإنترنت أن يمثل ذلك عرضًا للخدمة داخل جمهورية مصر العربية.</p>
     </div>
   </section>`;
 }
@@ -98,8 +98,8 @@ function fullGateMarkup() {
         <div class="egx-gate-mark" aria-hidden="true"><span>/</span><strong>A</strong></div>
         <div>
           <span class="egx-gate-eyebrow">EGX RESEARCH · /ALPHA</span>
-          <h1 id="egx-gate-title"><span lang="en">Before entering EGX /Alpha</span><span lang="ar" dir="rtl">قبل الدخول إلى EGX /Alpha</span></h1>
-          <p id="egx-gate-intro">ACCESS &amp; PRIVACY NOTICE · إشعار الوصول والخصوصية</p>
+          <h1 id="egx-gate-title"><span lang="en">ADVANCED DEEP-LEARNING RESEARCH ON THE EGYPTIAN EXCHANGE</span><span lang="ar" dir="rtl">بحث متقدم بالتعلم العميق حول البورصة المصرية</span></h1>
+          <p id="egx-gate-intro"><span lang="en" dir="ltr">Purpose-built quantitative intelligence designed to broaden international understanding and research visibility of the Egyptian market.</span><br><span lang="ar" dir="rtl">ذكاء كمي متخصص طُوّر لتوسيع الفهم الدولي للسوق المصري وتعزيز حضوره البحثي خارج مصر.</span></p>
         </div>
       </header>
       ${bilingualLegalCopy()}
@@ -108,11 +108,11 @@ function fullGateMarkup() {
         <input id="egx-outside-egypt-confirmation" type="checkbox" data-egx-territorial-confirmation>
         <span class="egx-gate-checkmark" aria-hidden="true"></span>
         <span class="egx-gate-confirmation-copy">
-          <strong lang="en" dir="ltr">I confirm that I am currently accessing EGX Research from outside the Arab Republic of Egypt.</strong>
-          <strong lang="ar" dir="rtl">أؤكد أنني أدخل حاليًا إلى EGX Research من خارج جمهورية مصر العربية.</strong>
+          <strong lang="en" dir="ltr">I confirm that I am physically located outside the Arab Republic of Egypt and am accessing EGX Research from outside Egypt.</strong>
+          <strong lang="ar" dir="rtl">أقر بأنني موجود فعليًا خارج جمهورية مصر العربية وأنني أدخل إلى EGX Research من خارجها.</strong>
         </span>
       </label>
-      <p class="egx-gate-egypt-note"><span lang="en">If you are accessing from within Egypt, do not confirm this statement or continue.</span><span lang="ar" dir="rtl">إذا كنت تدخل إلى الموقع من داخل مصر، فلا تؤكد هذا الإقرار ولا تتابع الدخول.</span></p>
+      <p class="egx-gate-egypt-note"><span lang="en">If you are physically located in Egypt, do not confirm the statement below or continue.</span><span lang="ar" dir="rtl">إذا كنت موجودًا فعليًا داخل جمهورية مصر العربية، فلا تؤكد الإقرار التالي ولا تتابع الدخول.</span></p>
       <button class="egx-gate-continue" type="button" data-egx-gate-continue disabled>
         <span lang="en">CONTINUE TO EGX /ALPHA</span>
         <span lang="ar" dir="rtl">المتابعة إلى EGX /ALPHA</span>
