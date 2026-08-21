@@ -88,7 +88,7 @@ for (const required of ['currentHtmlHasDate', '__egx_record', 'DEPLOYING NEW PUB
   assert.ok(pwa.includes(required), `PWA release client should include ${required}`);
 }
 const sw = fs.readFileSync('assets/sw.js', 'utf8');
-assert.ok(sw.includes("const VERSION = 'egx-alpha-pwa-v2'"), 'final release must roll the service-worker cache generation');
+assert.ok(sw.includes("const VERSION = 'egx-alpha-pwa-v3'"), 'final release must roll the service-worker cache generation');
 assert.ok(sw.includes("key.startsWith('egx-alpha-')"), 'service-worker activation must clear prior EGX /Alpha cache generations');
 
 const workflow = fs.readFileSync('.github/workflows/deploy-pages.yaml', 'utf8');
