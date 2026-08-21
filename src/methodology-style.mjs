@@ -44,6 +44,7 @@ export const METHODOLOGY_CSS = String.raw`
 .page-methodology .reference-card small{display:block;margin-top:6px;color:var(--muted);font-size:.7rem;line-height:1.5}
 .page-methodology .reference-card:hover{border-color:var(--brand)}
 .page-methodology .methodology-closing{margin:0 0 12px;padding:clamp(28px,4vw,42px);border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--brand) 3%,var(--surface))}
+.page-methodology .methodology-hero>.methodology-case-studies{margin-top:clamp(24px,3vw,34px);margin-bottom:0}
 .page-methodology .case-study-head{max-width:82ch}
 .page-methodology .case-study-kicker{display:block;color:var(--brand);font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.09em}
 .page-methodology .case-study-head h2{max-width:20ch;margin:10px 0 0;color:var(--text);font-size:clamp(1.55rem,3vw,2.5rem);line-height:1.1;letter-spacing:-.025em}
