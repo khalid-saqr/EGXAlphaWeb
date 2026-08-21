@@ -1,4 +1,4 @@
-const VERSION = 'egx-alpha-pwa-v2';
+const VERSION = 'egx-alpha-pwa-v3';
 const STATIC_CACHE = `${VERSION}-static`;
 const CURRENT_CACHE = `${VERSION}-current`;
 const ARCHIVE_CACHE = `${VERSION}-archive`;
@@ -103,6 +103,7 @@ self.addEventListener('fetch', event => {
 
   const relative = relativePath(url.pathname);
   const currentPaths = new Set(['/', '/today/', '/ar/', '/ar/today/', '/data/latest.json', '/data/index.json']);
+  const criticalGateAssets = new Set(['/assets/access-gate.js', '/assets/pwa.css']);
   const isDatedArchivePage = /^\/(?:ar\/)?archive\/\d{4}-\d{2}-\d{2}\/?$/.test(relative);
   const isDatedArchiveData = /^\/data\/archive\/\d{4}-\d{2}-\d{2}\.json$/.test(relative);
   const isImmutableArchive = isDatedArchivePage || isDatedArchiveData;
@@ -110,6 +111,10 @@ self.addEventListener('fetch', event => {
 
   if (currentPaths.has(relative)) {
     event.respondWith(networkFirst(request, CURRENT_CACHE, relative));
+    return;
+  }
+  if (criticalGateAssets.has(relative)) {
+    event.respondWith(networkFirst(request, STATIC_CACHE, relative));
     return;
   }
   if (isImmutableArchive) {
