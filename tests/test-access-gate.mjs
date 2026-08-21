@@ -27,16 +27,16 @@ for (const required of [
   'يستخدم EGX /Alpha نماذج تعلم عميق متخصصة لنشر بحث كمي عام وغير شخصي عن البورصة المصرية.',
   'ولا ينفذ الموقع معاملات، أو يحتفظ بأموال العملاء، أو يدير محافظ، أو يقدم استشارات استثمارية شخصية.',
   'الخدمة لا تحمل ولا تدّعي الحصول على ترخيص أو اعتماد من الهيئة العامة للرقابة المالية المصرية، ولا تُعرض أو تُوجَّه إلى أشخاص موجودين داخل مصر.',
-  'ولا يُقصد من مجرد إتاحتها التقنية عبر شبكة الإنترنت أن يمثل ذلك عرضًا للخدمة داخل جمهورية مصر العربية.'
-]) assert.ok(visibleGate.includes(required), `visible access gate copy should include ${required}`);
-
-for (const required of [
+  'ولا يُقصد من مجرد إتاحتها التقنية عبر شبكة الإنترنت أن يمثل ذلك عرضًا للخدمة داخل جمهورية مصر العربية.',
   'I confirm that I am physically located outside the Arab Republic of Egypt and am accessing EGX Research from outside Egypt.',
   'أقر بأنني موجود فعليًا خارج جمهورية مصر العربية وأنني أدخل إلى EGX Research من خارجها.',
   'If you are physically located in Egypt, do not confirm the statement below or continue.',
   'إذا كنت موجودًا فعليًا داخل جمهورية مصر العربية، فلا تؤكد الإقرار التالي ولا تتابع الدخول.',
   'CONTINUE TO EGX /ALPHA',
-  'المتابعة إلى EGX /ALPHA',
+  'المتابعة إلى EGX /ALPHA'
+]) assert.ok(visibleGate.includes(required), `visible access gate copy should include ${required}`);
+
+for (const required of [
   'egxalpha-access-ack-v1',
   'egxalpha-storage-optout-v1',
   'aria-modal="true"',
