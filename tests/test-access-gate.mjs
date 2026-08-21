@@ -12,17 +12,28 @@ const sw = fs.readFileSync('assets/sw.js', 'utf8');
 assert.equal(builtGate, gate, 'Pages artifact must ship the exact access-gate module');
 
 for (const required of [
-  'EGX Research is an independent research and educational website operated outside the Arab Republic of Egypt.',
-  'It aims to strengthen the international visibility and understanding of the Egyptian Exchange by making independent, advanced quantitative market research accessible to audiences outside Egypt.',
-  'The service is not licensed by the Egyptian Financial Regulatory Authority and is not offered or directed to persons accessing it from within Egypt.',
-  'EGX Research موقع مستقل للبحث والتعليم يُدار من خارج جمهورية مصر العربية.',
-  'ويهدف إلى تعزيز الحضور الدولي للبورصة المصرية وتوسيع فهمها لدى الجمهور خارج مصر من خلال إتاحة بحث كمي مستقل ومتقدم عن السوق.',
-  'الخدمة غير مرخصة من الهيئة العامة للرقابة المالية المصرية، ولا تُعرض أو تُوجَّه إلى الأشخاص الذين يدخلون إليها من داخل مصر.'
+  'ADVANCED DEEP-LEARNING RESEARCH ON THE EGYPTIAN EXCHANGE',
+  'بحث متقدم بالتعلم العميق حول البورصة المصرية',
+  'Purpose-built quantitative intelligence designed to broaden international understanding and research visibility of the Egyptian market.',
+  'ذكاء كمي متخصص طُوّر لتوسيع الفهم الدولي للسوق المصري وتعزيز حضوره البحثي خارج مصر.',
+  'TERRITORIAL ACCESS &amp; REGULATORY STATUS · نطاق الوصول والصفة التنظيمية',
+  'EGX Research is an independent research publication and educational website produced and operated outside the Arab Republic of Egypt by entities that maintain no establishment or branch in Egypt for the conduct of this activity.',
+  'EGX /Alpha uses purpose-built deep-learning models to publish general, non-personalised quantitative research on the Egyptian Exchange.',
+  'The website does not execute transactions, hold client funds, manage portfolios or provide personalised investment advice.',
+  'The service does not hold or claim a licence or approval from the Egyptian Financial Regulatory Authority and is not offered or directed to persons located in Egypt.',
+  'Its technical accessibility over the public internet is not intended to constitute an offering of the service into Egypt.',
+  'EGX Research منشور بحثي وموقع تعليمي مستقل يُنتج ويُدار من خارج جمهورية مصر العربية بواسطة جهات لا تملك منشأة أو فرعًا في مصر لمزاولة هذا النشاط.',
+  'يستخدم EGX /Alpha نماذج تعلم عميق متخصصة لنشر بحث كمي عام وغير شخصي عن البورصة المصرية.',
+  'ولا ينفذ الموقع معاملات، أو يحتفظ بأموال العملاء، أو يدير محافظ، أو يقدم استشارات استثمارية شخصية.',
+  'الخدمة لا تحمل ولا تدّعي الحصول على ترخيص أو اعتماد من الهيئة العامة للرقابة المالية المصرية، ولا تُعرض أو تُوجَّه إلى أشخاص موجودين داخل مصر.',
+  'ولا يُقصد من مجرد إتاحتها التقنية عبر شبكة الإنترنت أن يمثل ذلك عرضًا للخدمة داخل جمهورية مصر العربية.'
 ]) assert.ok(visibleGate.includes(required), `visible access gate copy should include ${required}`);
 
 for (const required of [
-  'I confirm that I am currently accessing EGX Research from outside the Arab Republic of Egypt.',
-  'أؤكد أنني أدخل حاليًا إلى EGX Research من خارج جمهورية مصر العربية.',
+  'I confirm that I am physically located outside the Arab Republic of Egypt and am accessing EGX Research from outside Egypt.',
+  'أقر بأنني موجود فعليًا خارج جمهورية مصر العربية وأنني أدخل إلى EGX Research من خارجها.',
+  'If you are physically located in Egypt, do not confirm the statement below or continue.',
+  'إذا كنت موجودًا فعليًا داخل جمهورية مصر العربية، فلا تؤكد الإقرار التالي ولا تتابع الدخول.',
   'CONTINUE TO EGX /ALPHA',
   'المتابعة إلى EGX /ALPHA',
   'egxalpha-access-ack-v1',
