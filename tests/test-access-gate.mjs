@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const gate = fs.readFileSync('assets/access-gate.js', 'utf8');
+const visibleGate = gate.replaceAll('<strong>', '').replaceAll('</strong>', '');
 const builtGate = fs.readFileSync('_site/assets/access-gate.js', 'utf8');
 const pwa = fs.readFileSync('assets/pwa.js', 'utf8');
 const app = fs.readFileSync('assets/app.js', 'utf8');
@@ -16,7 +17,10 @@ for (const required of [
   'The service is not licensed by the Egyptian Financial Regulatory Authority and is not offered or directed to persons accessing it from within Egypt.',
   'EGX Research موقع مستقل للبحث والتعليم يُدار من خارج جمهورية مصر العربية.',
   'ويهدف إلى تعزيز الحضور الدولي للبورصة المصرية وتوسيع فهمها لدى الجمهور خارج مصر من خلال إتاحة بحث كمي مستقل ومتقدم عن السوق.',
-  'الخدمة غير مرخصة من الهيئة العامة للرقابة المالية المصرية، ولا تُعرض أو تُوجَّه إلى الأشخاص الذين يدخلون إليها من داخل مصر.',
+  'الخدمة غير مرخصة من الهيئة العامة للرقابة المالية المصرية، ولا تُعرض أو تُوجَّه إلى الأشخاص الذين يدخلون إليها من داخل مصر.'
+]) assert.ok(visibleGate.includes(required), `visible access gate copy should include ${required}`);
+
+for (const required of [
   'I confirm that I am currently accessing EGX Research from outside the Arab Republic of Egypt.',
   'أؤكد أنني أدخل حاليًا إلى EGX Research من خارج جمهورية مصر العربية.',
   'CONTINUE TO EGX /ALPHA',
