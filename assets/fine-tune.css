@@ -96,6 +96,8 @@ html,body{background:var(--bg);color:var(--text)}
 .footer-provenance-line a{color:var(--brand);font-weight:780;text-decoration:underline;text-decoration-thickness:1px;text-decoration-color:currentColor;text-underline-offset:3px}
 .footer-provenance-line a:hover,.footer-provenance-line a:focus-visible{color:var(--brand-hover)}
 .footer-disclaimer{grid-column:1;max-width:112ch;margin:0;padding:12px 0 0;color:var(--muted);font-size:.57rem;line-height:1.7}
+.footer-disclaimer a{color:var(--brand);font-weight:780;text-decoration:underline;text-decoration-thickness:1px;text-decoration-color:currentColor;text-underline-offset:3px}
+.footer-disclaimer a:hover,.footer-disclaimer a:focus-visible{color:var(--brand-hover)}
 .footer-rights{grid-column:2;margin:12px 0 2px;color:var(--muted);font-family:var(--mono);font-size:.53rem;text-align:end;white-space:nowrap}
 
 /* Remove obsolete footer settings affordances even if legacy CSS remains cached. */
