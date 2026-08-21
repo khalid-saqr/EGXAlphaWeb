@@ -106,7 +106,10 @@ function footerShellStrings(locale) {
     verify: 'تحقق من السجل العام',
     recordMeta: 'JSON · قابل للقراءة آلياً',
     app: 'التطبيق',
-    provenance: 'المصدر'
+    provenance: 'إشعار الاستقلال والصفة البحثية',
+    legalLead: 'حقوق الملكية الفكرية لـEGX Research مملوكة لـEGX Research Community LLP بالمملكة المتحدة، ويُشغّل الموقع بواسطة ',
+    legalMiddle: ' بالمملكة المتحدة و',
+    legalTail: ' بالولايات المتحدة. يقدم الموقع محتوى بحثيًا وتعليميًا عامًا يهدف إلى تعزيز فهم البورصة المصرية وأساليب التحليل الكمي للأسواق الناشئة باستخدام تقنيات التعلم العميق. الجهات المالكة والمشغلة لا تملك منشأة أو فرعًا في مصر لمزاولة هذا النشاط، ولا تنفذ معاملات أو تحتفظ بأموال العملاء أو تدير محافظ أو تقدم استشارات استثمارية شخصية. ولا يمثل المحتوى عرضًا أو دعوة للتعامل أو اعتمادًا من البورصة المصرية أو الهيئة العامة للرقابة المالية. ويظل أي التزام قانوني خاضعًا للقواعد الإلزامية المنطبقة على كل جهة وفقًا لطبيعة نشاطها ومكان مزاولة النشاط ذي الصلة.'
   };
   return {
     close: 'RESEARCH CLOSE',
@@ -125,7 +128,10 @@ function footerShellStrings(locale) {
     verify: 'VERIFY PUBLIC RECORD',
     recordMeta: 'JSON · MACHINE-READABLE',
     app: 'APP',
-    provenance: 'PROVENANCE'
+    provenance: 'INDEPENDENCE AND RESEARCH STATUS NOTICE',
+    legalLead: 'The intellectual property rights in EGX Research are owned by EGX Research Community LLP, United Kingdom, and the website is operated by ',
+    legalMiddle: ', United Kingdom, and ',
+    legalTail: ', United States. The website provides general research and educational content intended to enhance understanding of the Egyptian Exchange and quantitative analysis of emerging markets using deep-learning techniques. The owning and operating entities maintain no establishment or branch in Egypt for the conduct of this activity, and do not execute transactions, hold client funds, manage portfolios, or provide personalised investment advice. Nothing on this website constitutes an offer or solicitation to transact, or implies endorsement or approval by the Egyptian Exchange or the Financial Regulatory Authority. Any legal obligation remains subject to the mandatory rules applicable to each entity, according to the nature and place of conduct of the relevant activity.'
   };
 }
 
@@ -171,6 +177,9 @@ export function htmlShell({ title, description, canonicalPath, payload, body, pa
     .replaceAll('__F15__', escapeHtml(footer.app))
     .replaceAll('__F16__', escapeHtml(footer.provenance))
     .replaceAll('__F17__', escapeHtml(footer.faq))
+    .replaceAll('__F18__', escapeHtml(footer.legalLead))
+    .replaceAll('__F19__', escapeHtml(footer.legalMiddle))
+    .replaceAll('__F20__', escapeHtml(footer.legalTail))
     .replaceAll('__FAQ_URL__', escapeHtml(rel(localePath('/faq/', lang))));
   localizedBody = polishLocalizedHtml(localizedBody, lang);
   const page = `<!doctype html>
@@ -321,9 +330,8 @@ export function siteFooter() {
     <section class="footer-provenance">
       <div class="footer-provenance-line">
         <span class="footer-label">__F16__</span>
-        <p>EGX Research is a project of <strong>EGX Research Community LLP</strong>, in association with <a href="https://knowdyn.com" target="_blank" rel="noopener noreferrer">KNOWDYN</a> and <a href="https://60arabia.com" target="_blank" rel="noopener noreferrer">60Arabia</a>.</p>
       </div>
-      <p class="footer-disclaimer">Research and information only. Not investment advice. Public engine outputs are provided as-is. Nothing on this site is a recommendation, solicitation, target price or execution instruction. EGX Research Community LLP, KNOWDYN, 60Arabia and their affiliates accept no responsibility for trading decisions, losses, damages or other outcomes arising from use of, reliance on or interpretation of the public engine data, to the fullest extent permitted by applicable law.</p>
+      <p class="footer-disclaimer">__F18__<a href="https://knowdyn.com" target="_blank" rel="noopener noreferrer">KNOWDYN LTD</a>__F19__<a href="https://60arabia.com" target="_blank" rel="noopener noreferrer">60Arabia</a>__F20__</p>
       <div class="footer-rights">© ${year} EGX Research Community LLP.</div>
     </section>
     <div class="offline-notice" data-pwa-offline role="status" aria-live="polite" hidden>__X5__</div>
