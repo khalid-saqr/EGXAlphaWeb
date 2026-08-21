@@ -8,6 +8,8 @@
   const basePath = String(siteConfig.basePath ?? '').replace(/\/$/, '');
   const locale = String(siteConfig.locale || 'en').toLowerCase().startsWith('ar') ? 'ar' : 'en';
   const ui = siteConfig.strings || {};
+  const STORAGE_OPTOUT_KEY = 'egxalpha-storage-optout-v1';
+  const THEME_KEY = 'egxalpha-theme';
 
   function text(key, fallback, values = {}) {
     let value = String(ui[key] ?? fallback ?? '');
@@ -54,15 +56,29 @@
     if (/^\/(?:today|archive|search|methodology|investor-guide|institutional|symbol)(?:\/|$)/.test(path)) return `/ar${path}`;
     return path;
   }
-  function setTheme(theme) {
+  function persistentDeviceStorageEnabled() {
+    try { return localStorage.getItem(STORAGE_OPTOUT_KEY) !== '1'; } catch (_) { return false; }
+  }
+  function storedTheme() {
+    if (!persistentDeviceStorageEnabled()) return null;
+    try { return localStorage.getItem(THEME_KEY); } catch (_) { return null; }
+  }
+  function setTheme(theme, { persist = true } = {}) {
     const resolved = theme === 'light' ? 'light' : 'dark';
     document.documentElement.dataset.theme = resolved;
-    localStorage.setItem('egxalpha-theme', resolved);
+    if (persist && persistentDeviceStorageEnabled()) {
+      try { localStorage.setItem(THEME_KEY, resolved); } catch (_) {}
+    }
     document.querySelectorAll('[data-theme-toggle]').forEach(button => button.setAttribute('aria-pressed', resolved === 'light' ? 'true' : 'false'));
   }
 
-  setTheme(localStorage.getItem('egxalpha-theme') || 'dark');
+  setTheme(storedTheme() || 'dark', { persist: false });
   document.querySelectorAll('[data-theme-toggle]').forEach(button => button.addEventListener('click', () => setTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light')));
+  window.addEventListener('egx-storage-mode-changed', event => {
+    if (event.detail?.enabled === false) {
+      try { localStorage.removeItem(THEME_KEY); } catch (_) {}
+    }
+  });
 
   function initRankingController() {
     const horizonButtons = [...document.querySelectorAll('[data-horizon-select]')];

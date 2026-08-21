@@ -84,6 +84,9 @@ jobs:
       - name: Verify responsive research close footer
         run: node tests/test-footer.mjs
 
+      - name: Verify privacy and territorial access gate
+        run: node tests/test-access-gate.mjs
+
       - name: Verify installable PWA and freshness behavior
         run: node tests/test-pwa.mjs
 
