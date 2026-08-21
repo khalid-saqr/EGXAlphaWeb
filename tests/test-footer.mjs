@@ -16,7 +16,7 @@ const render = locale => htmlShell({
 const en = render('en');
 const ar = render('ar');
 
-for (const token of ['__F1__','__F2__','__F3__','__F4__','__F5__','__F6__','__F7__','__F8__','__F9__','__F10__','__F11__','__F12__','__F13__','__F14__','__F15__','__F16__','__F17__']) {
+for (const token of ['__F1__','__F2__','__F3__','__F4__','__F5__','__F6__','__F7__','__F8__','__F9__','__F10__','__F11__','__F12__','__F13__','__F14__','__F15__','__F16__','__F17__','__F18__','__F19__','__F20__']) {
   assert.equal(en.includes(token), false, `English footer should resolve ${token}`);
   assert.equal(ar.includes(token), false, `Arabic footer should resolve ${token}`);
 }
@@ -36,13 +36,16 @@ for (const required of [
   'ACCESS',
   'Institutional Access',
   'VERIFY PUBLIC RECORD',
-  'PROVENANCE'
+  'INDEPENDENCE AND RESEARCH STATUS NOTICE'
 ]) assert.ok(en.includes(required), `English research close should include ${required}`);
 
 assert.ok(en.includes('<a href="/methodology/">Research Methodology</a>\n          <a href="/faq/">Frequently Asked Questions</a>'), 'FAQ link must sit directly below Research Methodology under Understand /Alpha');
 assert.ok(en.includes('<a class="footer-record-link" href="/data/latest.json"><strong>VERIFY PUBLIC RECORD</strong><span class="footer-record-meta">JSON · MACHINE-READABLE</span></a>'), 'verification action must preserve the exact public JSON target while hiding the implementation filename from the visible label');
 assert.equal(en.includes('Public quantitative research for the Egyptian Exchange.'), false, 'generic footer identity copy should be retired');
 assert.equal(en.includes('<span class="footer-label">RESEARCH</span>'), false, 'duplicated generic RESEARCH directory should be retired');
+assert.ok(en.includes('The intellectual property rights in EGX Research are owned by EGX Research Community LLP, United Kingdom'), 'English footer must contain the approved independence and research-status notice');
+assert.ok(en.includes('maintain no establishment or branch in Egypt for the conduct of this activity'), 'English footer must preserve the approved jurisdictional fact statement');
+assert.equal(en.includes('Research and information only. Not investment advice.'), false, 'superseded English disclaimer must be removed');
 
 for (const required of [
   '<html lang="ar" dir="rtl">',
@@ -61,13 +64,15 @@ for (const required of [
   'الوصول المؤسسي',
   'تحقق من السجل العام',
   '>التطبيق<',
-  'المصدر'
+  'إشعار الاستقلال والصفة البحثية'
 ]) assert.ok(ar.includes(required), `Arabic research close should include ${required}`);
 assert.ok(ar.includes('href="/ar/faq/"'), 'Arabic footer must link to the localized FAQ route');
 assert.ok(ar.includes('href="/data/latest.json"'), 'Arabic footer must verify the shared root public JSON');
 assert.equal(ar.includes('href="/ar/data/latest.json"'), false, 'Arabic footer must not invent a localized data path');
+assert.ok(ar.includes('حقوق الملكية الفكرية لـEGX Research مملوكة لـEGX Research Community LLP بالمملكة المتحدة'), 'Arabic footer must contain the approved independence and research-status notice');
+assert.ok(ar.includes('الجهات المالكة والمشغلة لا تملك منشأة أو فرعًا في مصر لمزاولة هذا النشاط'), 'Arabic footer must preserve the approved jurisdictional fact statement');
 
-const knowdynLink = '<a href="https://knowdyn.com" target="_blank" rel="noopener noreferrer">KNOWDYN</a>';
+const knowdynLink = '<a href="https://knowdyn.com" target="_blank" rel="noopener noreferrer">KNOWDYN LTD</a>';
 const sixtyArabiaLink = '<a href="https://60arabia.com" target="_blank" rel="noopener noreferrer">60Arabia</a>';
 for (const html of [en, ar]) {
   assert.ok(html.includes(knowdynLink), 'footer must preserve the embedded KNOWDYN hyperlink');
@@ -93,7 +98,7 @@ assert.ok(compactFooter.includes('.footer-app{background:transparent}'), 'Access
 assert.ok(compactFooter.includes('.footer-app-kicker{display:none}'), 'APP kicker must not compete with the Access hierarchy');
 assert.ok(compactFooter.includes('.footer-record-meta{display:none}'), 'Verify Public Record must remain the visible verification label');
 assert.ok(footerCss.includes('.footer-app .pwa-install-button{'), 'PWA install must remain available as a secondary access action');
-assert.ok(footerCss.includes('.footer-provenance-line a{color:var(--brand);'), 'provenance partner links must be visibly identifiable as links');
+assert.ok(footerCss.includes('.footer-disclaimer a{color:var(--brand);'), 'legal notice partner links must be visibly identifiable as links');
 assert.ok(compactFooter.includes('.footer-disclaimer{grid-column:1;max-width:112ch;'), 'legal copy must use a readable line length');
 assert.ok(footerCss.includes('.footer-close-meta span+span::before{content:"·";'), 'research metadata groups must retain an explicit separator');
 
