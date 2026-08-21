@@ -188,6 +188,7 @@ export function buildSite({ root = DEFAULT_ROOT, outDir = path.join(root, '_site
 
   copy(path.join(root, 'assets', 'app.js'), path.join(outDir, 'assets', 'app.js'));
   copy(path.join(root, 'assets', 'pwa.js'), path.join(outDir, 'assets', 'pwa.js'));
+  copy(path.join(root, 'assets', 'access-gate.js'), path.join(outDir, 'assets', 'access-gate.js'));
   copy(path.join(root, 'assets', 'pwa.css'), path.join(outDir, 'assets', 'pwa.css'));
   copy(path.join(root, 'assets', 'fine-tune.css'), path.join(outDir, 'assets', 'fine-tune.css'));
   for (const paper of ['EGX_Alpha_Case_Study_1.pdf', 'EGX_Alpha_Case_Study_2.pdf', 'EGX_Alpha_Case_Study_3.pdf']) {
