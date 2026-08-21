@@ -1,6 +1,9 @@
 html[dir="rtl"] body{font-family:"Noto Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;text-align:start}
 html[dir="rtl"] .brand-lockup,html[dir="rtl"] .footer-brand-lockup,html[dir="rtl"] .alpha-mark,html[dir="rtl"] .brand-copy{direction:ltr;unicode-bidi:isolate}
-html[dir="rtl"] .brand-context{direction:rtl}
+/* Keep the product header geometry stable across locales while isolating Arabic labels inside the LTR shell. */
+html[dir="rtl"] .research-topbar,html[dir="rtl"] .research-topbar .nav-desktop,html[dir="rtl"] .research-topbar .header-actions,html[dir="rtl"] .research-topbar .mobile-menu,html[dir="rtl"] .research-topbar .mobile-menu-panel{direction:ltr;unicode-bidi:isolate}
+html[dir="rtl"] .research-topbar .brand-context,html[dir="rtl"] .research-topbar .nav-desktop a,html[dir="rtl"] .research-topbar .mobile-menu-links a,html[dir="rtl"] .research-topbar .mobile-search-link{direction:rtl;unicode-bidi:isolate;text-align:start}
+html[dir="rtl"] .research-topbar .language-action{direction:ltr;unicode-bidi:isolate}
 html[dir="rtl"] .language-action{font-family:var(--mono)}
 html[dir="rtl"] .deck-stock strong,html[dir="rtl"] .symbol-cell strong,html[dir="rtl"] .result-symbol,html[dir="rtl"] .page-dossier .dossier-hero h1,html[dir="rtl"] .dossier-card-rank,html[dir="rtl"] .dossier-rank,html[dir="rtl"] .dossier-percentile,html[dir="rtl"] .dossier-date,html[dir="rtl"] .dossier-horizon-label strong,html[dir="rtl"] .result-rank,html[dir="rtl"] .result-horizon,html[dir="rtl"] time,html[dir="rtl"] code,html[dir="rtl"] .control-runline,html[dir="rtl"] .evidence-stat strong,html[dir="rtl"] .evidence-scale strong,html[dir="rtl"] .paper-meta strong,html[dir="rtl"] .formula{direction:ltr;unicode-bidi:isolate;text-align:start}
 html[dir="rtl"] .terminal-model-head,html[dir="rtl"] .terminal-model-row,html[dir="rtl"] .deck-rank-row,html[dir="rtl"] .research-dossier-head,html[dir="rtl"] .research-dossier-row{direction:rtl}
