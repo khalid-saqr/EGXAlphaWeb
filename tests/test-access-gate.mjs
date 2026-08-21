@@ -48,7 +48,13 @@ for (const required of [
   'function bilingualPair(en, ar)',
   '<bdi dir="ltr">EGX /Alpha</bdi>',
   '<bdi dir="ltr">EGX Research</bdi>',
-  'button.innerHTML = bilingualPair(en, ar)'
+  'button.innerHTML = bilingualPair(en, ar)',
+  'class="egx-gate-language-block" lang="en" dir="ltr"',
+  'class="egx-gate-language-block" lang="ar" dir="rtl"',
+  'id="egx-gate-territorial-title-en"',
+  'id="egx-gate-territorial-title-ar"',
+  'id="egx-gate-privacy-title-en"',
+  'id="egx-gate-privacy-title-ar"'
 ]) assert.ok(gate.includes(required), `access gate should include ${required}`);
 
 assert.equal(gate.includes('foreign investors'), false, 'territorial gate must not target a foreign-investor class');
@@ -74,16 +80,26 @@ for (const required of [
   '.egx-access-gate{position:fixed;z-index:10000',
   '.egx-access-card{position:relative;width:min(820px,100%)',
   '.egx-gate-bilingual{display:grid;grid-template-columns:1fr 1fr',
+  '.egx-gate-language-block{min-width:0}',
+  '.egx-gate-language-block>.egx-gate-kicker{margin-bottom:10px}',
   '.egx-access-gate [lang="ar"]{direction:rtl;unicode-bidi:isolate',
   '.egx-access-gate [lang="en"]{direction:ltr;unicode-bidi:isolate}',
   '.egx-access-gate bdi[dir="ltr"]{direction:ltr;unicode-bidi:isolate}',
   '.egx-bidi-pair{display:inline-flex',
+  '.egx-gate-storage-action{flex:1 1 100%;width:100%;display:flex;justify-content:center;text-align:center',
+  '.egx-gate-storage-action>.egx-bidi-pair{display:grid;justify-items:center',
   '@media(max-width:860px){.egx-gate-bilingual{grid-template-columns:1fr',
+  '.egx-gate-language-block[lang="ar"]{padding-top:12px;border-top:1px solid',
   '.egx-gate-confirmation',
   '.egx-gate-continue',
   '@media(max-width:700px)'
 ]) assert.ok(css.includes(required), `access gate CSS should include ${required}`);
 
-assert.ok(sw.includes("'/assets/access-gate.js'"), 'service worker should precache the access-gate module');
+for (const required of [
+  "const VERSION = 'egx-alpha-pwa-v3'",
+  "const criticalGateAssets = new Set(['/assets/access-gate.js', '/assets/pwa.css'])",
+  'criticalGateAssets.has(relative)',
+  "'/assets/access-gate.js'"
+]) assert.ok(sw.includes(required), `service worker should include ${required}`);
 
 console.log('test-access-gate passed');
