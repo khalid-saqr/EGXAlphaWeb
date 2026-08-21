@@ -19,7 +19,7 @@ function relativePath(pathname) {
 const PRECACHE = [
   '/', '/today/', '/ar/', '/ar/today/',
   '/data/latest.json', '/data/index.json',
-  '/assets/app.js', '/assets/pwa.js', '/assets/pwa.css',
+  '/assets/app.js', '/assets/pwa.js', '/assets/access-gate.js', '/assets/pwa.css',
   '/manifest.webmanifest',
   '/assets/icons/icon-192.png',
   '/assets/icons/icon-512.png',
