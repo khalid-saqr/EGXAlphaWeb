@@ -96,6 +96,12 @@ assert.ok(workflow.includes('git checkout origin/main -- data/latest.json data/a
 assert.ok(workflow.includes('Verify final release and publication rollover'), 'Pages CI must include the final release gate');
 assert.ok(workflow.includes('Verify production publication after Pages deploy'), 'main deployments must verify production convergence');
 assert.ok(workflow.includes('EXPECTED_TRADING_DATE'), 'production verification must compare against the built trading date');
+assert.ok(workflow.includes('service_worker_version: ${{ steps.release-meta.outputs.service_worker_version }}'), 'build must expose the service-worker version as release metadata');
+assert.ok(workflow.includes("fs.readFileSync('_site/sw.js', 'utf8')"), 'release metadata must derive the service-worker version from the built artifact');
+assert.ok(workflow.includes('service_worker_version=${version[1]}'), 'release metadata must publish the derived service-worker version');
+assert.ok(workflow.includes('EXPECTED_SW_VERSION: ${{ needs.build.outputs.service_worker_version }}'), 'production verification must consume the derived service-worker version');
+assert.ok(workflow.includes('[ "$live_sw_version" = "$EXPECTED_SW_VERSION" ]'), 'production verification must compare live and built service-worker versions exactly');
+assert.equal(/egx-alpha-pwa-v\d+/.test(workflow), false, 'deployment workflow must never hard-code a service-worker cache generation');
 
 const raw8 = JSON.parse(fs.readFileSync('tests/fixtures/universe-2026-07-08.json', 'utf8'));
 const raw9 = JSON.parse(fs.readFileSync('tests/fixtures/universe-2026-07-09.json', 'utf8'));
