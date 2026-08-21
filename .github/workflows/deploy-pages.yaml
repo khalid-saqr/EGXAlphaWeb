@@ -24,6 +24,7 @@ jobs:
     timeout-minutes: 12
     outputs:
       trading_date: ${{ steps.release-meta.outputs.trading_date }}
+      service_worker_version: ${{ steps.release-meta.outputs.service_worker_version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,7 +53,19 @@ jobs:
 
       - name: Capture release metadata
         id: release-meta
-        run: node -e 'const fs=require("fs"); const p=require("./data/latest.json"); fs.appendFileSync(process.env.GITHUB_OUTPUT, "trading_date="+p.trading_date+"\n")'
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const payload = JSON.parse(fs.readFileSync('data/latest.json', 'utf8'));
+          const serviceWorker = fs.readFileSync('_site/sw.js', 'utf8');
+          const version = serviceWorker.match(/const VERSION = '([^']+)'/);
+          if (!version) throw new Error('Unable to derive service-worker version from _site/sw.js');
+          fs.appendFileSync(
+            process.env.GITHUB_OUTPUT,
+            `trading_date=${payload.trading_date}\nservice_worker_version=${version[1]}\n`
+          );
+          console.log(`Release metadata: trading_date=${payload.trading_date}; service_worker_version=${version[1]}`);
+          NODE
 
       - name: Verify production output and payload identity
         run: node tests/test-build-output.mjs
@@ -136,23 +149,28 @@ jobs:
       - name: Verify production publication after Pages deploy
         env:
           EXPECTED_TRADING_DATE: ${{ needs.build.outputs.trading_date }}
+          EXPECTED_SW_VERSION: ${{ needs.build.outputs.service_worker_version }}
         run: |
           set -euo pipefail
           live_date=""
+          live_sw_version=""
           for attempt in {1..12}; do
             body="$(curl -fsS --max-time 15 -H 'Cache-Control: no-cache' "https://egxresearch.com/data/latest.json?release=${GITHUB_SHA}" || true)"
             if [ -n "$body" ]; then
               live_date="$(printf '%s' "$body" | python3 -c 'import json,sys; data=json.load(sys.stdin); print(data.get("trading_date",""))' 2>/dev/null || true)"
               if [ "$live_date" = "$EXPECTED_TRADING_DATE" ]; then
-                if curl -fsS --max-time 15 "https://egxresearch.com/manifest.webmanifest?release=${GITHUB_SHA}" >/dev/null \
-                  && curl -fsS --max-time 15 "https://egxresearch.com/sw.js?release=${GITHUB_SHA}" | grep -q "egx-alpha-pwa-v2"; then
-                  echo "Production release verified for trading date ${EXPECTED_TRADING_DATE}."
+                live_sw="$(curl -fsS --max-time 15 -H 'Cache-Control: no-cache' "https://egxresearch.com/sw.js?release=${GITHUB_SHA}" || true)"
+                live_sw_version="$(printf '%s\n' "$live_sw" | sed -n "s/^const VERSION = '\([^']*\)';$/\1/p" | head -n 1)"
+                if curl -fsS --max-time 15 -H 'Cache-Control: no-cache' "https://egxresearch.com/manifest.webmanifest?release=${GITHUB_SHA}" >/dev/null \
+                  && [ -n "$live_sw_version" ] \
+                  && [ "$live_sw_version" = "$EXPECTED_SW_VERSION" ]; then
+                  echo "Production release verified for trading date ${EXPECTED_TRADING_DATE} with service worker ${EXPECTED_SW_VERSION}."
                   exit 0
                 fi
               fi
             fi
-            echo "Production not converged yet (attempt ${attempt}/12; live=${live_date:-unavailable}; expected=${EXPECTED_TRADING_DATE})."
+            echo "Production not converged yet (attempt ${attempt}/12; live_date=${live_date:-unavailable}; expected_date=${EXPECTED_TRADING_DATE}; live_sw=${live_sw_version:-unavailable}; expected_sw=${EXPECTED_SW_VERSION:-unavailable})."
             sleep 5
           done
-          echo "Production publication verification failed: live=${live_date:-unavailable}, expected=${EXPECTED_TRADING_DATE}."
+          echo "Production publication verification failed: live_date=${live_date:-unavailable}, expected_date=${EXPECTED_TRADING_DATE}, live_sw=${live_sw_version:-unavailable}, expected_sw=${EXPECTED_SW_VERSION:-unavailable}."
           exit 1
