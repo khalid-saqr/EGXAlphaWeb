@@ -7,7 +7,10 @@ const allowedBinary = new Set([
   'assets/icons/icon-192.png',
   'assets/icons/icon-512.png',
   'assets/icons/icon-maskable-512.png',
-  'assets/icons/apple-touch-icon.png'
+  'assets/icons/apple-touch-icon.png',
+  'assets/case-studies/EGX_Alpha_Case_Study_1.pdf',
+  'assets/case-studies/EGX_Alpha_Case_Study_2.pdf',
+  'assets/case-studies/EGX_Alpha_Case_Study_3.pdf'
 ]);
 function walk(dir) {
   for (const name of fs.readdirSync(dir)) {
@@ -22,6 +25,6 @@ function walk(dir) {
   }
 }
 walk('.');
-assert.equal(allowedBinary.size, 4, 'binary allowlist should remain narrow');
-for (const file of allowedBinary) assert.equal(fs.existsSync(file), true, `approved PWA icon should exist: ${file}`);
+assert.equal(allowedBinary.size, 7, 'binary allowlist should remain narrow');
+for (const file of allowedBinary) assert.equal(fs.existsSync(file), true, `approved public binary should exist: ${file}`);
 console.log('test-no-binaries passed');

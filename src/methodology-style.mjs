@@ -44,10 +44,29 @@ export const METHODOLOGY_CSS = String.raw`
 .page-methodology .reference-card small{display:block;margin-top:6px;color:var(--muted);font-size:.7rem;line-height:1.5}
 .page-methodology .reference-card:hover{border-color:var(--brand)}
 .page-methodology .methodology-closing{margin:0 0 12px;padding:clamp(28px,4vw,42px);border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--brand) 3%,var(--surface))}
-.page-methodology .methodology-closing strong{display:block;max-width:30ch;color:var(--text);font-size:clamp(1.35rem,2.8vw,2.25rem);line-height:1.18}
-.page-methodology .methodology-closing p{max-width:72ch;margin:14px 0 0;color:var(--soft);font-size:.9rem;line-height:1.72}
+.page-methodology .case-study-head{max-width:82ch}
+.page-methodology .case-study-kicker{display:block;color:var(--brand);font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.09em}
+.page-methodology .case-study-head h2{max-width:20ch;margin:10px 0 0;color:var(--text);font-size:clamp(1.55rem,3vw,2.5rem);line-height:1.1;letter-spacing:-.025em}
+.page-methodology .case-study-head .case-study-intro{max-width:75ch;margin:14px 0 0;color:var(--soft);font-size:.88rem;line-height:1.72}
+.page-methodology .case-study-list{margin-top:clamp(24px,3vw,34px);border-top:1px solid var(--line)}
+.page-methodology .case-study-record{border-bottom:1px solid var(--line)}
+.page-methodology .case-study-record summary{display:grid;grid-template-columns:42px minmax(0,1fr) 28px;gap:14px;align-items:start;padding:20px 0;list-style:none;cursor:pointer;color:var(--text)}
+.page-methodology .case-study-record summary::-webkit-details-marker{display:none}
+.page-methodology .case-study-record summary:focus-visible{outline:2px solid var(--brand);outline-offset:6px;border-radius:4px}
+.page-methodology .case-study-number{padding-top:3px;color:var(--brand);font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.08em}
+.page-methodology .case-study-record summary strong{display:block;max-width:68ch;font-size:clamp(.94rem,1.55vw,1.08rem);line-height:1.5}
+.page-methodology .case-study-toggle{display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--line);border-radius:50%;color:var(--brand);font-family:var(--mono);font-size:1rem;font-weight:700;line-height:1}
+.page-methodology .case-study-toggle::before{content:'+'}
+.page-methodology .case-study-record[open] .case-study-toggle::before{content:'−'}
+.page-methodology .case-study-record[open] summary{padding-bottom:12px}
+.page-methodology .case-study-panel{padding-block:0 24px;padding-inline:56px 42px}
+.page-methodology .case-study-panel p{max-width:72ch;margin:0;color:var(--soft);font-size:.86rem;line-height:1.72}
+.page-methodology .case-study-panel p strong{color:var(--text);font-weight:850}
+.page-methodology .case-study-download{display:inline-flex;align-items:center;gap:8px;min-height:40px;margin-top:16px;padding:0 13px;border:1px solid var(--line);border-radius:8px;color:var(--soft);font-family:var(--mono);font-size:.6rem;font-weight:900;letter-spacing:.05em;text-decoration:none}
+.page-methodology .case-study-download:hover{border-color:var(--brand);color:var(--brand)}
+.page-methodology .case-study-download span{font-size:.8rem}
 @media(max-width:900px){.page-methodology .priority-grid,.page-methodology .capability-grid,.page-methodology .agenda-grid{grid-template-columns:1fr 1fr}.page-methodology .learning-loop{flex-wrap:wrap}.page-methodology .learning-arrow{min-width:18px}}
 @media(max-width:700px){.page-methodology .methodology-question,.page-methodology .methodology-section{grid-template-columns:1fr;gap:12px}.page-methodology .methodology-index{padding-top:0}.page-methodology .public-private,.page-methodology .reference-grid{grid-template-columns:1fr}.page-methodology .methodology-hero h1{max-width:none}}
-@media(max-width:520px){.page-methodology .priority-grid,.page-methodology .capability-grid,.page-methodology .agenda-grid{grid-template-columns:1fr}.page-methodology .learning-loop{flex-direction:column}.page-methodology .learning-step{flex-basis:auto;min-height:58px}.page-methodology .learning-arrow{min-height:20px;transform:rotate(90deg)}.page-methodology .methodology-actions{display:grid}.page-methodology .methodology-actions a{width:100%;justify-content:center}}
-@media print{@page{size:A4;margin:14mm}.page-methodology .topbar,.page-methodology .site-footer{display:none!important}.page-methodology .site-shell{width:100%;padding:0}.page-methodology .methodology-story{width:100%;margin:0}.page-methodology .methodology-section,.page-methodology .priority-grid,.page-methodology .public-private,.page-methodology .reference-block{break-inside:avoid}}
+@media(max-width:520px){.page-methodology .priority-grid,.page-methodology .capability-grid,.page-methodology .agenda-grid{grid-template-columns:1fr}.page-methodology .learning-loop{flex-direction:column}.page-methodology .learning-step{flex-basis:auto;min-height:58px}.page-methodology .learning-arrow{min-height:20px;transform:rotate(90deg)}.page-methodology .methodology-actions{display:grid}.page-methodology .methodology-actions a{width:100%;justify-content:center}.page-methodology .case-study-record summary{grid-template-columns:30px minmax(0,1fr) 26px;gap:10px;padding:18px 0}.page-methodology .case-study-toggle{width:26px;height:26px}.page-methodology .case-study-panel{padding-inline:40px 0}.page-methodology .case-study-download{width:100%;justify-content:center;text-align:center}}
+@media print{@page{size:A4;margin:14mm}.page-methodology .topbar,.page-methodology .site-footer{display:none!important}.page-methodology .site-shell{width:100%;padding:0}.page-methodology .methodology-story{width:100%;margin:0}.page-methodology .methodology-section,.page-methodology .priority-grid,.page-methodology .public-private,.page-methodology .reference-block,.page-methodology .methodology-case-studies{break-inside:avoid}.page-methodology .case-study-record:not([open])>.case-study-panel{display:block}.page-methodology .case-study-toggle{display:none}}
 `;
