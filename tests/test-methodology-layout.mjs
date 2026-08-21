@@ -14,7 +14,13 @@ for (const required of [
   'Every forecast becomes future evidence. Every new generation must earn promotion.',
   'The public website is the research surface, not the engine room.',
   'More depth. More evidence. No novelty for its own sake.',
-  'An index gives you the average. /Alpha gives you the order.',
+  'EGX /Alpha Case Studies',
+  'EGX /Alpha Rank 1 vs. Rank 1+: A Comparative 1D/3D Exit-Discipline Trading Simulation',
+  'EGX /Alpha Rank 1 vs. Rank 1+: Comparative Next-Session Whole-Share Trading Simulations',
+  'Positive-Filtered vs. Raw-Rank Five-Sleeve Portfolios',
+  'A tightly controlled ex-ante test:',
+  'The preserved ex-ante signal choice reshaped the entire trading path:',
+  'A capacity-aware portfolio stress test delivered the uncomfortable result:',
   '1D', '3D', '5D', '10D',
   'Relative Rank', 'Model Direction',
   'progressive, generational learning',
@@ -34,7 +40,10 @@ for (const required of [
   'كل توقع يتحول لاحقاً إلى دليل. وكل جيل جديد يجب أن يستحق مكانه.',
   'ما تراه على الموقع هو سطح البحث، وليس غرفة المحرك.',
   'عمق أكبر. أدلة أكثر. بلا تعقيد لمجرد الاستعراض.',
-  'المؤشر يعطيك المتوسط. EGX /Alpha يعطيك الترتيب.',
+  'دراسات حالة EGX /Alpha',
+  'اختبار ex-ante محكوم:',
+  'غيّر اختيار الإشارة ex-ante المحفوظ مسار التداول بالكامل:',
+  'اختبار محفظة يراعي سعة التداول كشف نتيجة معاكسة للتوقع:',
   'التسلسل الزمني', 'الآفاق الأربعة', 'الترتيب والاتجاه إشارتان منفصلتان', 'طبقة التعلم العميق', 'التحقق زمني'
 ]) assert.ok(ar.includes(required), `Arabic methodology should include ${required}`);
 
@@ -54,6 +63,24 @@ for (const href of ['/ar/today/', '/ar/investor-guide/', '/ar/archive/', '/data/
   assert.ok(ar.includes(`href="${href}"`), `Arabic methodology should expose ${href}`);
 }
 assert.equal(ar.includes('href="/ar/data/latest.json"'), false, 'Arabic methodology must preserve the shared public-data path');
+
+const caseStudyFiles = [
+  'EGX_Alpha_Case_Study_1.pdf',
+  'EGX_Alpha_Case_Study_2.pdf',
+  'EGX_Alpha_Case_Study_3.pdf'
+];
+for (const file of caseStudyFiles) {
+  const href = `/assets/case-studies/${file}`;
+  assert.ok(en.includes(`href="${href}"`), `English methodology should link ${href}`);
+  assert.ok(ar.includes(`href="${href}"`), `Arabic methodology should link ${href}`);
+  assert.equal(fs.existsSync(`_site${href}`), true, `${href} should be present in Pages artifact`);
+}
+assert.equal((en.match(/class="case-study-record"/g) || []).length, 3, 'English methodology should expose exactly three case-study accordions');
+assert.equal((ar.match(/class="case-study-record"/g) || []).length, 3, 'Arabic methodology should expose exactly three case-study accordions');
+assert.ok(en.includes(' download>DOWNLOAD CASE STUDY · PDF'), 'English case-study links should download PDFs');
+assert.ok(ar.includes(' download>تنزيل دراسة الحالة · PDF'), 'Arabic case-study links should download PDFs');
+assert.equal(en.includes('An index gives you the average. /Alpha gives you the order.'), false, 'retired English closing copy should be removed');
+assert.equal(ar.includes('المؤشر يعطيك المتوسط. EGX /Alpha يعطيك الترتيب.'), false, 'retired Arabic closing copy should be removed');
 
 for (const privateTerm of [
   'ranking_score', 'direction_logit', 'return_forecast', 'x_seq', 'symbol_idx',
