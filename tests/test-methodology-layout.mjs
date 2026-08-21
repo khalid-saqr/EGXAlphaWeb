@@ -47,10 +47,20 @@ for (const required of [
   'التسلسل الزمني', 'الآفاق الأربعة', 'الترتيب والاتجاه إشارتان منفصلتان', 'طبقة التعلم العميق', 'التحقق زمني'
 ]) assert.ok(ar.includes(required), `Arabic methodology should include ${required}`);
 
+const enQuestionIndex = en.indexOf('THE QUESTION /ALPHA ANSWERS');
+const enCaseStudiesIndex = en.indexOf('EGX /Alpha Case Studies');
+const enProblemIndex = en.indexOf('01 / THE PROBLEM');
+assert.ok(enQuestionIndex >= 0 && enCaseStudiesIndex > enQuestionIndex && enProblemIndex > enCaseStudiesIndex, 'English case studies should sit in the hero after the methodology question and before section 01');
+
+const arQuestionIndex = ar.indexOf('السؤال الذي يجيب عنه EGX /Alpha');
+const arCaseStudiesIndex = ar.indexOf('دراسات حالة EGX /Alpha');
+const arProblemIndex = ar.indexOf('01 / المشكلة');
+assert.ok(arQuestionIndex >= 0 && arCaseStudiesIndex > arQuestionIndex && arProblemIndex > arCaseStudiesIndex, 'Arabic case studies should sit in the hero after the methodology question and before section 01');
+
 for (const href of [
   'https://www.egx.com.eg/en/indexrulesmethodologyegx70-ewi.aspx?nav=16',
   'https://academic.oup.com/rfs/article/33/5/2223/5758276',
-  'https://pubsonline.informs.org/doi/10.1287/mnsc.2023.4695'
+  'https://pubsonline.informs.com/doi/10.1287/mnsc.2023.4695'
 ]) {
   assert.ok(en.includes(`href="${href}"`), `English methodology should link ${href}`);
   assert.ok(ar.includes(`href="${href}"`), `Arabic methodology should link ${href}`);
