@@ -1,4 +1,4 @@
-(function () {
+(async function () {
   const configText = document.getElementById('site-config')?.textContent?.trim();
   const payloadText = document.getElementById('beacon-payload')?.textContent?.trim();
   let siteConfig = { basePath: '', locale: 'en' };
@@ -8,6 +8,18 @@
 
   const basePath = String(siteConfig.basePath || '').replace(/\/$/, '');
   const locale = String(siteConfig.locale || 'en').toLowerCase().startsWith('ar') ? 'ar' : 'en';
+  const STORAGE_OPTOUT_KEY = 'egxalpha-storage-optout-v1';
+  const persistentDeviceStorageEnabled = () => {
+    try { return localStorage.getItem(STORAGE_OPTOUT_KEY) !== '1'; } catch (_) { return false; }
+  };
+
+  try {
+    const gateModule = await import(`${basePath || ''}/assets/access-gate.js`);
+    await gateModule.initAccessGate();
+  } catch (_) {
+    return;
+  }
+
   const strings = locale === 'ar' ? {
     install: 'تثبيت EGX /ALPHA',
     installCta: 'تثبيت EGX /Alpha',
@@ -17,6 +29,7 @@
     installGeneric: 'استخدم خيار تثبيت التطبيق من قائمة المتصفح.',
     installIOS: 'على iPhone أو iPad: اضغط مشاركة ثم «إضافة إلى الشاشة الرئيسية».',
     installDismissed: 'يمكنك تثبيت التطبيق لاحقاً من هذا الخيار.',
+    storageDisabled: 'التخزين الوظيفي المستمر معطّل من إعدادات الخصوصية.',
     online: 'متصل · يتم فحص أحدث سجل عند فتح التطبيق',
     offline: 'غير متصل · عرض آخر سجل عام محفوظ',
     checking: 'جارٍ فحص أحدث سجل عام…',
@@ -32,6 +45,7 @@
     installGeneric: 'Use your browser menu and choose Install app.',
     installIOS: 'On iPhone or iPad: tap Share, then Add to Home Screen.',
     installDismissed: 'You can install the app later from this control.',
+    storageDisabled: 'Persistent functional storage is disabled in privacy settings.',
     online: 'ONLINE · LATEST RECORD CHECKED ON OPEN',
     offline: 'OFFLINE · SHOWING LAST CACHED PUBLIC RECORD',
     checking: 'CHECKING LATEST PUBLIC RECORD…',
@@ -75,6 +89,19 @@
 
   function setInstallState() {
     if (!installButtons.length) return;
+    if (!persistentDeviceStorageEnabled()) {
+      for (const button of installButtons) {
+        button.textContent = installLabel(button);
+        button.disabled = true;
+        button.dataset.state = 'storage-disabled';
+      }
+      if (footerInstallHelp) {
+        footerInstallHelp.hidden = false;
+        footerInstallHelp.textContent = strings.storageDisabled;
+      }
+      for (const help of installHelps.filter(help => help !== footerInstallHelp)) help.hidden = true;
+      return;
+    }
     if (isStandalone()) {
       for (const button of installButtons) {
         button.textContent = installedLabel(button);
@@ -173,7 +200,7 @@
 
   for (const installButton of installButtons) {
     installButton.addEventListener('click', async () => {
-      if (isStandalone()) return;
+      if (isStandalone() || !persistentDeviceStorageEnabled()) return;
       const installHelp = helpForButton(installButton);
       if (!deferredPrompt) {
         if (installHelp) {
@@ -194,15 +221,21 @@
     });
   }
 
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', async () => {
-      try {
-        const scope = `${basePath || ''}/`;
-        const registration = await navigator.serviceWorker.register(`${basePath}/sw.js`, { scope });
-        registration.update().catch(() => {});
-      } catch (_) {}
-    });
+  async function registerServiceWorker() {
+    if (!('serviceWorker' in navigator) || !persistentDeviceStorageEnabled()) return;
+    try {
+      const scope = `${basePath || ''}/`;
+      const registration = await navigator.serviceWorker.register(`${basePath}/sw.js`, { scope });
+      registration.update().catch(() => {});
+    } catch (_) {}
   }
+
+  if ('serviceWorker' in navigator) window.addEventListener('load', registerServiceWorker);
+  window.addEventListener('egx-storage-mode-changed', event => {
+    if (event.detail?.enabled) registerServiceWorker();
+    else deferredPrompt = null;
+    setInstallState();
+  });
 
   window.addEventListener('online', () => { updateConnectionState(); checkLatestPublicRecord(); });
   window.addEventListener('offline', updateConnectionState);
