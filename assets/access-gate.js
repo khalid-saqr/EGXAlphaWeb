@@ -41,9 +41,8 @@ async function clearFunctionalStorage() {
 }
 
 async function setPersistentStorageEnabled(enabled) {
-  if (enabled) {
-    safeLocalRemove(STORAGE_OPTOUT_KEY);
-  } else {
+  if (enabled) safeLocalRemove(STORAGE_OPTOUT_KEY);
+  else {
     safeLocalSet(STORAGE_OPTOUT_KEY, '1');
     await clearFunctionalStorage();
   }
@@ -71,12 +70,16 @@ function bilingualLegalCopy() {
   return `<section class="egx-gate-legal" aria-labelledby="egx-gate-territorial-title-en egx-gate-territorial-title-ar">
     <div class="egx-gate-bilingual egx-gate-language-sections">
       <div class="egx-gate-language-block" lang="en" dir="ltr">
-        <span class="egx-gate-kicker" id="egx-gate-territorial-title-en">TERRITORIAL ACCESS &amp; REGULATORY STATUS</span>
-        <p><strong>EGX Research</strong> is an independent research publication and educational website produced and operated outside the Arab Republic of Egypt by entities that maintain no establishment or branch in Egypt for the conduct of this activity. EGX /Alpha uses purpose-built deep-learning models to publish general, non-personalised quantitative research on the Egyptian Exchange. The website does not execute transactions, hold client funds, manage portfolios or provide personalised investment advice.<br><br>The service does not hold or claim a licence or approval from the Egyptian Financial Regulatory Authority and is not offered or directed to persons located in Egypt. Its technical accessibility over the public internet is not intended to constitute an offering of the service into Egypt.</p>
+        <span class="egx-gate-kicker" id="egx-gate-territorial-title-en">RESEARCH STATUS</span>
+        <p><strong>EGX Research</strong> is an independent research publication produced and operated outside the Arab Republic of Egypt by entities that maintain no establishment or branch in Egypt for this activity. The website does not execute transactions, hold client funds, manage portfolios or provide personalised investment advice. Relative Rank, Model Direction and related outputs are general model-generated research classifications; they are not Buy, Hold or Sell recommendations.</p>
+        <span class="egx-gate-kicker">TERRITORIAL ACCESS</span>
+        <p>EGX Research does not hold or claim a licence or approval from the Egyptian Financial Regulatory Authority, and this public research environment is not offered or directed to persons physically located in Egypt. Technical accessibility through the public internet is not intended to constitute an offering into Egypt.</p>
       </div>
       <div class="egx-gate-language-block" lang="ar" dir="rtl">
-        <span class="egx-gate-kicker" id="egx-gate-territorial-title-ar">نطاق الوصول والصفة التنظيمية</span>
-        <p><strong><bdi dir="ltr">EGX Research</bdi></strong> منشور بحثي وموقع تعليمي مستقل يُنتج ويُدار من خارج جمهورية مصر العربية بواسطة جهات لا تملك منشأة أو فرعًا في مصر لمزاولة هذا النشاط. يستخدم <bdi dir="ltr">EGX /Alpha</bdi> نماذج تعلم عميق متخصصة لنشر بحث كمي عام وغير شخصي عن البورصة المصرية. ولا ينفذ الموقع معاملات، أو يحتفظ بأموال العملاء، أو يدير محافظ، أو يقدم استشارات استثمارية شخصية.<br><br>الخدمة لا تحمل ولا تدّعي الحصول على ترخيص أو اعتماد من الهيئة العامة للرقابة المالية المصرية، ولا تُعرض أو تُوجَّه إلى أشخاص موجودين داخل مصر. ولا يُقصد من مجرد إتاحتها التقنية عبر شبكة الإنترنت أن يمثل ذلك عرضًا للخدمة داخل جمهورية مصر العربية.</p>
+        <span class="egx-gate-kicker" id="egx-gate-territorial-title-ar">الصفة البحثية</span>
+        <p><strong><bdi dir="ltr">EGX Research</bdi></strong> منشور بحثي مستقل يُنتج ويُدار من خارج جمهورية مصر العربية بواسطة جهات لا تملك منشأة أو فرعاً في مصر لمزاولة هذا النشاط. ولا ينفذ الموقع معاملات، أو يحتفظ بأموال العملاء، أو يدير محافظ، أو يقدم استشارات استثمارية شخصية. ويُعد الترتيب النسبي واتجاه النموذج والمخرجات ذات الصلة تصنيفات بحثية عامة مولدة بواسطة النموذج، وليست توصيات شراء أو احتفاظ أو بيع.</p>
+        <span class="egx-gate-kicker">نطاق الوصول</span>
+        <p>لا تحمل <bdi dir="ltr">EGX Research</bdi> ولا تدعي ترخيصاً أو اعتماداً من الهيئة العامة للرقابة المالية المصرية، ولا تُعرض هذه البيئة البحثية العامة أو تُوجَّه إلى أشخاص موجودين فعلياً داخل مصر. ولا يُقصد من الإتاحة التقنية عبر الإنترنت العام أن تمثل عرضاً للخدمة داخل مصر.</p>
       </div>
     </div>
   </section>`;
@@ -87,11 +90,11 @@ function privacyCopy() {
     <div class="egx-gate-bilingual egx-gate-bilingual-compact egx-gate-language-sections">
       <div class="egx-gate-language-block" lang="en" dir="ltr">
         <span class="egx-gate-kicker" id="egx-gate-privacy-title-en">PRIVACY &amp; DEVICE STORAGE</span>
-        <p>EGX Research uses no advertising, analytics or behavioural-tracking cookies. After access, the site may remember an appearance preference and cache first-party content for performance and offline/PWA functionality. A session-only access acknowledgement avoids repeating this gate during the same browser session. None of this is used to profile visitors or shared with advertisers.</p>
+        <p>This website does not use advertising, behavioural-tracking or profiling cookies. It may remember functional preferences such as appearance and may cache first-party public content to support the installable web application. Access acknowledgement is session-based.</p>
       </div>
       <div class="egx-gate-language-block" lang="ar" dir="rtl">
         <span class="egx-gate-kicker" id="egx-gate-privacy-title-ar">الخصوصية والتخزين على الجهاز</span>
-        <p>لا تستخدم <bdi dir="ltr">EGX Research</bdi> ملفات تعريف ارتباط إعلانية أو تحليلية أو تقنيات لتتبع السلوك. بعد الدخول، قد يتذكر الموقع تفضيل المظهر ويخزن محتوى من الموقع نفسه لتحسين الأداء ودعم العمل دون اتصال وخصائص التطبيق. ويُستخدم إقرار وصول خاص بالجلسة فقط لتجنب تكرار هذه البوابة خلال جلسة المتصفح نفسها. ولا تُستخدم هذه البيانات لإنشاء ملف سلوكي للزوار أو مشاركتها مع المعلنين.</p>
+        <p>لا يستخدم الموقع ملفات تعريف ارتباط إعلانية أو للتتبع السلوكي أو بناء الملفات الشخصية. وقد يتذكر بعض التفضيلات الوظيفية مثل المظهر، كما قد يحفظ محتوى عاماً من الطرف الأول لدعم تطبيق الويب القابل للتثبيت. ويقتصر تأكيد الدخول على جلسة الاستخدام الحالية.</p>
       </div>
     </div>
     <div class="egx-gate-storage-row">
@@ -107,9 +110,9 @@ function fullGateMarkup() {
       <header class="egx-gate-header">
         <div class="egx-gate-mark" aria-hidden="true"><span>/</span><strong>A</strong></div>
         <div>
-          <span class="egx-gate-eyebrow">EGX RESEARCH · /ALPHA</span>
-          <h1 id="egx-gate-title"><span lang="en" dir="ltr">ADVANCED DEEP-LEARNING RESEARCH ON THE EGYPTIAN EXCHANGE</span><span lang="ar" dir="rtl">بحث متقدم بالتعلم العميق حول البورصة المصرية</span></h1>
-          <p id="egx-gate-intro"><span lang="en" dir="ltr">Purpose-built quantitative intelligence designed to broaden international understanding and research visibility of the Egyptian market.</span><span lang="ar" dir="rtl">ذكاء كمي متخصص طُوّر لتوسيع الفهم الدولي للسوق المصري وتعزيز حضوره البحثي خارج مصر.</span></p>
+          <span class="egx-gate-eyebrow"><span lang="en" dir="ltr">PUBLIC QUANTITATIVE RESEARCH ENVIRONMENT</span><span lang="ar" dir="rtl">بيئة عامة للبحث الكمي</span></span>
+          <h1 id="egx-gate-title"><span lang="en" dir="ltr">A research digital twin of the Egyptian equity market</span><span lang="ar" dir="rtl">توأم رقمي بحثي لسوق الأسهم المصري</span></h1>
+          <p id="egx-gate-intro"><span lang="en" dir="ltr">EGX /Alpha is a continuously updated research digital twin of the Egyptian equity market. Its purpose-built deep-learning engine publishes a general, non-personalised representation of relative behaviour across the eligible equity universe after each completed EGX session, for quantitative market research, financial literacy and reproducible study.</span><span lang="ar" dir="rtl"><bdi dir="ltr">EGX /Alpha</bdi> توأم رقمي بحثي متجدد لسوق الأسهم المصري. وينشر محرك التعلم العميق المتخصص تمثيلاً بحثياً عاماً وغير شخصي للسلوك النسبي لمجموعة الأسهم المؤهلة بعد كل جلسة مكتملة في البورصة المصرية، للبحث الكمي في السوق ودعم الثقافة المالية والدراسة القابلة لإعادة التحقق.</span></p>
         </div>
       </header>
       ${bilingualLegalCopy()}
@@ -119,13 +122,13 @@ function fullGateMarkup() {
         <span class="egx-gate-checkmark" aria-hidden="true"></span>
         <span class="egx-gate-confirmation-copy">
           <strong lang="en" dir="ltr">I confirm that I am physically located outside the Arab Republic of Egypt and am accessing EGX Research from outside Egypt.</strong>
-          <strong lang="ar" dir="rtl">أقر بأنني موجود فعليًا خارج جمهورية مصر العربية وأنني أدخل إلى <bdi dir="ltr">EGX Research</bdi> من خارجها.</strong>
+          <strong lang="ar" dir="rtl">أؤكد أنني موجود فعلياً خارج جمهورية مصر العربية، وأنني أدخل إلى <bdi dir="ltr">EGX Research</bdi> من خارج مصر.</strong>
         </span>
       </label>
-      <p class="egx-gate-egypt-note"><span lang="en" dir="ltr">If you are physically located in Egypt, do not confirm the statement below or continue.</span><span lang="ar" dir="rtl">إذا كنت موجودًا فعليًا داخل جمهورية مصر العربية، فلا تؤكد الإقرار التالي ولا تتابع الدخول.</span></p>
+      <p class="egx-gate-egypt-note"><span lang="en" dir="ltr">If you are physically located in Egypt, do not confirm this statement or continue into the public research environment.</span><span lang="ar" dir="rtl">إذا كنت موجوداً فعلياً داخل مصر، فلا تؤكد هذه العبارة ولا تتابع الدخول إلى بيئة البحث العامة.</span></p>
       <button class="egx-gate-continue" type="button" data-egx-gate-continue disabled>
-        <span lang="en" dir="ltr">CONTINUE TO EGX /ALPHA</span>
-        <span lang="ar" dir="rtl">المتابعة إلى <bdi dir="ltr">EGX /ALPHA</bdi></span>
+        <span lang="en" dir="ltr">ENTER RESEARCH ENVIRONMENT</span>
+        <span lang="ar" dir="rtl">الدخول إلى البيئة البحثية</span>
       </button>
     </section>
   </div>`;

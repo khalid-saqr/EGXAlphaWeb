@@ -33,7 +33,7 @@ assert.ok(arHome.includes('<link rel="alternate" hreflang="ar" href="https://egx
 assert.ok(arHome.includes('<link rel="alternate" hreflang="x-default" href="https://egxresearch.com/">'));
 assert.ok(enHome.includes('<link rel="alternate" hreflang="ar" href="https://egxresearch.com/ar/">'));
 
-for (const required of ['EGX Research', 'ALPHA', 'كيف يرتب EGX /Alpha أسهم EGX المؤهلة للجلسات المقبلة؟', 'ينشر EGX /Alpha ترتيباً بحثياً نسبياً للأسهم المؤهلة', 'مخرجات نموذجية عامة مخصصة للبحث والمعلومات', 'الترتيب النسبي', 'اتجاه النموذج', 'تغير الترتيب', 'إيجابي', 'محايد', 'سلبي', 'اللغة', 'EN', 'تثبيت EGX /ALPHA', '>التطبيق<']) {
+for (const required of ['EGX Research', 'ALPHA', 'EGX /ALPHA · توأم رقمي بحثي', 'شاهد كيف يقرأ التعلم العميق بنية سوق الأسهم المصري.', 'EGX /Alpha توأم رقمي بحثي متجدد لسوق الأسهم المصري.', 'الترتيب النسبي', 'اتجاه النموذج', 'تغير الترتيب', 'إيجابي', 'محايد', 'سلبي', 'اللغة', 'EN', 'تثبيت EGX /ALPHA', '>التطبيق<']) {
   assert.ok(arHome.includes(required), `Arabic homepage should include ${required}`);
 }
 for (const bad of ['Deep-learning ranking of Egyptian equities.', 'ترتيب أسهم البورصة المصرية باستخدام التعلم العميق.', 'After each completed EGX session, /Alpha ranks the eligible stock universe across multiple forward horizons.', 'بعد كل جلسة مكتملة في البورصة المصرية، يرتب /Alpha الأسهم المؤهلة عبر عدة آفاق مستقبلية.', 'أي أسهم EGX تستحق انتباهك الآن؟', 'أي أسهم EGX تستحق انتباهك غداً؟', 'ترتيب يومي للأولوية', 'السهمS', 'stocks analysed', '>Positive<', '>Neutral<', '>Negative<', '>Today<', '>History<', '>Guide<', '>Institutional<', '>LANGUAGE<', '>APP<']) {
@@ -51,29 +51,29 @@ assert.ok(arHome.includes('rel="manifest" href="/manifest.webmanifest"'), 'Arabi
 assert.ok(arHome.includes('src="/assets/pwa.js"'), 'Arabic pages should use the same PWA runtime');
 
 const arArchive = read('_site/ar/archive/index.html');
-for (const required of ['السجل العام للنموذج', 'الجلسات العامة', 'السجلات الحية', 'السجلات التاريخية', 'فتح الجلسة']) assert.ok(arArchive.includes(required), `Arabic archive should include ${required}`);
+for (const required of ['الذاكرة العامة للنموذج', 'حالات النموذج العامة', 'سجلات من الإنتاج الحي', 'سجلات نموذج تاريخية', 'افتح الحالة المحفوظة']) assert.ok(arArchive.includes(required), `Arabic archive should include ${required}`);
 assert.equal(arArchive.includes('stocks analysed'), false);
 assert.ok(arArchive.includes(`href="/ar/archive/${date}/"`));
 
 const arSearch = read('_site/ar/search/index.html');
-for (const required of ['البحث في السجل العام للنموذج', 'ابحث عن سهم أو جلسة أو أفق للنموذج.', 'رمز السهم', 'اتجاه النموذج']) assert.ok(arSearch.includes(required), `Arabic search should include ${required}`);
+for (const required of ['ابحث في الذاكرة العامة للتوأم الرقمي', 'تتبع سهماً عبر حالات النموذج المنشورة.', 'اتجاه النموذج', 'الترتيب النسبي']) assert.ok(arSearch.includes(required), `Arabic search should include ${required}`);
 assert.ok(arSearch.includes('"locale":"ar"'));
 
 const arMethodology = read('_site/ar/methodology/index.html');
-for (const required of ['ورقة بحثية كمية عامة', 'التسلسل الزمني', 'الآفاق الأربعة', 'الترتيب والاتجاه إشارتان منفصلتان', 'طبقة التعلم العميق', 'التحقق زمني']) assert.ok(arMethodology.includes(required), `Arabic methodology should include ${required}`);
+for (const required of ['ورقة بحثية كمية عامة', 'بناء توأم رقمي بحثي لسوق الأسهم المصري.', 'الترتيب النسبي', 'اتجاه النموذج', 'التعلم العميق', 'يجب أن يظل المستقبل مستقبلاً أثناء الاختبار.']) assert.ok(arMethodology.includes(required), `Arabic methodology should include ${required}`);
 assert.equal(arMethodology.includes('HERO FOCUS'), false, 'methodology must remain aligned with the unified 5D-primary terminal');
 assert.equal(arMethodology.includes('default hero lens'), false);
 assert.ok(arMethodology.includes('href="/methodology/"') || arMethodology.includes('href="/"'), 'Arabic methodology should expose an English counterpart link');
 
 const enGuide = read('_site/investor-guide/index.html');
-for (const required of ['What EGX /Alpha Publishes — and How to Interpret the Daily Ranking', 'The question the engine is built to answer', 'How to read the daily ranking', 'How the fields can be read together', 'market-relative forward return']) assert.ok(enGuide.includes(required), `English research interpretation guide should include ${required}`);
+for (const required of ['FINANCIAL LITERACY · LEARNING GUIDE', 'Learn to read a deep-learning model state.', 'What is a research digital twin?', 'Relative Rank', 'Model Direction', 'How forecasts become evidence']) assert.ok(enGuide.includes(required), `English learning guide should include ${required}`);
 
 const arGuide = read('_site/ar/investor-guide/index.html');
-for (const required of ['دليل تفسير المخرجات البحثية العامة', 'ماذا ينشر EGX /Alpha؟ وكيف تُفسر ترتيباته اليومية؟', 'كيف تُقرأ الحقول معاً؟', 'البورصة المصرية', 'اتجاه النموذج', 'تغير الترتيب']) assert.ok(arGuide.includes(required), `Arabic research interpretation guide should include ${required}`);
-assert.equal(arGuide.includes('INVESTOR الدليل'), false, 'investor-guide context should be fully localized');
-assert.equal(arGuide.includes('كيف يستخدم المستثمر الفرد EGX /Alpha في دعم قراره'), false, 'investor-guide localization test should not require the retired guide heading');
+for (const required of ['دليل التعلم والثقافة المالية', 'تعلّم كيف تقرأ حالة نموذج تعلم عميق.', 'ما هو التوأم الرقمي البحثي؟', 'الترتيب النسبي', 'اتجاه النموذج', 'تغير الترتيب']) assert.ok(arGuide.includes(required), `Arabic learning guide should include ${required}`);
+assert.equal(arGuide.includes('INVESTOR الدليل'), false, 'learning-guide context should be fully localized');
+assert.equal(arGuide.includes('كيف يستخدم المستثمر الفرد EGX /Alpha في دعم قراره'), false, 'learning-guide localization must not restore the retired decision-support heading');
 const schemaMatch = arGuide.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
-assert.ok(schemaMatch, 'Arabic investor guide should retain Article structured data');
+assert.ok(schemaMatch, 'Arabic learning guide should retain Article structured data');
 const schema = JSON.parse(schemaMatch[1]);
 assert.equal(schema.inLanguage, 'ar');
 assert.ok(String(schema.url).endsWith('/ar/investor-guide/'));
@@ -81,10 +81,10 @@ assert.ok(String(schema.mainEntityOfPage).endsWith('/ar/investor-guide/'));
 assert.ok(String(schema.headline).includes('EGX /Alpha'));
 
 const arInstitutional = read('_site/ar/institutional/index.html');
-for (const required of ['ذكاء كمي لأسهم البورصة المصرية', 'القدرات', 'التواصل المؤسسي']) assert.ok(arInstitutional.includes(required), `Arabic institutional page should include ${required}`);
+for (const required of ['توأم رقمي بحثي قابل لإعادة التحقق للأسهم المصرية.', 'القدرات', 'استفسارات مؤسسية']) assert.ok(arInstitutional.includes(required), `Arabic institutional page should include ${required}`);
 
 const arDossier = read(`_site/ar/symbol/${symbol}/index.html`);
-for (const required of [symbol, 'بحث سهم EGX /ALPHA', 'الرؤية الحالية عبر الآفاق', 'سجل الترتيب النسبي', 'المئين للترتيب', `<title>${symbol} — سجل نموذج EGX /Alpha</title>`]) assert.ok(arDossier.includes(required), `Arabic dossier should include ${required}`);
+for (const required of [symbol, 'ذاكرة النموذج للسهم', 'أحدث حالة نموذج منشورة', 'سجل الموقع النسبي للنموذج', 'المئين للترتيب', `<title>${symbol} | ذاكرة النموذج للسهم | EGX Research</title>`]) assert.ok(arDossier.includes(required), `Arabic dossier should include ${required}`);
 assert.equal(arDossier.includes('EGX /Alpha model history'), false, 'Arabic dossier metadata should not retain the English model-history label');
 assert.ok(arDossier.includes(`href="/symbol/${symbol}/"`), 'Arabic dossier language control should return to the English counterpart');
 assert.ok(arDossier.includes(`href="/ar/symbol/${symbol}/"`) || arHome.includes(`href="/ar/symbol/${symbol}/"`), 'Arabic content links should preserve locale when opening stock research');
@@ -101,6 +101,6 @@ for (const required of ['siteConfig.locale', 'siteConfig.strings', 'localizedCon
 assert.equal(client.includes('serviceWorker.register'), false, 'service-worker registration should remain isolated in the PWA runtime');
 const pwa = fs.readFileSync('assets/pwa.js', 'utf8');
 assert.ok(pwa.includes("locale === 'ar'"), 'PWA runtime should localize dynamic install/offline states');
-assert.ok(fs.existsSync('_site/manifest.webmanifest'), 'Commit 5 should emit the PWA manifest');
+assert.ok(fs.existsSync('_site/manifest.webmanifest'), 'build should emit the PWA manifest');
 
 console.log('test-localization passed');

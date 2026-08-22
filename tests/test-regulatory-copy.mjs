@@ -34,6 +34,11 @@ const forbidden = [
   'POST-CLOSE · CAIRO',
   'Quantitative investment research',
   'How can I use it as an investor?',
+  'expert stock investor',
+  'AI investor',
+  'robo-investor',
+  'high-fidelity simulation model',
+  'PUBLIC FINANCIAL-LITERACY RESEARCH ENVIRONMENT',
   'دليل المستثمر الفرد',
   'من أين يقول النموذج إن بحثك يجب أن يبدأ؟',
   'ابدأ من المراكز العليا',
@@ -42,7 +47,8 @@ const forbidden = [
   'ماذا يستحق الانتباه أولاً',
   'توزيع الإشارة',
   'بعد الإغلاق · القاهرة',
-  'كمستثمر يدير محفظته بنفسه'
+  'كمستثمر يدير محفظته بنفسه',
+  'محاكاة عالية الدقة'
 ];
 
 for (const file of pages) {
@@ -61,33 +67,33 @@ const institutional = fs.readFileSync('_site/institutional/index.html', 'utf8');
 const methodology = fs.readFileSync('_site/methodology/index.html', 'utf8');
 
 for (const required of [
-  'How does EGX /Alpha rank the eligible EGX universe for the sessions ahead?',
-  'general model outputs intended for research and informational use',
-  'not recommendations to buy, sell or hold any security',
-  'A daily cross-sectional research ranking of the Egyptian market.',
+  'See the Egyptian equity market through deep learning.',
+  'continuously updated research digital twin of the Egyptian equity market',
+  'neither is a Buy, Hold or Sell recommendation',
+  'A living research record of the Egyptian equity market.',
   'not offered or directed to persons located in Egypt'
 ]) assert.ok(home.includes(required), `homepage should include ${required}`);
 
 for (const required of [
-  'كيف يرتب EGX /Alpha أسهم EGX المؤهلة للجلسات المقبلة؟',
-  'مخرجات نموذجية عامة مخصصة للبحث والمعلومات',
-  'توصيات بشراء أي ورقة مالية',
-  'ترتيب بحثي نسبي يومي للسوق المصري.',
+  'شاهد كيف يقرأ التعلم العميق بنية سوق الأسهم المصري.',
+  'توأم رقمي بحثي متجدد لسوق الأسهم المصري',
+  'لا يمثل أي منهما توصية شراء أو احتفاظ أو بيع',
+  'سجل بحثي حي لسوق الأسهم المصري.',
   'لا يُعرض أو يُوجَّه إلى أشخاص موجودين داخل مصر'
 ]) assert.ok(arHome.includes(required), `Arabic homepage should include ${required}`);
 
-assert.ok(guide.includes('PUBLIC RESEARCH INTERPRETATION GUIDE'));
-assert.ok(guide.includes('How the fields can be read together'));
-assert.ok(arGuide.includes('دليل تفسير المخرجات البحثية العامة'));
-assert.ok(arGuide.includes('كيف تُقرأ الحقول معاً؟'));
+assert.ok(guide.includes('FINANCIAL LITERACY · LEARNING GUIDE'));
+assert.ok(guide.includes('What is a research digital twin?'));
+assert.ok(arGuide.includes('دليل التعلم والثقافة المالية'));
+assert.ok(arGuide.includes('ما هو التوأم الرقمي البحثي؟'));
 
-assert.ok(faq.includes('how should its public ranking be interpreted?'));
-assert.ok(faq.includes('market-relative model classifications rather than Buy, Hold or Sell labels'));
+assert.ok(faq.includes('What does “research digital twin” mean?'));
+assert.ok(faq.includes('They are not Buy, Hold or Sell recommendations'));
 
-assert.ok(institutional.includes('For research collaboration, research publication, research-data formats, technology or other institutional enquiries:'));
-assert.ok(institutional.includes('do not constitute an offer of investment advisory, brokerage, execution, portfolio-management or custody services'));
+assert.ok(institutional.includes('For research collaboration, academic or financial-literacy projects, research-data formats, technology, publication infrastructure or other institutional enquiries:'));
+assert.ok(institutional.includes('Institutional enquiries do not constitute an offer of investment advisory, brokerage, execution, portfolio-management or custody services'));
 
-assert.ok(methodology.includes('From a broad market to a cross-sectional ranking.'));
+assert.ok(methodology.includes('Building a research digital twin of the Egyptian equity market.'));
 assert.ok(methodology.includes('HYPOTHETICAL RESEARCH SIMULATIONS'));
 assert.equal(methodology.includes('EGP 1m to +56.74%'), false, 'promotional simulated-return teaser should not remain on methodology page');
 
