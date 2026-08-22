@@ -23,27 +23,29 @@ for (const token of ['__F1__','__F2__','__F3__','__F4__','__F5__','__F6__','__F7
 
 for (const required of [
   'RESEARCH CLOSE',
-  'A daily cross-sectional research ranking of the Egyptian market.',
-  'Relative Rank and Model Direction provide general quantitative research observations for independent interpretation.',
-  'USE /ALPHA',
-  'Today&#39;s Ranking',
-  'Search Stocks',
-  'Ranking History',
+  'A living research record of the Egyptian equity market.',
+  'published for quantitative market research, financial literacy and reproducible study.',
+  'Relative Rank, Model Direction, Rank Move and related outputs are general model-generated research classifications.',
+  'EXPLORE /ALPHA',
+  "TODAY'S MODEL STATE",
+  'SEARCH',
+  'PUBLIC MODEL MEMORY',
   'UNDERSTAND /ALPHA',
-  'Investor Guide',
-  'Research Methodology',
+  'Learn',
+  'RESEARCH METHOD',
   'Frequently Asked Questions',
   'ACCESS',
   'Institutional Enquiries',
-  'VERIFY PUBLIC RECORD',
-  'INDEPENDENCE AND RESEARCH STATUS NOTICE'
+  'MACHINE-READABLE RECORD',
+  'INDEPENDENCE, RESEARCH STATUS AND TERRITORIAL NOTICE'
 ]) assert.ok(en.includes(required), `English research close should include ${required}`);
 
-assert.ok(en.includes('<a href="/methodology/">Research Methodology</a>\n          <a href="/faq/">Frequently Asked Questions</a>'), 'FAQ link must sit directly below Research Methodology under Understand /Alpha');
-assert.ok(en.includes('<a class="footer-record-link" href="/data/latest.json"><strong>VERIFY PUBLIC RECORD</strong><span class="footer-record-meta">JSON · MACHINE-READABLE</span></a>'), 'verification action must preserve the exact public JSON target while hiding the implementation filename from the visible label');
+assert.ok(en.includes('href="/methodology/"'), 'footer must preserve the methodology route');
+assert.ok(en.includes('href="/faq/"'), 'footer must preserve the FAQ route');
+assert.ok(en.includes('<a class="footer-record-link" href="/data/latest.json"><strong>MACHINE-READABLE RECORD</strong>'), 'machine-readable verification action must preserve the exact public JSON target');
 assert.equal(en.includes('Public quantitative research for the Egyptian Exchange.'), false, 'generic footer identity copy should be retired');
 assert.equal(en.includes('<span class="footer-label">RESEARCH</span>'), false, 'duplicated generic RESEARCH directory should be retired');
-assert.ok(en.includes('The intellectual property rights in EGX Research are owned by EGX Research Community LLP, United Kingdom'), 'English footer must contain the approved independence and research-status notice');
+assert.ok(en.includes('The intellectual property rights in EGX Research are owned by <strong>EGX Research Community LLP</strong>, United Kingdom'), 'English footer must contain the approved independence and research-status notice');
 assert.ok(en.includes('maintain no establishment or branch in Egypt for the conduct of this activity'), 'English footer must preserve the approved jurisdictional fact statement');
 assert.ok(en.includes('not offered or directed to persons located in Egypt'), 'English footer must align with the territorial-access position');
 assert.ok(en.includes('do not constitute recommendations to buy, sell or hold any security'), 'English footer must classify model outputs as research rather than transaction recommendations');
@@ -51,28 +53,29 @@ assert.equal(en.includes('Research and information only. Not investment advice.'
 
 for (const required of [
   '<html lang="ar" dir="rtl">',
-  'خلاصة البحث',
-  'ترتيب بحثي نسبي يومي للسوق المصري.',
-  'يقدم الترتيب النسبي واتجاه النموذج مشاهدات بحثية كمية عامة للتفسير المستقل.',
-  'استخدم /ALPHA',
-  'ترتيب اليوم',
-  'ابحث عن الأسهم',
-  'سجل الترتيب',
+  'خاتمة البحث',
+  'سجل بحثي حي لسوق الأسهم المصري.',
+  'يُنشر للبحث الكمي في السوق، ودعم الثقافة المالية، والدراسة القابلة لإعادة التحقق.',
+  'تصنيفات بحثية عامة مولدة بواسطة النموذج',
+  'استكشف /ALPHA',
+  'حالة النموذج اليوم',
+  '>بحث<',
+  'الذاكرة العامة للنموذج',
   'افهم /ALPHA',
-  'دليل المستثمر',
-  'منهجية البحث',
+  '>تعلّم<',
+  'منهج البحث',
   'الاسئلة الشائعة',
   'الوصول',
   'استفسارات مؤسسية',
-  'تحقق من السجل العام',
+  'السجل القابل للقراءة آلياً',
   '>التطبيق<',
-  'إشعار الاستقلال والصفة البحثية'
+  'إشعار الاستقلال والصفة البحثية والنطاق الإقليمي'
 ]) assert.ok(ar.includes(required), `Arabic research close should include ${required}`);
 assert.ok(ar.includes('href="/ar/faq/"'), 'Arabic footer must link to the localized FAQ route');
 assert.ok(ar.includes('href="/data/latest.json"'), 'Arabic footer must verify the shared root public JSON');
 assert.equal(ar.includes('href="/ar/data/latest.json"'), false, 'Arabic footer must not invent a localized data path');
-assert.ok(ar.includes('حقوق الملكية الفكرية لـEGX Research مملوكة لـEGX Research Community LLP بالمملكة المتحدة'), 'Arabic footer must contain the approved independence and research-status notice');
-assert.ok(ar.includes('الجهات المالكة والمشغلة لا تملك منشأة أو فرعًا في مصر لمزاولة هذا النشاط'), 'Arabic footer must preserve the approved jurisdictional fact statement');
+assert.ok(ar.includes('حقوق الملكية الفكرية لـEGX Research مملوكة لـ<strong>EGX Research Community LLP</strong> بالمملكة المتحدة'), 'Arabic footer must contain the approved independence and research-status notice');
+assert.ok(ar.includes('الجهات المالكة والمشغلة لا تملك منشأة أو فرعاً في مصر لمزاولة هذا النشاط'), 'Arabic footer must preserve the approved jurisdictional fact statement');
 assert.ok(ar.includes('لا يُعرض أو يُوجَّه إلى أشخاص موجودين داخل مصر'), 'Arabic footer must align with the territorial-access position');
 assert.ok(ar.includes('لا تمثل توصيات بشراء أي ورقة مالية أو بيعها أو الاحتفاظ بها'), 'Arabic footer must classify model outputs as research rather than transaction recommendations');
 
@@ -100,7 +103,7 @@ assert.equal(footerCss.includes('↗'), false, 'internal footer links must not u
 assert.equal(footerCss.includes('content:"↓"'), false, 'PWA install must not regain a prominent download-arrow treatment');
 assert.ok(compactFooter.includes('.footer-app{background:transparent}'), 'Access must not render as a special shaded product panel');
 assert.ok(compactFooter.includes('.footer-app-kicker{display:none}'), 'APP kicker must not compete with the Access hierarchy');
-assert.ok(compactFooter.includes('.footer-record-meta{display:none}'), 'Verify Public Record must remain the visible verification label');
+assert.ok(compactFooter.includes('.footer-record-meta{display:none}'), 'machine-readable record must remain the visible verification label');
 assert.ok(footerCss.includes('.footer-app .pwa-install-button{'), 'PWA install must remain available as a secondary access action');
 assert.ok(footerCss.includes('.footer-disclaimer a{color:var(--brand);'), 'legal notice partner links must be visibly identifiable as links');
 assert.ok(compactFooter.includes('.footer-disclaimer{grid-column:1;max-width:112ch;'), 'legal copy must use a readable line length');

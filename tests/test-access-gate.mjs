@@ -12,28 +12,31 @@ const sw = fs.readFileSync('assets/sw.js', 'utf8');
 assert.equal(builtGate, gate, 'Pages artifact must ship the exact access-gate module');
 
 for (const required of [
-  'ADVANCED DEEP-LEARNING RESEARCH ON THE EGYPTIAN EXCHANGE',
-  'بحث متقدم بالتعلم العميق حول البورصة المصرية',
-  'Purpose-built quantitative intelligence designed to broaden international understanding and research visibility of the Egyptian market.',
-  'ذكاء كمي متخصص طُوّر لتوسيع الفهم الدولي للسوق المصري وتعزيز حضوره البحثي خارج مصر.',
-  'TERRITORIAL ACCESS &amp; REGULATORY STATUS',
-  'نطاق الوصول والصفة التنظيمية',
-  'EGX Research is an independent research publication and educational website produced and operated outside the Arab Republic of Egypt by entities that maintain no establishment or branch in Egypt for the conduct of this activity.',
-  'EGX /Alpha uses purpose-built deep-learning models to publish general, non-personalised quantitative research on the Egyptian Exchange.',
+  'PUBLIC QUANTITATIVE RESEARCH ENVIRONMENT',
+  'بيئة عامة للبحث الكمي',
+  'A research digital twin of the Egyptian equity market',
+  'توأم رقمي بحثي لسوق الأسهم المصري',
+  'EGX /Alpha is a continuously updated research digital twin of the Egyptian equity market.',
+  'for quantitative market research, financial literacy and reproducible study.',
+  'RESEARCH STATUS',
+  'الصفة البحثية',
+  'TERRITORIAL ACCESS',
+  'نطاق الوصول',
+  'EGX Research is an independent research publication produced and operated outside the Arab Republic of Egypt by entities that maintain no establishment or branch in Egypt for this activity.',
   'The website does not execute transactions, hold client funds, manage portfolios or provide personalised investment advice.',
-  'The service does not hold or claim a licence or approval from the Egyptian Financial Regulatory Authority and is not offered or directed to persons located in Egypt.',
-  'Its technical accessibility over the public internet is not intended to constitute an offering of the service into Egypt.',
-  'EGX Research منشور بحثي وموقع تعليمي مستقل يُنتج ويُدار من خارج جمهورية مصر العربية بواسطة جهات لا تملك منشأة أو فرعًا في مصر لمزاولة هذا النشاط.',
-  'يستخدم EGX /Alpha نماذج تعلم عميق متخصصة لنشر بحث كمي عام وغير شخصي عن البورصة المصرية.',
-  'ولا ينفذ الموقع معاملات، أو يحتفظ بأموال العملاء، أو يدير محافظ، أو يقدم استشارات استثمارية شخصية.',
-  'الخدمة لا تحمل ولا تدّعي الحصول على ترخيص أو اعتماد من الهيئة العامة للرقابة المالية المصرية، ولا تُعرض أو تُوجَّه إلى أشخاص موجودين داخل مصر.',
-  'ولا يُقصد من مجرد إتاحتها التقنية عبر شبكة الإنترنت أن يمثل ذلك عرضًا للخدمة داخل جمهورية مصر العربية.',
+  'Relative Rank, Model Direction and related outputs are general model-generated research classifications; they are not Buy, Hold or Sell recommendations.',
+  'EGX Research does not hold or claim a licence or approval from the Egyptian Financial Regulatory Authority',
+  'this public research environment is not offered or directed to persons physically located in Egypt.',
+  'Technical accessibility through the public internet is not intended to constitute an offering into Egypt.',
+  'منشور بحثي مستقل يُنتج ويُدار من خارج جمهورية مصر العربية',
+  'وليست توصيات شراء أو احتفاظ أو بيع.',
+  'ولا تُعرض هذه البيئة البحثية العامة أو تُوجَّه إلى أشخاص موجودين فعلياً داخل مصر.',
   'I confirm that I am physically located outside the Arab Republic of Egypt and am accessing EGX Research from outside Egypt.',
-  'أقر بأنني موجود فعليًا خارج جمهورية مصر العربية وأنني أدخل إلى EGX Research من خارجها.',
-  'If you are physically located in Egypt, do not confirm the statement below or continue.',
-  'إذا كنت موجودًا فعليًا داخل جمهورية مصر العربية، فلا تؤكد الإقرار التالي ولا تتابع الدخول.',
-  'CONTINUE TO EGX /ALPHA',
-  'المتابعة إلى EGX /ALPHA'
+  'أؤكد أنني موجود فعلياً خارج جمهورية مصر العربية، وأنني أدخل إلى EGX Research من خارج مصر.',
+  'If you are physically located in Egypt, do not confirm this statement or continue into the public research environment.',
+  'إذا كنت موجوداً فعلياً داخل مصر، فلا تؤكد هذه العبارة ولا تتابع الدخول إلى بيئة البحث العامة.',
+  'ENTER RESEARCH ENVIRONMENT',
+  'الدخول إلى البيئة البحثية'
 ]) assert.ok(visibleGate.includes(required), `visible access gate copy should include ${required}`);
 
 for (const required of [
@@ -54,9 +57,12 @@ for (const required of [
   'id="egx-gate-territorial-title-en"',
   'id="egx-gate-territorial-title-ar"',
   'id="egx-gate-privacy-title-en"',
-  'id="egx-gate-privacy-title-ar"'
+  'id="egx-gate-privacy-title-ar"',
+  'localStorage.setItem(key, value)',
+  'sessionStorage.setItem(key, value)'
 ]) assert.ok(gate.includes(required), `access gate should include ${required}`);
 
+assert.equal(gate.includes('PUBLIC FINANCIAL-LITERACY RESEARCH ENVIRONMENT'), false, 'financial literacy must remain a purpose rather than the primary product label');
 assert.equal(gate.includes('foreign investors'), false, 'territorial gate must not target a foreign-investor class');
 assert.equal(gate.includes('المستثمرين الأجانب'), false, 'Arabic territorial gate must not target a foreign-investor class');
 

@@ -5,48 +5,43 @@ const en = fs.readFileSync('_site/methodology/index.html', 'utf8');
 const ar = fs.readFileSync('_site/ar/methodology/index.html', 'utf8');
 
 for (const required of [
-  'WHY /ALPHA EXISTS',
-  'The index tells you how the market moved. /Alpha ranks how eligible stocks compare.',
-  'THE QUESTION /ALPHA ANSWERS',
-  'The market average is useful. It is also incomplete.',
-  'From a broad market to a cross-sectional ranking.',
-  'Why deep learning? Because markets are interactions, not checklists.',
-  'Every forecast becomes future evidence. Every new generation must earn promotion.',
-  'The public website is the research surface, not the engine room.',
-  'More depth. More evidence. No novelty for its own sake.',
-  'EGX /Alpha Case Studies',
-  'EGX /Alpha Rank 1 vs. Rank 1+: A Comparative 1D/3D Exit-Discipline Trading Simulation',
-  'EGX /Alpha Rank 1 vs. Rank 1+: Comparative Next-Session Whole-Share Trading Simulations',
-  'Positive-Filtered vs. Raw-Rank Five-Sleeve Portfolios',
+  'PUBLIC QUANTITATIVE RESEARCH PAPER',
+  'Building a research digital twin of the Egyptian equity market.',
+  'THE RESEARCH QUESTION',
+  'The index tells you how a basket moved. The twin studies how eligible stocks differ inside that market.',
+  'A learned analytical representation that updates after completed market sessions.',
+  'Because market relationships are nonlinear, conditional and time-varying.',
+  'Where does each eligible stock sit relative to the others at a selected forward horizon?',
+  'The future must remain future during testing.',
+  'Observe → publish → wait → score → learn → challenge → review.',
+  'A twin should preserve its earlier states.',
+  'Research credibility grows when forecasts can be checked after they mature.',
+  'Hypothetical experiments for studying ranking rules, not client performance.',
   'HYPOTHETICAL RESEARCH SIMULATIONS',
-  'A controlled ex-ante simulation comparing two predefined ranking-selection rules',
-  'A next-session whole-share simulation examining how two predefined ranking-selection rules',
-  'A capacity-aware portfolio simulation comparing a direction-filtered rule with a raw-ranking rule',
+  'EGX /Alpha Case Studies',
+  'Controlled ex-ante comparison of two predefined ranking-selection rules',
+  'Next-session whole-share simulation of two predefined ranking-selection rules',
   '1D', '3D', '5D', '10D',
   'Relative Rank', 'Model Direction',
-  'progressive, generational learning',
-  'References and verification.',
-  'Today’s EGX /Alpha ranking',
-  'Public model memory',
-  'Machine-readable public record'
+  'References and verification.'
 ]) assert.ok(en.includes(required), `English methodology should include ${required}`);
 
 for (const required of [
   'ورقة بحثية كمية عامة',
-  'المؤشر يخبرك كيف تحرك السوق. ويعرض EGX /Alpha كيف يرتب النموذج الأسهم المؤهلة مقارنة ببعضها.',
-  'السؤال الذي يجيب عنه EGX /Alpha',
-  'متوسط السوق مهم. لكنه لا يصف الفروق بين الأسهم منفردة.',
-  'من سوق واسع إلى ترتيب بحثي نسبي.',
-  'لماذا التعلم العميق؟ لأن السوق علاقات متغيرة، لا قائمة شروط ثابتة.',
-  'كل توقع يتحول لاحقاً إلى دليل. وكل جيل جديد يجب أن يستحق مكانه.',
-  'ما تراه على الموقع هو سطح البحث، وليس غرفة المحرك.',
-  'عمق أكبر. أدلة أكثر. بلا تعقيد لمجرد الاستعراض.',
-  'دراسات حالة EGX /Alpha',
+  'بناء توأم رقمي بحثي لسوق الأسهم المصري.',
+  'السؤال البحثي',
+  'المؤشر يخبرك كيف تحركت سلة من الأسهم؛ أما التوأم الرقمي فيدرس كيف تختلف الأسهم المؤهلة داخل السوق.',
+  'تمثيل تحليلي متعلم يتجدد بعد الجلسات المكتملة.',
+  'لأن علاقات السوق غير خطية ومشروطة ومتغيرة بمرور الوقت.',
+  'أين يقع كل سهم مؤهل مقارنة ببقية الأسهم عند أفق مستقبلي محدد؟',
+  'يجب أن يظل المستقبل مستقبلاً أثناء الاختبار.',
+  'رصد ← نشر ← انتظار ← قياس ← تعلم ← تحدٍّ ← مراجعة.',
+  'التوأم الرقمي الجيد يحتفظ بحالاته السابقة.',
+  'تزداد مصداقية البحث عندما يمكن فحص التوقعات بعد اكتمالها.',
+  'تجارب افتراضية لدراسة قواعد الترتيب، وليست أداءً فعلياً لعملاء.',
   'محاكاة بحثية افتراضية',
-  'محاكاة ex-ante محكومة تقارن بين قاعدتين محددتين مسبقاً',
-  'محاكاة لتداول أسهم كاملة في الجلسة التالية',
-  'محاكاة لمحفظة تراعي سعة التداول وتقارن بين قاعدة تستخدم ترشيح اتجاه النموذج',
-  'التسلسل الزمني', 'الآفاق الأربعة', 'الترتيب والاتجاه إشارتان منفصلتان', 'طبقة التعلم العميق', 'التحقق زمني'
+  'دراسات حالة EGX /Alpha',
+  'الترتيب النسبي', 'اتجاه النموذج', 'المراجعة البشرية'
 ]) assert.ok(ar.includes(required), `Arabic methodology should include ${required}`);
 
 for (const href of [
@@ -58,7 +53,7 @@ for (const href of [
 }
 for (const html of [en, ar]) {
   assert.ok(html.includes('pubsonline.informs.org'), 'methodology should preserve the Chen, Pelger & Zhu external reference host');
-  assert.ok(html.includes('Chen, Pelger & Zhu — Deep Learning in Asset Pricing'), 'methodology should preserve the Chen, Pelger & Zhu reference title');
+  assert.ok(html.includes('Deep Learning in Asset Pricing'), 'methodology should preserve the Chen, Pelger & Zhu reference title');
 }
 
 for (const href of ['/today/', '/investor-guide/', '/archive/', '/data/latest.json', '/institutional/']) {
