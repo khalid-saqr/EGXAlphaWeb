@@ -6,10 +6,10 @@ const ar = fs.readFileSync('_site/ar/methodology/index.html', 'utf8');
 
 for (const required of [
   'WHY /ALPHA EXISTS',
-  'The index tells you how the market moved. /Alpha tells you where to look.',
+  'The index tells you how the market moved. /Alpha ranks how eligible stocks compare.',
   'THE QUESTION /ALPHA ANSWERS',
   'The market average is useful. It is also incomplete.',
-  'From market noise to an order of priority.',
+  'From a broad market to a cross-sectional ranking.',
   'Why deep learning? Because markets are interactions, not checklists.',
   'Every forecast becomes future evidence. Every new generation must earn promotion.',
   'The public website is the research surface, not the engine room.',
@@ -18,9 +18,10 @@ for (const required of [
   'EGX /Alpha Rank 1 vs. Rank 1+: A Comparative 1D/3D Exit-Discipline Trading Simulation',
   'EGX /Alpha Rank 1 vs. Rank 1+: Comparative Next-Session Whole-Share Trading Simulations',
   'Positive-Filtered vs. Raw-Rank Five-Sleeve Portfolios',
-  'A tightly controlled ex-ante test:',
-  'The preserved ex-ante signal choice reshaped the entire trading path:',
-  'A capacity-aware portfolio stress test delivered the uncomfortable result:',
+  'HYPOTHETICAL RESEARCH SIMULATIONS',
+  'A controlled ex-ante simulation comparing two predefined ranking-selection rules',
+  'A next-session whole-share simulation examining how two predefined ranking-selection rules',
+  'A capacity-aware portfolio simulation comparing a direction-filtered rule with a raw-ranking rule',
   '1D', '3D', '5D', '10D',
   'Relative Rank', 'Model Direction',
   'progressive, generational learning',
@@ -32,25 +33,26 @@ for (const required of [
 
 for (const required of [
   'ورقة بحثية كمية عامة',
-  'المؤشر يخبرك كيف تحرك السوق. EGX /Alpha يخبرك أين تبدأ البحث داخله.',
+  'المؤشر يخبرك كيف تحرك السوق. ويعرض EGX /Alpha كيف يرتب النموذج الأسهم المؤهلة مقارنة ببعضها.',
   'السؤال الذي يجيب عنه EGX /Alpha',
-  'متوسط السوق مهم. لكنه لا يكفي لاتخاذ قرار بين الأسهم.',
-  'من ضوضاء السوق إلى ترتيب واضح للأولوية.',
+  'متوسط السوق مهم. لكنه لا يصف الفروق بين الأسهم منفردة.',
+  'من سوق واسع إلى ترتيب بحثي نسبي.',
   'لماذا التعلم العميق؟ لأن السوق علاقات متغيرة، لا قائمة شروط ثابتة.',
   'كل توقع يتحول لاحقاً إلى دليل. وكل جيل جديد يجب أن يستحق مكانه.',
   'ما تراه على الموقع هو سطح البحث، وليس غرفة المحرك.',
   'عمق أكبر. أدلة أكثر. بلا تعقيد لمجرد الاستعراض.',
   'دراسات حالة EGX /Alpha',
-  'اختبار ex-ante محكوم:',
-  'غيّر اختيار الإشارة ex-ante المحفوظ مسار التداول بالكامل:',
-  'اختبار محفظة يراعي سعة التداول كشف نتيجة معاكسة للتوقع:',
+  'محاكاة بحثية افتراضية',
+  'محاكاة ex-ante محكومة تقارن بين قاعدتين محددتين مسبقاً',
+  'محاكاة لتداول أسهم كاملة في الجلسة التالية',
+  'محاكاة لمحفظة تراعي سعة التداول وتقارن بين قاعدة تستخدم ترشيح اتجاه النموذج',
   'التسلسل الزمني', 'الآفاق الأربعة', 'الترتيب والاتجاه إشارتان منفصلتان', 'طبقة التعلم العميق', 'التحقق زمني'
 ]) assert.ok(ar.includes(required), `Arabic methodology should include ${required}`);
 
 for (const href of [
   'https://www.egx.com.eg/en/indexrulesmethodologyegx70-ewi.aspx?nav=16',
   'https://academic.oup.com/rfs/article/33/5/2223/5758276',
-  'https://pubsonline.informs.org/doi/10.1287/mnsc.2023.4695'
+  'https://pubsonline.informs.com/doi/10.1287/mnsc.2023.4695'
 ]) {
   assert.ok(en.includes(`href="${href}"`), `English methodology should link ${href}`);
   assert.ok(ar.includes(`href="${href}"`), `Arabic methodology should link ${href}`);
