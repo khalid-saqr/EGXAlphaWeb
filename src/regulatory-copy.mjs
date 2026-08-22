@@ -3,6 +3,7 @@ import { digitalTwinGuideSection } from './digital-twin-guide.mjs';
 import { digitalTwinFaqSection } from './digital-twin-faq.mjs';
 import { digitalTwinMethodologyArticle } from './digital-twin-methodology.mjs';
 import { transformDigitalTwinInstitutional, transformDigitalTwinArchiveSearchSymbol, transformDigitalTwinFooter } from './digital-twin-shared.mjs';
+import { applyDigitalTwinTightening } from './digital-twin-tighten.mjs';
 
 function isArabic(locale) { return String(locale || '').toLowerCase().startsWith('ar'); }
 function replaceAll(value, pairs) { let out=String(value??''); for(const [a,b] of pairs) out=out.replaceAll(a,b); return out; }
@@ -36,12 +37,12 @@ export function applyRegulatoryText(value,locale='en'){
   let out=replaceAll(value,isArabic(locale)?AR_TEXT:EN_TEXT);
   if(!isArabic(locale)) {
     out=out.replace(/^EGX \/Alpha — \d{4}-\d{2}-\d{2} — \d+ stocks$/,'EGX /Alpha | Research Digital Twin of the Egyptian Equity Market');
-    out=out.replace(/^EGX \/Alpha quantitative market ranking for the Egyptian Exchange, analysis date .+$/,'EGX /Alpha is a deep-learning research digital twin of the Egyptian equity market, publishing public model states for financial literacy, quantitative market education and reproducible research.');
+    out=out.replace(/^EGX \/Alpha quantitative market ranking for the Egyptian Exchange, analysis date .+$/,'EGX /Alpha is a deep-learning research digital twin of the Egyptian equity market, publishing public model states for quantitative market research, financial literacy and reproducible study.');
     out=out.replace(/^(.+?) — EGX \/Alpha model history — EGXResearch$/,'$1 | Public Model Memory | EGX Research');
     out=out.replace(/^(.+?) — EGX \/Alpha model history$/,'$1 | Stock Model Memory | EGX Research');
   } else {
     out=out.replace(/^EGX \/Alpha — \d{4}-\d{2}-\d{2} — \d+ سهماً$/,'EGX /Alpha | توأم رقمي بحثي لسوق الأسهم المصري');
-    out=out.replace(/^ترتيب EGX \/Alpha الكمي لسوق البورصة المصرية، تاريخ التحليل .+$/,'EGX /Alpha توأم رقمي بحثي بالتعلم العميق لسوق الأسهم المصري، ينشر حالات نموذج عامة لدعم الثقافة المالية والتعليم الكمي للأسواق والبحث القابل لإعادة التحقق.');
+    out=out.replace(/^ترتيب EGX \/Alpha الكمي لسوق البورصة المصرية، تاريخ التحليل .+$/,'EGX /Alpha توأم رقمي بحثي بالتعلم العميق لسوق الأسهم المصري، ينشر حالات نموذج عامة للبحث الكمي في السوق، ودعم الثقافة المالية، والدراسة القابلة لإعادة التحقق.');
     out=out.replace(/^(.+?) — سجل نموذج EGX \/Alpha$/,'$1 | ذاكرة النموذج للسهم | EGX Research');
   }
   return out;
@@ -55,5 +56,5 @@ export function applyRegulatoryHtml(value,locale='en'){
  out=transformDigitalTwinInstitutional(out,ar);
  out=transformDigitalTwinArchiveSearchSymbol(out,ar);
  out=transformDigitalTwinFooter(out,ar);
- return applyRegulatoryText(out,locale);
+ return applyDigitalTwinTightening(applyRegulatoryText(out,locale),locale);
 }
