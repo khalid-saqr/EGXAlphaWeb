@@ -1,4 +1,5 @@
 import { isArabic } from './i18n.mjs';
+import { applyRegulatoryHtml, applyRegulatoryText } from './regulatory-copy.mjs';
 
 function replaceAll(value, pairs) {
   let output = String(value ?? '');
@@ -11,7 +12,7 @@ const TEXT_PAIRS = [
   ['EGX /Alpha model history — EGXResearch', 'سجل نموذج EGX /Alpha — EGXResearch'],
   ['EGX /Alpha model history', 'سجل نموذج EGX /Alpha'],
   ['How EGX /Alpha works — EGXResearch', 'كيف يعمل EGX /Alpha — EGXResearch'],
-  ['How to Use EGX /Alpha | Egyptian Stock Market Decision Support | EGX Research', 'كيفية استخدام EGX /Alpha | دعم القرار في سوق الأسهم المصرية | EGX Research'],
+  ['How to Use EGX /Alpha | Egyptian Stock Market Decision Support | EGX Research', 'كيف تقرأ EGX /Alpha | دليل تفسير المخرجات البحثية | EGX Research'],
   ['Institutional — EGX /Alpha', 'للمؤسسات — EGX /Alpha'],
   ['Public methodology and interpretation guide for EGX /Alpha.', 'المنهجية العامة ودليل تفسير EGX /Alpha.'],
   ['Explore dated EGX /Alpha quantitative model rankings.', 'استعرض ترتيبات نموذج EGX /Alpha الكمي المحفوظة حسب التاريخ.'],
@@ -19,7 +20,8 @@ const TEXT_PAIRS = [
   ['Institutional research and technology enquiries for EGX /Alpha.', 'استفسارات البحث والتقنية للمؤسسات بشأن EGX /Alpha.'],
   ['Public quantitative EGX /Alpha ranking history for ', 'السجل العام لترتيب EGX /Alpha الكمي للسهم '],
   ['EGX /Alpha quantitative market ranking for the Egyptian Exchange, analysis date ', 'ترتيب EGX /Alpha الكمي لسوق البورصة المصرية، تاريخ التحليل '],
-  ['How retail investors can use EGX /Alpha for Egyptian Stock Market research, deep-learning stock forecasting and EGX stock analysis, including البورصة المصرية.', 'كيف يمكن للمستثمر الفرد استخدام EGX /Alpha في بحث سوق الأسهم المصرية وتوقع الأسهم بالتعلم العميق وتحليل أسهم البورصة المصرية.'],
+  ['How retail investors can use EGX /Alpha for Egyptian Stock Market research, deep-learning stock forecasting and EGX stock analysis, including البورصة المصرية.', 'دليل بحثي لفهم مخرجات EGX /Alpha الكمية وتوقعاته بالتعلم العميق وتحليل سجلاته العامة للبورصة المصرية.'],
+  ['Quantitative investment research', 'Quantitative market research'],
   ['Switch language', 'تغيير اللغة'],
   ['Install EGX /Alpha', 'تثبيت EGX /Alpha'],
   ['INSTALL EGX /ALPHA', 'تثبيت EGX /ALPHA'],
@@ -45,14 +47,16 @@ const TEXT_PAIRS = [
 ];
 
 export function polishLocalizedText(value, locale = 'en') {
-  if (!isArabic(locale)) return String(value ?? '');
-  let output = replaceAll(value, TEXT_PAIRS);
-  output = output.replace(/\b(\d[\d,]*) stocks\b/gi, '$1 سهماً');
-  return output;
+  let output = String(value ?? '');
+  if (isArabic(locale)) {
+    output = replaceAll(output, TEXT_PAIRS);
+    output = output.replace(/\b(\d[\d,]*) stocks\b/gi, '$1 سهماً');
+  }
+  return applyRegulatoryText(output, locale);
 }
 
 export function polishLocalizedHtml(value, locale = 'en') {
-  if (!isArabic(locale)) return String(value ?? '');
+  if (!isArabic(locale)) return applyRegulatoryHtml(String(value ?? ''), locale);
   let output = String(value ?? '');
 
   // Keep the live homepage value proposition atomic so generic localization cannot split its meaning.
@@ -91,5 +95,5 @@ export function polishLocalizedHtml(value, locale = 'en') {
   output = output.replace('"inLanguage":"en"', '"inLanguage":"ar"');
   output = output.replace(/("(?:mainEntityOfPage|url)":")([^"\n]*?)\/investor-guide\/(\")/g, '$1$2/ar/investor-guide/$3');
 
-  return output;
+  return applyRegulatoryHtml(output, locale);
 }

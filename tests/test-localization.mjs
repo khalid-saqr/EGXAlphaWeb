@@ -33,10 +33,10 @@ assert.ok(arHome.includes('<link rel="alternate" hreflang="ar" href="https://egx
 assert.ok(arHome.includes('<link rel="alternate" hreflang="x-default" href="https://egxresearch.com/">'));
 assert.ok(enHome.includes('<link rel="alternate" hreflang="ar" href="https://egxresearch.com/ar/">'));
 
-for (const required of ['EGX Research', 'ALPHA', 'أي أسهم EGX تستحق انتباهك غداً؟', 'بعد كل جلسة في البورصة المصرية، يواجه المستثمرون المشكلة نفسها:', 'أسهم كثيرة، وضوضاء كثيرة، وقدرة محدودة على المتابعة.', 'يحول EGX /Alpha السوق إلى ترتيب يومي للأولوية', 'كلما ظهر السهم في مركز أعلى، كان تفضيل EGX /Alpha النسبي له أقوى.', 'يضيف اتجاه النموذج رؤية منفصلة إيجابية أو محايدة أو سلبية', 'الترتيب النسبي', 'اتجاه النموذج', 'تغير الترتيب', 'إيجابي', 'محايد', 'سلبي', 'اللغة', 'EN', 'تثبيت EGX /ALPHA', '>التطبيق<']) {
+for (const required of ['EGX Research', 'ALPHA', 'كيف يرتب EGX /Alpha أسهم EGX المؤهلة للجلسات المقبلة؟', 'ينشر EGX /Alpha ترتيباً بحثياً نسبياً للأسهم المؤهلة', 'مخرجات نموذجية عامة مخصصة للبحث والمعلومات', 'الترتيب النسبي', 'اتجاه النموذج', 'تغير الترتيب', 'إيجابي', 'محايد', 'سلبي', 'اللغة', 'EN', 'تثبيت EGX /ALPHA', '>التطبيق<']) {
   assert.ok(arHome.includes(required), `Arabic homepage should include ${required}`);
 }
-for (const bad of ['Deep-learning ranking of Egyptian equities.', 'ترتيب أسهم البورصة المصرية باستخدام التعلم العميق.', 'After each completed EGX session, /Alpha ranks the eligible stock universe across multiple forward horizons.', 'بعد كل جلسة مكتملة في البورصة المصرية، يرتب /Alpha الأسهم المؤهلة عبر عدة آفاق مستقبلية.', 'أي أسهم EGX تستحق انتباهك الآن؟', 'السهمS', 'stocks analysed', '>Positive<', '>Neutral<', '>Negative<', '>Today<', '>History<', '>Guide<', '>Institutional<', '>LANGUAGE<', '>APP<']) {
+for (const bad of ['Deep-learning ranking of Egyptian equities.', 'ترتيب أسهم البورصة المصرية باستخدام التعلم العميق.', 'After each completed EGX session, /Alpha ranks the eligible stock universe across multiple forward horizons.', 'بعد كل جلسة مكتملة في البورصة المصرية، يرتب /Alpha الأسهم المؤهلة عبر عدة آفاق مستقبلية.', 'أي أسهم EGX تستحق انتباهك الآن؟', 'أي أسهم EGX تستحق انتباهك غداً؟', 'ترتيب يومي للأولوية', 'السهمS', 'stocks analysed', '>Positive<', '>Neutral<', '>Negative<', '>Today<', '>History<', '>Guide<', '>Institutional<', '>LANGUAGE<', '>APP<']) {
   assert.equal(arHome.includes(bad), false, `Arabic homepage should not contain ${bad}`);
 }
 assert.ok(arHome.includes('href="/ar/today/"'));
@@ -66,10 +66,10 @@ assert.equal(arMethodology.includes('default hero lens'), false);
 assert.ok(arMethodology.includes('href="/methodology/"') || arMethodology.includes('href="/"'), 'Arabic methodology should expose an English counterpart link');
 
 const enGuide = read('_site/investor-guide/index.html');
-for (const required of ['What EGX /Alpha Answers — and How to Read the Daily Ranking', 'The question the engine is built to answer', 'How to read the daily ranking', 'market-relative forward return']) assert.ok(enGuide.includes(required), `English investor guide should include ${required}`);
+for (const required of ['What EGX /Alpha Publishes — and How to Interpret the Daily Ranking', 'The question the engine is built to answer', 'How to read the daily ranking', 'How the fields can be read together', 'market-relative forward return']) assert.ok(enGuide.includes(required), `English research interpretation guide should include ${required}`);
 
 const arGuide = read('_site/ar/investor-guide/index.html');
-for (const required of ['دليل المستثمر الفرد', 'ما السؤال الذي يجيب عنه EGX /Alpha؟ وكيف تقرأ ترتيب كل يوم؟', 'البورصة المصرية', 'اتجاه النموذج', 'تغير الترتيب']) assert.ok(arGuide.includes(required), `Arabic investor guide should include ${required}`);
+for (const required of ['دليل تفسير المخرجات البحثية العامة', 'ماذا ينشر EGX /Alpha؟ وكيف تُفسر ترتيباته اليومية؟', 'كيف تُقرأ الحقول معاً؟', 'البورصة المصرية', 'اتجاه النموذج', 'تغير الترتيب']) assert.ok(arGuide.includes(required), `Arabic research interpretation guide should include ${required}`);
 assert.equal(arGuide.includes('INVESTOR الدليل'), false, 'investor-guide context should be fully localized');
 assert.equal(arGuide.includes('كيف يستخدم المستثمر الفرد EGX /Alpha في دعم قراره'), false, 'investor-guide localization test should not require the retired guide heading');
 const schemaMatch = arGuide.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
