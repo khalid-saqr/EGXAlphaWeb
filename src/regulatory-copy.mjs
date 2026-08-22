@@ -10,7 +10,6 @@ function basePath(html){
   const m=String(html).match(/href="([^"?#]*?)(?:\/today\/|\/archive\/|\/search\/|\/methodology\/|\/investor-guide\/|\/institutional\/|\/faq\/)/);
   if(!m) return ''; const prefix=m[1].replace(/\/$/,''); return prefix.replace(/\/ar$/,'');
 }
-function u(base,path){ return `${base}${path}`; }
 
 const EN_TEXT=[
  ['How to Read EGX /Alpha | Investor Guide | EGX Research','Learn to Read EGX /Alpha | Financial Literacy Guide | EGX Research'],
@@ -33,7 +32,6 @@ const AR_TEXT=[
  ['بعد الإغلاق · القاهرة','بعد إغلاق جلسة EGX']
 ];
 
-
 export function applyRegulatoryText(value,locale='en'){
   let out=replaceAll(value,isArabic(locale)?AR_TEXT:EN_TEXT);
   if(!isArabic(locale)) {
@@ -51,8 +49,8 @@ export function applyRegulatoryText(value,locale='en'){
 export function applyRegulatoryHtml(value,locale='en'){
  const ar=isArabic(locale); let out=String(value??''); const b=basePath(out);
  if(out.includes('page-home')||out.includes('data-page="signal"')) out=transformDigitalTwinHome(out,ar);
- if(out.includes('guide-shell')) out=out.replace(/<div class="guide-shell">[\s\S]*<\/div>(?=<footer class="site-footer research-footer")/,digitalTwinGuideSection(ar,b));
- if(out.includes('page-faq')||out.includes('faq-page')) out=out.replace(/<section class="faq-page"[\s\S]*<\/section>(?=<footer class="site-footer research-footer")/,digitalTwinFaqSection(ar,b));
+ if(out.includes('guide-shell')) out=out.replace(/<div class="guide-shell">[\s\S]*<\/div>\s*(?=<footer class="site-footer research-footer")/,digitalTwinGuideSection(ar,b));
+ if(out.includes('page-faq')||out.includes('faq-page')) out=out.replace(/<section class="faq-page"[\s\S]*<\/section>\s*(?=<footer class="site-footer research-footer")/,digitalTwinFaqSection(ar,b));
  if(out.includes('methodology-story')) out=out.replace(/<article class="methodology-story"[\s\S]*<\/article>/,digitalTwinMethodologyArticle(ar,b));
  out=transformDigitalTwinInstitutional(out,ar);
  out=transformDigitalTwinArchiveSearchSymbol(out,ar);
