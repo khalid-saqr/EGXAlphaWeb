@@ -14,7 +14,7 @@ function safeLocalGet(key) {
   try { return localStorage.getItem(key); } catch (_) { return null; }
 }
 function safeLocalSet(key, value) {
-  try { sessionStorage.setItem(key, value); } catch (_) {}
+  try { localStorage.setItem(key, value); } catch (_) {}
 }
 function safeLocalRemove(key) {
   try { localStorage.removeItem(key); } catch (_) {}
