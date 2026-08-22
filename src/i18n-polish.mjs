@@ -21,6 +21,7 @@ const TEXT_PAIRS = [
   ['Public quantitative EGX /Alpha ranking history for ', 'السجل العام لترتيب EGX /Alpha الكمي للسهم '],
   ['EGX /Alpha quantitative market ranking for the Egyptian Exchange, analysis date ', 'ترتيب EGX /Alpha الكمي لسوق البورصة المصرية، تاريخ التحليل '],
   ['How retail investors can use EGX /Alpha for Egyptian Stock Market research, deep-learning stock forecasting and EGX stock analysis, including البورصة المصرية.', 'كيف يمكن للمستثمر الفرد استخدام EGX /Alpha في بحث سوق الأسهم المصرية وتوقع الأسهم بالتعلم العميق وتحليل أسهم البورصة المصرية.'],
+  ['Quantitative investment research', 'Quantitative market research'],
   ['Switch language', 'تغيير اللغة'],
   ['Install EGX /Alpha', 'تثبيت EGX /Alpha'],
   ['INSTALL EGX /ALPHA', 'تثبيت EGX /ALPHA'],
