@@ -95,7 +95,16 @@ assert.equal(sw.includes("relative.startsWith('/ar/archive/')"), false, 'mutable
 for (const forbidden of ["addEventListener('push'", "addEventListener('sync'", 'periodicSync', 'showNotification']) assert.equal(sw.includes(forbidden), false, `service worker must not include ${forbidden}`);
 
 const pwaCss = fs.readFileSync('_site/assets/pwa.css', 'utf8');
-for (const required of ['@media(display-mode:standalone)', 'env(safe-area-inset-top)', '.offline-notice', '@media(max-width:620px)', '.alpha-control-deck .primary-action{color:#000}', '.pwa-hero-install']) assert.ok(pwaCss.includes(required));
+for (const required of [
+  '@media(display-mode:standalone)', 'env(safe-area-inset-top)', '.offline-notice', '@media(max-width:620px)',
+  '.alpha-control-deck .primary-action{color:#000}', '.pwa-hero-install', '@media(max-width:680px)',
+  '.page-home .alpha-control-deck{row-gap:48px}',
+  '.page-home .control-deck-copy>.hero-primary-action{margin-top:8px}',
+  '.page-home .control-deck-copy>.pwa-hero-install{width:100%;min-height:48px!important;display:flex;align-items:center;justify-content:center;box-sizing:border-box;margin:14px 0 0',
+  'background:transparent;color:var(--brand)!important;text-align:center',
+  '.page-home .control-deck-copy>.pwa-hero-install-help{width:100%;max-width:none;margin:9px 0 0;text-align:center}'
+]) assert.ok(pwaCss.includes(required), `PWA CSS should include ${required}`);
+assert.equal(pwaCss.includes('.pwa-hero-install{margin-inline-start:7px}'), false, 'mobile hero install must not retain the obsolete horizontal nudge');
 const fineTuneCss = fs.readFileSync('_site/assets/fine-tune.css', 'utf8');
 for (const required of ['--bg:#010201','--brand:#00D084','--bg:#FFFFFF','--brand:#007A4B','.footer-app .pwa-install-button']) assert.ok(fineTuneCss.includes(required));
 
