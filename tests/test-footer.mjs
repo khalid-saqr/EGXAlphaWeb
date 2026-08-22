@@ -23,8 +23,8 @@ for (const token of ['__F1__','__F2__','__F3__','__F4__','__F5__','__F6__','__F7
 
 for (const required of [
   'RESEARCH CLOSE',
-  'A daily order of priority for the Egyptian market.',
-  'Start with what the model ranks highest. Then do your research.',
+  'A daily cross-sectional research ranking of the Egyptian market.',
+  'Relative Rank and Model Direction provide general quantitative research observations for independent interpretation.',
   'USE /ALPHA',
   'Today&#39;s Ranking',
   'Search Stocks',
@@ -34,7 +34,7 @@ for (const required of [
   'Research Methodology',
   'Frequently Asked Questions',
   'ACCESS',
-  'Institutional Access',
+  'Institutional Enquiries',
   'VERIFY PUBLIC RECORD',
   'INDEPENDENCE AND RESEARCH STATUS NOTICE'
 ]) assert.ok(en.includes(required), `English research close should include ${required}`);
@@ -45,13 +45,15 @@ assert.equal(en.includes('Public quantitative research for the Egyptian Exchange
 assert.equal(en.includes('<span class="footer-label">RESEARCH</span>'), false, 'duplicated generic RESEARCH directory should be retired');
 assert.ok(en.includes('The intellectual property rights in EGX Research are owned by EGX Research Community LLP, United Kingdom'), 'English footer must contain the approved independence and research-status notice');
 assert.ok(en.includes('maintain no establishment or branch in Egypt for the conduct of this activity'), 'English footer must preserve the approved jurisdictional fact statement');
+assert.ok(en.includes('not offered or directed to persons located in Egypt'), 'English footer must align with the territorial-access position');
+assert.ok(en.includes('do not constitute recommendations to buy, sell or hold any security'), 'English footer must classify model outputs as research rather than transaction recommendations');
 assert.equal(en.includes('Research and information only. Not investment advice.'), false, 'superseded English disclaimer must be removed');
 
 for (const required of [
   '<html lang="ar" dir="rtl">',
   'خلاصة البحث',
-  'ترتيب يومي للأولوية في السوق المصري.',
-  'ابدأ بما يضعه النموذج في أعلى الترتيب، ثم ابدأ بحثك.',
+  'ترتيب بحثي نسبي يومي للسوق المصري.',
+  'يقدم الترتيب النسبي واتجاه النموذج مشاهدات بحثية كمية عامة للتفسير المستقل.',
   'استخدم /ALPHA',
   'ترتيب اليوم',
   'ابحث عن الأسهم',
@@ -61,7 +63,7 @@ for (const required of [
   'منهجية البحث',
   'الاسئلة الشائعة',
   'الوصول',
-  'الوصول المؤسسي',
+  'استفسارات مؤسسية',
   'تحقق من السجل العام',
   '>التطبيق<',
   'إشعار الاستقلال والصفة البحثية'
@@ -71,6 +73,8 @@ assert.ok(ar.includes('href="/data/latest.json"'), 'Arabic footer must verify th
 assert.equal(ar.includes('href="/ar/data/latest.json"'), false, 'Arabic footer must not invent a localized data path');
 assert.ok(ar.includes('حقوق الملكية الفكرية لـEGX Research مملوكة لـEGX Research Community LLP بالمملكة المتحدة'), 'Arabic footer must contain the approved independence and research-status notice');
 assert.ok(ar.includes('الجهات المالكة والمشغلة لا تملك منشأة أو فرعًا في مصر لمزاولة هذا النشاط'), 'Arabic footer must preserve the approved jurisdictional fact statement');
+assert.ok(ar.includes('لا يُعرض أو يُوجَّه إلى أشخاص موجودين داخل مصر'), 'Arabic footer must align with the territorial-access position');
+assert.ok(ar.includes('لا تمثل توصيات بشراء أي ورقة مالية أو بيعها أو الاحتفاظ بها'), 'Arabic footer must classify model outputs as research rather than transaction recommendations');
 
 const knowdynLink = '<a href="https://knowdyn.com" target="_blank" rel="noopener noreferrer">KNOWDYN LTD</a>';
 const sixtyArabiaLink = '<a href="https://60arabia.com" target="_blank" rel="noopener noreferrer">60Arabia</a>';

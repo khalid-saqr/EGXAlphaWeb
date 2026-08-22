@@ -1,4 +1,5 @@
 import { isArabic } from './i18n.mjs';
+import { applyRegulatoryHtml, applyRegulatoryText } from './regulatory-copy.mjs';
 
 function replaceAll(value, pairs) {
   let output = String(value ?? '');
@@ -45,14 +46,16 @@ const TEXT_PAIRS = [
 ];
 
 export function polishLocalizedText(value, locale = 'en') {
-  if (!isArabic(locale)) return String(value ?? '');
-  let output = replaceAll(value, TEXT_PAIRS);
-  output = output.replace(/\b(\d[\d,]*) stocks\b/gi, '$1 سهماً');
-  return output;
+  let output = String(value ?? '');
+  if (isArabic(locale)) {
+    output = replaceAll(output, TEXT_PAIRS);
+    output = output.replace(/\b(\d[\d,]*) stocks\b/gi, '$1 سهماً');
+  }
+  return applyRegulatoryText(output, locale);
 }
 
 export function polishLocalizedHtml(value, locale = 'en') {
-  if (!isArabic(locale)) return String(value ?? '');
+  if (!isArabic(locale)) return applyRegulatoryHtml(String(value ?? ''), locale);
   let output = String(value ?? '');
 
   // Keep the live homepage value proposition atomic so generic localization cannot split its meaning.
@@ -91,5 +94,5 @@ export function polishLocalizedHtml(value, locale = 'en') {
   output = output.replace('"inLanguage":"en"', '"inLanguage":"ar"');
   output = output.replace(/("(?:mainEntityOfPage|url)":")([^"\n]*?)\/investor-guide\/(\")/g, '$1$2/ar/investor-guide/$3');
 
-  return output;
+  return applyRegulatoryHtml(output, locale);
 }
