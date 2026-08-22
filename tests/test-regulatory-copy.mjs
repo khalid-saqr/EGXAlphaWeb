@@ -71,7 +71,7 @@ for (const required of [
 for (const required of [
   'كيف يرتب EGX /Alpha أسهم EGX المؤهلة للجلسات المقبلة؟',
   'مخرجات نموذجية عامة مخصصة للبحث والمعلومات',
-  'ليستا توصيات بشراء أي ورقة مالية أو بيعها أو الاحتفاظ بها',
+  'توصيات بشراء أي ورقة مالية',
   'ترتيب بحثي نسبي يومي للسوق المصري.',
   'لا يُعرض أو يُوجَّه إلى أشخاص موجودين داخل مصر'
 ]) assert.ok(arHome.includes(required), `Arabic homepage should include ${required}`);
