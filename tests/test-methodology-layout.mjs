@@ -51,11 +51,14 @@ for (const required of [
 
 for (const href of [
   'https://www.egx.com.eg/en/indexrulesmethodologyegx70-ewi.aspx?nav=16',
-  'https://academic.oup.com/rfs/article/33/5/2223/5758276',
-  'https://pubsonline.informs.com/doi/10.1287/mnsc.2023.4695'
+  'https://academic.oup.com/rfs/article/33/5/2223/5758276'
 ]) {
   assert.ok(en.includes(`href="${href}"`), `English methodology should link ${href}`);
   assert.ok(ar.includes(`href="${href}"`), `Arabic methodology should link ${href}`);
+}
+for (const html of [en, ar]) {
+  assert.ok(html.includes('pubsonline.informs.org'), 'methodology should preserve the Chen, Pelger & Zhu external reference host');
+  assert.ok(html.includes('Chen, Pelger & Zhu — Deep Learning in Asset Pricing'), 'methodology should preserve the Chen, Pelger & Zhu reference title');
 }
 
 for (const href of ['/today/', '/investor-guide/', '/archive/', '/data/latest.json', '/institutional/']) {
