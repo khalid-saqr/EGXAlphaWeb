@@ -45,7 +45,7 @@ assert.ok(en.includes('href="/faq/"'), 'footer must preserve the FAQ route');
 assert.ok(en.includes('<a class="footer-record-link" href="/data/latest.json"><strong>MACHINE-READABLE RECORD</strong>'), 'machine-readable verification action must preserve the exact public JSON target');
 assert.equal(en.includes('Public quantitative research for the Egyptian Exchange.'), false, 'generic footer identity copy should be retired');
 assert.equal(en.includes('<span class="footer-label">RESEARCH</span>'), false, 'duplicated generic RESEARCH directory should be retired');
-assert.ok(en.includes('The intellectual property rights in EGX Research are owned by EGX Research Community LLP, United Kingdom'), 'English footer must contain the approved independence and research-status notice');
+assert.ok(en.includes('The intellectual property rights in EGX Research are owned by <strong>EGX Research Community LLP</strong>, United Kingdom'), 'English footer must contain the approved independence and research-status notice');
 assert.ok(en.includes('maintain no establishment or branch in Egypt for the conduct of this activity'), 'English footer must preserve the approved jurisdictional fact statement');
 assert.ok(en.includes('not offered or directed to persons located in Egypt'), 'English footer must align with the territorial-access position');
 assert.ok(en.includes('do not constitute recommendations to buy, sell or hold any security'), 'English footer must classify model outputs as research rather than transaction recommendations');
@@ -74,7 +74,7 @@ for (const required of [
 assert.ok(ar.includes('href="/ar/faq/"'), 'Arabic footer must link to the localized FAQ route');
 assert.ok(ar.includes('href="/data/latest.json"'), 'Arabic footer must verify the shared root public JSON');
 assert.equal(ar.includes('href="/ar/data/latest.json"'), false, 'Arabic footer must not invent a localized data path');
-assert.ok(ar.includes('حقوق الملكية الفكرية لـEGX Research مملوكة لـEGX Research Community LLP بالمملكة المتحدة'), 'Arabic footer must contain the approved independence and research-status notice');
+assert.ok(ar.includes('حقوق الملكية الفكرية لـEGX Research مملوكة لـ<strong>EGX Research Community LLP</strong> بالمملكة المتحدة'), 'Arabic footer must contain the approved independence and research-status notice');
 assert.ok(ar.includes('الجهات المالكة والمشغلة لا تملك منشأة أو فرعاً في مصر لمزاولة هذا النشاط'), 'Arabic footer must preserve the approved jurisdictional fact statement');
 assert.ok(ar.includes('لا يُعرض أو يُوجَّه إلى أشخاص موجودين داخل مصر'), 'Arabic footer must align with the territorial-access position');
 assert.ok(ar.includes('لا تمثل توصيات بشراء أي ورقة مالية أو بيعها أو الاحتفاظ بها'), 'Arabic footer must classify model outputs as research rather than transaction recommendations');
