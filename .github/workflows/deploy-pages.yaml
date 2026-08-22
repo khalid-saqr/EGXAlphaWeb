@@ -100,6 +100,9 @@ jobs:
       - name: Verify privacy and territorial access gate
         run: node tests/test-access-gate.mjs
 
+      - name: Verify regulatory copy consistency
+        run: node tests/test-regulatory-copy.mjs
+
       - name: Verify installable PWA and freshness behavior
         run: node tests/test-pwa.mjs
 
