@@ -14,7 +14,7 @@ function safeLocalGet(key) {
   try { return localStorage.getItem(key); } catch (_) { return null; }
 }
 function safeLocalSet(key, value) {
-  try { localStorage.setItem(key, value); } catch (_) {}
+  try { sessionStorage.setItem(key, value); } catch (_) {}
 }
 function safeLocalRemove(key) {
   try { localStorage.removeItem(key); } catch (_) {}
@@ -110,9 +110,9 @@ function fullGateMarkup() {
       <header class="egx-gate-header">
         <div class="egx-gate-mark" aria-hidden="true"><span>/</span><strong>A</strong></div>
         <div>
-          <span class="egx-gate-eyebrow"><span lang="en" dir="ltr">PUBLIC FINANCIAL-LITERACY RESEARCH ENVIRONMENT</span><span lang="ar" dir="rtl">بيئة بحثية عامة للثقافة المالية</span></span>
+          <span class="egx-gate-eyebrow"><span lang="en" dir="ltr">PUBLIC QUANTITATIVE RESEARCH ENVIRONMENT</span><span lang="ar" dir="rtl">بيئة عامة للبحث الكمي</span></span>
           <h1 id="egx-gate-title"><span lang="en" dir="ltr">A research digital twin of the Egyptian equity market</span><span lang="ar" dir="rtl">توأم رقمي بحثي لسوق الأسهم المصري</span></h1>
-          <p id="egx-gate-intro"><span lang="en" dir="ltr">EGX /Alpha is a continuously updated analytical model of the eligible Egyptian equity universe. It uses deep learning to publish a general, non-personalised research representation of relative market behaviour after each completed EGX session, supporting financial literacy, quantitative market education and reproducible research.</span><span lang="ar" dir="rtl"><bdi dir="ltr">EGX /Alpha</bdi> نموذج تحليلي متجدد لمجموعة الأسهم المصرية المؤهلة. ويستخدم التعلم العميق لنشر تمثيل بحثي عام وغير شخصي للسلوك النسبي للسوق بعد كل جلسة مكتملة في البورصة المصرية، دعماً للثقافة المالية والتعليم الكمي للأسواق والبحث القابل لإعادة التحقق.</span></p>
+          <p id="egx-gate-intro"><span lang="en" dir="ltr">EGX /Alpha is a continuously updated research digital twin of the Egyptian equity market. Its purpose-built deep-learning engine publishes a general, non-personalised representation of relative behaviour across the eligible equity universe after each completed EGX session, for quantitative market research, financial literacy and reproducible study.</span><span lang="ar" dir="rtl"><bdi dir="ltr">EGX /Alpha</bdi> توأم رقمي بحثي متجدد لسوق الأسهم المصري. وينشر محرك التعلم العميق المتخصص تمثيلاً بحثياً عاماً وغير شخصي للسلوك النسبي لمجموعة الأسهم المؤهلة بعد كل جلسة مكتملة في البورصة المصرية، للبحث الكمي في السوق ودعم الثقافة المالية والدراسة القابلة لإعادة التحقق.</span></p>
         </div>
       </header>
       ${bilingualLegalCopy()}
@@ -125,7 +125,7 @@ function fullGateMarkup() {
           <strong lang="ar" dir="rtl">أؤكد أنني موجود فعلياً خارج جمهورية مصر العربية، وأنني أدخل إلى <bdi dir="ltr">EGX Research</bdi> من خارج مصر.</strong>
         </span>
       </label>
-      <p class="egx-gate-egypt-note"><span lang="en" dir="ltr">If you are physically located in Egypt, do not confirm this statement or continue into the research terminal.</span><span lang="ar" dir="rtl">إذا كنت موجوداً فعلياً داخل مصر، فلا تؤكد هذه العبارة ولا تتابع الدخول إلى بيئة البحث.</span></p>
+      <p class="egx-gate-egypt-note"><span lang="en" dir="ltr">If you are physically located in Egypt, do not confirm this statement or continue into the public research environment.</span><span lang="ar" dir="rtl">إذا كنت موجوداً فعلياً داخل مصر، فلا تؤكد هذه العبارة ولا تتابع الدخول إلى بيئة البحث العامة.</span></p>
       <button class="egx-gate-continue" type="button" data-egx-gate-continue disabled>
         <span lang="en" dir="ltr">ENTER RESEARCH ENVIRONMENT</span>
         <span lang="ar" dir="rtl">الدخول إلى البيئة البحثية</span>
