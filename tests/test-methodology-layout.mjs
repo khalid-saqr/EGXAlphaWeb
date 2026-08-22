@@ -17,10 +17,11 @@ for (const required of [
   'A twin should preserve its earlier states.',
   'Research credibility grows when forecasts can be checked after they mature.',
   'Hypothetical experiments for studying ranking rules, not client performance.',
-  'HYPOTHETICAL RESEARCH SIMULATIONS',
+  'EX-ANTE FORECASTS · HYPOTHETICAL RESEARCH SIMULATIONS',
   'EGX /Alpha Case Studies',
-  'Controlled ex-ante comparison of two predefined ranking-selection rules',
-  'Next-session whole-share simulation of two predefined ranking-selection rules',
+  'EGX /Alpha Rank 1 vs. Rank 1+: A Comparative 1D/3D Exit-Discipline Trading Simulation',
+  'EGX /Alpha Rank 1 vs. Rank 1+: Comparative Next-Session Whole-Share Trading Simulations',
+  'Positive-Filtered vs. Raw-Rank Five-Sleeve Portfolios',
   '1D', '3D', '5D', '10D',
   'Relative Rank', 'Model Direction',
   'References and verification.'
@@ -39,8 +40,11 @@ for (const required of [
   'التوأم الرقمي الجيد يحتفظ بحالاته السابقة.',
   'تزداد مصداقية البحث عندما يمكن فحص التوقعات بعد اكتمالها.',
   'تجارب افتراضية لدراسة قواعد الترتيب، وليست أداءً فعلياً لعملاء.',
-  'محاكاة بحثية افتراضية',
+  'توقعات EX-ANTE · محاكاة بحثية افتراضية',
   'دراسات حالة EGX /Alpha',
+  'EGX /Alpha Rank 1 vs. Rank 1+: A Comparative 1D/3D Exit-Discipline Trading Simulation',
+  'EGX /Alpha Rank 1 vs. Rank 1+: Comparative Next-Session Whole-Share Trading Simulations',
+  'Positive-Filtered vs. Raw-Rank Five-Sleeve Portfolios',
   'الترتيب النسبي', 'اتجاه النموذج', 'المراجعة البشرية'
 ]) assert.ok(ar.includes(required), `Arabic methodology should include ${required}`);
 
@@ -77,8 +81,23 @@ for (const file of caseStudyFiles) {
 }
 assert.equal((en.match(/class="case-study-record"/g) || []).length, 3, 'English methodology should expose exactly three case-study accordions');
 assert.equal((ar.match(/class="case-study-record"/g) || []).length, 3, 'Arabic methodology should expose exactly three case-study accordions');
-assert.ok(en.includes(' download>DOWNLOAD CASE STUDY · PDF'), 'English case-study links should download PDFs');
-assert.ok(ar.includes(' download>تنزيل دراسة الحالة · PDF'), 'Arabic case-study links should download PDFs');
+assert.equal((en.match(/class="case-study-toggle"/g) || []).length, 3, 'English case-study accordions should restore the original toggle affordances');
+assert.equal((ar.match(/class="case-study-toggle"/g) || []).length, 3, 'Arabic case-study accordions should restore the original toggle affordances');
+assert.ok(en.includes(' download>DOWNLOAD CASE STUDY · PDF <span aria-hidden="true">↓</span>'), 'English case-study links should download PDFs with the original download affordance');
+assert.ok(ar.includes(' download>تنزيل دراسة الحالة · PDF <span aria-hidden="true">↓</span>'), 'Arabic case-study links should download PDFs with the original download affordance');
+
+for (const [html, label] of [[en, 'English'], [ar, 'Arabic']]) {
+  const articleStart = html.indexOf('<article class="methodology-story"');
+  const questionIndex = html.indexOf('<div class="methodology-question"', articleStart);
+  const caseIndex = html.indexOf('<aside class="methodology-closing methodology-case-studies"', questionIndex);
+  const firstSectionIndex = html.indexOf('<section class="methodology-section"', questionIndex);
+  assert.ok(questionIndex >= 0 && caseIndex > questionIndex && firstSectionIndex > caseIndex, `${label} case-study box should sit in the methodology hero immediately after the research question`);
+  const sectionNineIndex = html.indexOf(label === 'English' ? '09 / RESEARCH SIMULATIONS' : '09 / المحاكاة البحثية', firstSectionIndex);
+  const sectionTenIndex = html.indexOf(label === 'English' ? '10 / RESEARCH AGENDA' : '10 / أجندة البحث', sectionNineIndex);
+  assert.ok(sectionNineIndex >= 0 && sectionTenIndex > sectionNineIndex, `${label} methodology should preserve sections 09 and 10`);
+  assert.equal(html.slice(sectionNineIndex, sectionTenIndex).includes('methodology-case-studies'), false, `${label} case-study box should no longer be buried inside section 09`);
+}
+
 assert.equal(en.includes('An index gives you the average. /Alpha gives you the order.'), false, 'retired English closing copy should be removed');
 assert.equal(ar.includes('المؤشر يعطيك المتوسط. EGX /Alpha يعطيك الترتيب.'), false, 'retired Arabic closing copy should be removed');
 
