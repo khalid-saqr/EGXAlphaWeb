@@ -3,6 +3,8 @@ const ACCESS_ACK_VALUE = 'outside-egypt-confirmed';
 const STORAGE_OPTOUT_KEY = 'egxalpha-storage-optout-v1';
 const THEME_KEY = 'egxalpha-theme';
 const CACHE_PREFIXES = ['egx-alpha-', 'egxresearch-public-pwa-'];
+const OFFLINE_DEADLINE_ISO = '2026-09-06T23:59:00Z';
+const OFFLINE_DEADLINE = Date.parse(OFFLINE_DEADLINE_ISO);
 
 function safeSessionGet(key) {
   try { return sessionStorage.getItem(key); } catch (_) { return null; }
@@ -104,6 +106,52 @@ function privacyCopy() {
   </section>`;
 }
 
+function offlineCountdownMarkup() {
+  return `<section class="egx-gate-privacy" aria-labelledby="egx-gate-offline-title-en egx-gate-offline-title-ar">
+    <div class="egx-gate-storage-row" style="margin-top:0;padding-top:0;border-top:0;justify-content:center;text-align:center">
+      <span class="egx-gate-kicker" id="egx-gate-offline-title-en" lang="en" dir="ltr" style="width:100%;text-align:center">SCHEDULED PUBLIC ACCESS CLOSURE</span>
+      <span class="egx-gate-kicker" id="egx-gate-offline-title-ar" lang="ar" dir="rtl" style="width:100%;text-align:center">موعد إيقاف الوصول العام</span>
+      <p lang="en" dir="ltr" style="width:100%;margin:0;color:var(--soft);font-size:.72rem;line-height:1.6;text-align:center">At the direction of the new owner of <bdi dir="ltr">EGX /Alpha</bdi>, this public website is scheduled to be taken offline at <strong>23:59 GMT on 6 September 2026</strong>.</p>
+      <p lang="ar" dir="rtl" style="width:100%;margin:0;color:var(--soft);font-size:.72rem;line-height:1.75;text-align:center">بناءً على قرار المالك الجديد لـ <bdi dir="ltr">EGX /Alpha</bdi>، من المقرر إيقاف هذا الموقع العام عند الساعة <strong><bdi dir="ltr">23:59 GMT</bdi> في 6 سبتمبر 2026</strong>.</p>
+      <div data-egx-offline-countdown role="timer" aria-live="off" aria-label="Time remaining until EGX /Alpha public website shutdown" style="width:100%;margin:8px auto 0;color:var(--brand);font-family:var(--mono);font-size:clamp(1.8rem,5vw,3.4rem);font-weight:950;line-height:1;letter-spacing:.07em;text-align:center;font-variant-numeric:tabular-nums">00:00:00:00</div>
+      <div aria-hidden="true" style="width:100%;display:flex;justify-content:center;gap:clamp(12px,4vw,34px);color:var(--muted);font-family:var(--mono);font-size:.52rem;font-weight:800;letter-spacing:.08em;text-align:center">
+        <span>DAYS</span><span>HOURS</span><span>MINUTES</span><span>SECONDS</span>
+      </div>
+    </div>
+  </section>`;
+}
+
+function countdownValue(now = Date.now()) {
+  const remaining = Math.max(0, OFFLINE_DEADLINE - now);
+  const totalSeconds = Math.floor(remaining / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const pad = value => String(value).padStart(2, '0');
+  return {
+    remaining,
+    text: `${pad(days)}:${pad(hours)}:${pad(minutes)}:${pad(seconds)}`,
+    label: remaining > 0
+      ? `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds remaining until scheduled shutdown at 23:59 GMT on 6 September 2026`
+      : 'Scheduled shutdown time reached: 23:59 GMT on 6 September 2026'
+  };
+}
+
+function startOfflineCountdown(root) {
+  const node = root.querySelector('[data-egx-offline-countdown]');
+  if (!node) return () => {};
+  const update = () => {
+    const value = countdownValue();
+    node.textContent = value.text;
+    node.setAttribute('aria-label', value.label);
+    node.dataset.deadlineReached = value.remaining <= 0 ? 'true' : 'false';
+  };
+  update();
+  const timer = window.setInterval(update, 1000);
+  return () => window.clearInterval(timer);
+}
+
 function fullGateMarkup() {
   return `<div class="egx-access-gate" data-egx-access-gate role="presentation">
     <section class="egx-access-card" role="dialog" aria-modal="true" aria-labelledby="egx-gate-title" aria-describedby="egx-gate-intro">
@@ -115,6 +163,7 @@ function fullGateMarkup() {
           <p id="egx-gate-intro"><span lang="en" dir="ltr">EGX /Alpha is a continuously updated research digital twin of the Egyptian equity market. Its purpose-built deep-learning engine publishes a general, non-personalised representation of relative behaviour across the eligible equity universe after each completed EGX session, for quantitative market research, financial literacy and reproducible study.</span><span lang="ar" dir="rtl"><bdi dir="ltr">EGX /Alpha</bdi> توأم رقمي بحثي متجدد لسوق الأسهم المصري. وينشر محرك التعلم العميق المتخصص تمثيلاً بحثياً عاماً وغير شخصي للسلوك النسبي لمجموعة الأسهم المؤهلة بعد كل جلسة مكتملة في البورصة المصرية، للبحث الكمي في السوق ودعم الثقافة المالية والدراسة القابلة لإعادة التحقق.</span></p>
         </div>
       </header>
+      ${offlineCountdownMarkup()}
       ${bilingualLegalCopy()}
       ${privacyCopy()}
       <label class="egx-gate-confirmation" for="egx-outside-egypt-confirmation">
@@ -251,6 +300,7 @@ export async function initAccessGate() {
   if (!overlay || !card || !checkbox || !continueButton) return new Promise(() => {});
 
   bindStorageControls(overlay);
+  const stopCountdown = startOfflineCountdown(overlay);
   checkbox.addEventListener('change', () => { continueButton.disabled = !checkbox.checked; });
   const cleanupTrap = trapFocus(card, null);
 
@@ -258,6 +308,7 @@ export async function initAccessGate() {
     continueButton.addEventListener('click', () => {
       if (!checkbox.checked) return;
       safeSessionSet(ACCESS_ACK_KEY, ACCESS_ACK_VALUE);
+      stopCountdown();
       cleanupTrap();
       overlay.remove();
       shellLock(false);
