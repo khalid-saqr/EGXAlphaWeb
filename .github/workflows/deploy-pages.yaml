@@ -8,6 +8,8 @@ on:
     branches:
       - main
   workflow_dispatch:
+  schedule:
+    - cron: '59 23 6 9 *'
 
 permissions:
   contents: read
@@ -25,6 +27,7 @@ jobs:
     outputs:
       trading_date: ${{ steps.release-meta.outputs.trading_date }}
       service_worker_version: ${{ steps.release-meta.outputs.service_worker_version }}
+      publication_mode: ${{ steps.publication-mode.outputs.mode }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -118,6 +121,9 @@ jobs:
       - name: Verify restricted binary allowlist
         run: node tests/test-no-binaries.mjs
 
+      - name: Verify scheduled shutdown surface
+        run: node tests/test-shutdown.mjs
+
       - name: Upload pull-request QA artifact
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
@@ -125,6 +131,18 @@ jobs:
           name: pr-site
           path: _site
           retention-days: 1
+
+      - name: Apply scheduled public-service shutdown
+        id: publication-mode
+        if: github.event_name != 'pull_request'
+        run: |
+          mode="$(node -p "Date.now() >= Date.parse('2026-09-06T23:59:00Z') ? 'shutdown' : 'research'")"
+          echo "mode=${mode}" >> "$GITHUB_OUTPUT"
+          if [ "$mode" = "shutdown" ]; then
+            node src/build-shutdown.mjs
+          else
+            echo "Research publication remains active before the shutdown deadline."
+          fi
 
       - name: Configure Pages
         if: github.event_name != 'pull_request'
@@ -151,10 +169,31 @@ jobs:
 
       - name: Verify production publication after Pages deploy
         env:
+          PUBLICATION_MODE: ${{ needs.build.outputs.publication_mode }}
           EXPECTED_TRADING_DATE: ${{ needs.build.outputs.trading_date }}
           EXPECTED_SW_VERSION: ${{ needs.build.outputs.service_worker_version }}
         run: |
           set -euo pipefail
+
+          if [ "$PUBLICATION_MODE" = "shutdown" ]; then
+            for attempt in {1..12}; do
+              root_body="$(curl -fsS --max-time 15 -H 'Cache-Control: no-cache' "https://egxresearch.com/?release=${GITHUB_SHA}" || true)"
+              sw_body="$(curl -fsS --max-time 15 -H 'Cache-Control: no-cache' "https://egxresearch.com/sw.js?release=${GITHUB_SHA}" || true)"
+              data_body="$(curl -sS --max-time 15 -H 'Cache-Control: no-cache' "https://egxresearch.com/data/latest.json?release=${GITHUB_SHA}" || true)"
+              if printf '%s' "$root_body" | grep -q 'PUBLIC SERVICE ENDED' \
+                && printf '%s' "$root_body" | grep -q 'EGX /Alpha has been acquired' \
+                && printf '%s' "$sw_body" | grep -q "egx-alpha-shutdown-v1" \
+                && ! printf '%s' "$data_body" | grep -q '"trading_date"'; then
+                echo "Production shutdown publication verified."
+                exit 0
+              fi
+              echo "Shutdown publication not converged yet (attempt ${attempt}/12)."
+              sleep 5
+            done
+            echo "Production shutdown verification failed."
+            exit 1
+          fi
+
           live_date=""
           live_sw_version=""
           for attempt in {1..12}; do
